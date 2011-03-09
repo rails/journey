@@ -1,0 +1,8 @@
+.autotest
+CHANGELOG.rdoc
+Manifest.txt
+README.rdoc
+Rakefile
+lib/rack/router.rb
+rack-router.gemspec
+test/test_rack_router.rb
