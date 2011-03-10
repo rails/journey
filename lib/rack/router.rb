@@ -24,17 +24,11 @@ module Rack
     end
 
     def generate part, name, options, recall = nil, parameterize = nil
-      #p [part, name, options, recall, parameterize]
-      #p @routes
       # not sure what part or name is for yet.
 
-      routes.find { |r| r.connects_to?(options) }
+      route = routes.sort_by { |r| r.score(options) }.last
 
-      options = options.dup
-      path = [:controller, :action].map { |url_part|
-        options.delete url_part
-      }.compact.join '/'
-      ["/#{path}", options]
+      route.format options
     end
 
     def call env

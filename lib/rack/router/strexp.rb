@@ -5,6 +5,8 @@ module Rack
         alias :compile :new
       end
 
+      attr_reader :path
+
       def initialize path, requirements, separators, anchor = true
         @path         = path
         @requirements = requirements

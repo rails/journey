@@ -1,14 +1,9 @@
 require 'rack/route/definition/scanner'
+require 'rack/route/definition/node'
 
 module Rack
   module Route
     module Definition
-      class Node < Struct.new(:type, :children)
-        def initialize type, children = []
-          super
-        end
-      end
-
       class Parser < Racc::Parser
         def initialize
           @scanner = Definition::Scanner.new

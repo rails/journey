@@ -2,20 +2,26 @@ module Rack
   class Router
     module Path
       class Pattern
+        attr_reader :spec
+
         def initialize thing
+          parser = Rack::Route::Definition::Parser.new
+
           case thing
           when Regexp
-            @thing = thing
+            @spec = thing
             p :wtf => thing
           when String
-            @thing = Regexp.new(thing)
+            @spec = Regexp.new(thing)
           else
-            @thing = thing
+            @spec = parser.parse thing.path
           end
         end
 
         def names
-          @thing.names
+          @spec.find_all { |node|
+            node.type == :SYMBOL
+          }.map { |n| n.children.tr(':', '') }
         end
       end
     end
