@@ -15,48 +15,50 @@ module Rack
 ##### State transition tables begin ###
 
 racc_action_table = [
-     5,     6,    11,     8,     1,     1,    12,     1,    14 ]
+     1,     6,     7,    11,    13,     1,     8,    11,     1,    16 ]
 
 racc_action_check = [
-     1,     1,     7,     2,     3,     0,     8,    11,    13 ]
+     3,     1,     1,     3,     8,     0,     2,     9,    11,    15 ]
 
 racc_action_pointer = [
-     3,    -3,     3,     2,   nil,   nil,   nil,    -3,     6,   nil,
-   nil,     5,   nil,     2,   nil ]
+     3,    -2,     6,    -2,   nil,   nil,   nil,   nil,     4,     2,
+   nil,     6,   nil,   nil,   nil,     3,   nil ]
 
 racc_action_default = [
-   -10,    -3,   -10,    -5,    -6,    -9,    -8,    -2,   -10,    -4,
-    -1,   -10,    15,   -10,    -7 ]
+   -12,    -6,   -12,    -3,    -4,    -5,   -11,   -10,   -12,    -2,
+    -8,   -12,    -1,    17,    -7,   -12,    -9 ]
 
 racc_goto_table = [
-     2,    10,     7,     9,     3,     4,   nil,   nil,   nil,   nil,
-   nil,    13 ]
+     2,    10,     9,    12,     5,     4,   nil,    14,   nil,   nil,
+   nil,    15 ]
 
 racc_goto_check = [
-     1,     3,     2,     1,     4,     5,   nil,   nil,   nil,   nil,
+     1,     6,     3,     1,     5,     4,   nil,     6,   nil,   nil,
    nil,     1 ]
 
 racc_goto_pointer = [
-   nil,     0,     1,    -6,     3,     4 ]
+   nil,     0,   nil,    -1,     4,     3,    -2 ]
 
 racc_goto_default = [
-   nil,   nil,   nil,   nil,   nil,   nil ]
+   nil,   nil,     3,   nil,   nil,   nil,   nil ]
 
 racc_reduce_table = [
   0, 0, :racc_error,
-  3, 9, :_reduce_1,
+  2, 9, :_reduce_1,
   2, 9, :_reduce_2,
   1, 9, :_reduce_3,
   2, 10, :_reduce_4,
-  1, 10, :_reduce_5,
+  2, 10, :_reduce_5,
   1, 10, :_reduce_6,
-  3, 11, :_reduce_7,
-  1, 13, :_reduce_8,
-  1, 12, :_reduce_9 ]
+  2, 11, :_reduce_7,
+  1, 11, :_reduce_none,
+  3, 14, :_reduce_9,
+  1, 13, :_reduce_10,
+  1, 12, :_reduce_11 ]
 
-racc_reduce_n = 10
+racc_reduce_n = 12
 
-racc_shift_n = 15
+racc_shift_n = 17
 
 racc_token_table = {
   false => 0,
@@ -100,9 +102,10 @@ Racc_token_to_s_table = [
   "$start",
   "path",
   "segment",
-  "group",
+  "groups",
   "literal",
-  "symbol" ]
+  "symbol",
+  "group" ]
 
 Racc_debug_parser = false
 
@@ -111,46 +114,53 @@ Racc_debug_parser = false
 # reduce 0 omitted
 
 def _reduce_1(val, _values, result)
- result = Node.new(:PATH, val.last(2)) 
+ result = Node.new(:PATH, val) 
     result
 end
 
 def _reduce_2(val, _values, result)
- result = Node.new(:PATH, [val[1]]) 
+ result = Node.new(:PATH, val.flatten) 
     result
 end
 
 def _reduce_3(val, _values, result)
- result = Node.new(:PATH) 
+ result = Node.new(:PATH, val) 
     result
 end
 
 def _reduce_4(val, _values, result)
- result = Node.new(:SEGMENT, val) 
+ result = Node.new(:SEGMENT, [val.last]) 
     result
 end
 
 def _reduce_5(val, _values, result)
- result = Node.new(:SEGMENT, val) 
+ result = Node.new(:SEGMENT, [val.last]) 
     result
 end
 
 def _reduce_6(val, _values, result)
- result = Node.new(:SEGMENT, val) 
+ result = Node.new(:SEGMENT, []) 
     result
 end
 
 def _reduce_7(val, _values, result)
+ result = val.flatten 
+    result
+end
+
+# reduce 8 omitted
+
+def _reduce_9(val, _values, result)
  result = Node.new(:GROUP, val[1]) 
     result
 end
 
-def _reduce_8(val, _values, result)
+def _reduce_10(val, _values, result)
  result = Node.new(:SYMBOL, val.first) 
     result
 end
 
-def _reduce_9(val, _values, result)
+def _reduce_11(val, _values, result)
  result = Node.new(:LITERAL, val.first) 
     result
 end

@@ -10,7 +10,23 @@ module Rack
           end
 
           def visit_PATH node
-            "/#{node.children.map { |x| v accept node }.join}"
+            node.children.map { |x| accept x }.join
+          end
+
+          def visit_SEGMENT node
+            "/" + node.children.map { |x| accept x }.join
+          end
+
+          def visit_LITERAL node
+            node.children
+          end
+
+          def visit_SYMBOL node
+            node.children
+          end
+
+          def visit_GROUP node
+            "(#{accept node.children})"
           end
         end
 
@@ -25,15 +41,31 @@ module Rack
         end
 
         def test_segment
-          @parser.parse('/foo')
+          assert_round_trip '/foo'
+        end
+
+        def test_segments
+          assert_round_trip '/foo/bar'
         end
 
         def test_segment_symbol
-          @parser.parse('/foo/:id')
+          assert_round_trip '/foo/:id'
+        end
+
+        def test_symbol
+          assert_round_trip '/:foo'
         end
 
         def test_segment_group
-          @parser.parse('/foo(/:action)')
+          assert_round_trip('/foo(/:action)')
+        end
+
+        def test_segment_groups
+          assert_round_trip('/foo(/:action)(/:bar)')
+        end
+
+        def test_segment_nested_groups
+          assert_round_trip('/foo(/:action(/:bar))')
         end
 
         def assert_round_trip str
