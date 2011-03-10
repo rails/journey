@@ -56,6 +56,18 @@ module Rack
           assert_round_trip '/:foo'
         end
 
+        def test_group
+          assert_round_trip '(/:foo)'
+        end
+
+        def test_groups
+          assert_round_trip '(/:foo)(/:bar)'
+        end
+
+        def test_nested_groups
+          assert_round_trip '(/:foo(/:bar))'
+        end
+
         def test_segment_group
           assert_round_trip('/foo(/:action)')
         end
