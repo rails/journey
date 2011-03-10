@@ -104,6 +104,10 @@ module Rack
           assert_round_trip('/foo(/:action(/:bar))')
         end
 
+        def test_group_followed_by_path
+          assert_round_trip('/foo(/:action)/:bar')
+        end
+
         def test_star
           assert_round_trip('*foo')
           assert_round_trip('/bar/*foo')

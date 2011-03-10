@@ -6,7 +6,8 @@ rule
   path
     : segment path       { result = Node.new(:PATH, val.flatten) }
     | segment            { result = Node.new(:PATH, val.flatten) }
-    | groups             { result = Node.new(:PATH, val.flatten) }
+    | group path         { result = Node.new(:PATH, val.flatten) }
+    | group              { result = Node.new(:PATH, val.flatten) }
     | dot                { result = Node.new(:PATH, val.flatten) }
     | star               { result = Node.new(:PATH, val.flatten) }
     ;
@@ -18,10 +19,6 @@ rule
   dot
     : DOT symbol         { result = Node.new(:DOT, [val.last]) }
     | DOT literal        { result = Node.new(:DOT, [val.last]) }
-    ;
-  groups
-    : group groups       { result = val.flatten }
-    | group
     ;
   group
     : LPAREN path RPAREN { result = Node.new(:GROUP, val[1]) }
