@@ -7,9 +7,9 @@
 require 'racc/parser.rb'
 
 
-require 'rack/router/definition/parser_extras'
+require 'rack/route/definition/parser_extras'
 module Rack
-  module Router
+  module Route
     module Definition
       class Parser < Racc::Parser
 ##### State transition tables begin ###
@@ -86,7 +86,7 @@ Racc_token_to_s_table = [
   "RPAREN",
   "DOT",
   "$start",
-  "pattern" ]
+  "path" ]
 
 Racc_debug_parser = false
 
@@ -95,7 +95,7 @@ Racc_debug_parser = false
 # reduce 0 omitted
 
 def _reduce_1(val, _values, result)
- Nodes::Pattern.new 
+ result = Nodes::Path.new 
     result
 end
 
@@ -105,5 +105,5 @@ end
 
       end   # class Parser
       end   # module Definition
-    end   # module Router
+    end   # module Route
   end   # module Rack

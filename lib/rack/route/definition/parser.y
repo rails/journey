@@ -4,11 +4,11 @@ token SLASH LITERAL SYMBOL LPAREN RPAREN DOT
 
 rule
   path
-    : SLASH { Nodes::Path.new }
+    : SLASH { result = Nodes::Path.new }
     ;
 
 end
 
 ---- header
 
-require 'rack/router/definition/parser_extras'
+require 'rack/route/definition/parser_extras'

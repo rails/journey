@@ -1,7 +1,7 @@
 require 'helper'
 
 module Rack
-  module Router
+  module Route
     module Definition
       class TestScanner < MiniTest::Unit::TestCase
         def setup

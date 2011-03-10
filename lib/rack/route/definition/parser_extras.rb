@@ -1,4 +1,4 @@
-require 'rack/router/definition/scanner'
+require 'rack/route/definition/scanner'
 
 module Rack
   module Route

@@ -19,4 +19,6 @@ rule '.rb' => '.y' do |t|
   sh "racc -l -o #{t.name} #{t.source}"
 end
 
+Rake::Task[:test].prerequisites.unshift "lib/rack/route/definition/parser.rb"
+
 # vim: syntax=ruby

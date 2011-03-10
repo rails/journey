@@ -1,7 +1,7 @@
 require 'strscan'
 
 module Rack
-  class Router
+  module Route
     module Definition
       class Scanner
         def initialize
