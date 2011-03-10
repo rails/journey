@@ -3,13 +3,10 @@ require 'rack/route/definition/scanner'
 module Rack
   module Route
     module Definition
-      module Nodes
-        class Node < Struct.new(:children)
-          def initialize children = []
-            super
-          end
+      class Node < Struct.new(:type, :children)
+        def initialize type, children = []
+          super
         end
-        class Path < Node; end
       end
 
       class Parser < Racc::Parser

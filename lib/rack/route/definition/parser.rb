@@ -15,36 +15,48 @@ module Rack
 ##### State transition tables begin ###
 
 racc_action_table = [
-     1,     3,     4 ]
+     5,     6,    11,     8,     1,     1,    12,     1,    14 ]
 
 racc_action_check = [
-     0,     2,     3 ]
+     1,     1,     7,     2,     3,     0,     8,    11,    13 ]
 
 racc_action_pointer = [
-    -2,   nil,     1,     2,   nil ]
+     3,    -3,     3,     2,   nil,   nil,   nil,    -3,     6,   nil,
+   nil,     5,   nil,     2,   nil ]
 
 racc_action_default = [
-    -2,    -1,    -2,    -2,     5 ]
+   -10,    -3,   -10,    -5,    -6,    -9,    -8,    -2,   -10,    -4,
+    -1,   -10,    15,   -10,    -7 ]
 
 racc_goto_table = [
-     2 ]
+     2,    10,     7,     9,     3,     4,   nil,   nil,   nil,   nil,
+   nil,    13 ]
 
 racc_goto_check = [
-     1 ]
+     1,     3,     2,     1,     4,     5,   nil,   nil,   nil,   nil,
+   nil,     1 ]
 
 racc_goto_pointer = [
-   nil,     0 ]
+   nil,     0,     1,    -6,     3,     4 ]
 
 racc_goto_default = [
-   nil,   nil ]
+   nil,   nil,   nil,   nil,   nil,   nil ]
 
 racc_reduce_table = [
   0, 0, :racc_error,
-  1, 9, :_reduce_1 ]
+  3, 9, :_reduce_1,
+  2, 9, :_reduce_2,
+  1, 9, :_reduce_3,
+  2, 10, :_reduce_4,
+  1, 10, :_reduce_5,
+  1, 10, :_reduce_6,
+  3, 11, :_reduce_7,
+  1, 13, :_reduce_8,
+  1, 12, :_reduce_9 ]
 
-racc_reduce_n = 2
+racc_reduce_n = 10
 
-racc_shift_n = 5
+racc_shift_n = 15
 
 racc_token_table = {
   false => 0,
@@ -86,7 +98,11 @@ Racc_token_to_s_table = [
   "RPAREN",
   "DOT",
   "$start",
-  "path" ]
+  "path",
+  "segment",
+  "group",
+  "literal",
+  "symbol" ]
 
 Racc_debug_parser = false
 
@@ -95,7 +111,47 @@ Racc_debug_parser = false
 # reduce 0 omitted
 
 def _reduce_1(val, _values, result)
- result = Nodes::Path.new 
+ result = Node.new(:PATH, val.last(2)) 
+    result
+end
+
+def _reduce_2(val, _values, result)
+ result = Node.new(:PATH, [val[1]]) 
+    result
+end
+
+def _reduce_3(val, _values, result)
+ result = Node.new(:PATH) 
+    result
+end
+
+def _reduce_4(val, _values, result)
+ result = Node.new(:SEGMENT, val) 
+    result
+end
+
+def _reduce_5(val, _values, result)
+ result = Node.new(:SEGMENT, val) 
+    result
+end
+
+def _reduce_6(val, _values, result)
+ result = Node.new(:SEGMENT, val) 
+    result
+end
+
+def _reduce_7(val, _values, result)
+ result = Node.new(:GROUP, val[1]) 
+    result
+end
+
+def _reduce_8(val, _values, result)
+ result = Node.new(:SYMBOL, val.first) 
+    result
+end
+
+def _reduce_9(val, _values, result)
+ result = Node.new(:LITERAL, val.first) 
     result
 end
 
