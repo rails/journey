@@ -15,4 +15,8 @@ Hoe.spec 'rack-router' do
   self.extra_rdoc_files = FileList['*.rdoc']
 end
 
+rule '.rb' => '.y' do |t|
+  sh "racc -l -o #{t.name} #{t.source}"
+end
+
 # vim: syntax=ruby

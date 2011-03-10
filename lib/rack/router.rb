@@ -1,7 +1,7 @@
 require 'rack/router/utils'
 require 'rack/router/strexp'
 require 'rack/router/route'
-require 'rack/router/definition/scanner'
+require 'rack/route/definition/parser'
 require 'rack/router/path/pattern'
 
 module Rack
@@ -28,7 +28,7 @@ module Rack
       #p @routes
       # not sure what part or name is for yet.
 
-      route = routes.find { |r| r.connects_to?(options) }
+      routes.find { |r| r.connects_to?(options) }
 
       options = options.dup
       path = [:controller, :action].map { |url_part|
