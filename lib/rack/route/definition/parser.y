@@ -7,9 +7,9 @@ rule
     : segment path       { result = Node.new(:PATH, val.flatten) }
     | segment            { result = Node.new(:PATH, val.flatten) }
     | group path         { result = Node.new(:PATH, val.flatten) }
-    | group              { result = Node.new(:PATH, val.flatten) }
-    | dot                { result = Node.new(:PATH, val.flatten) }
-    | star               { result = Node.new(:PATH, val.flatten) }
+    | group              { result = Node.new(:PATH, val) }
+    | dot                { result = Node.new(:PATH, val) }
+    | star               { result = Node.new(:PATH, val) }
     ;
   segment
     : SLASH literal      { result = Node.new(:SEGMENT, [val.last]) }

@@ -5,7 +5,8 @@ module Rack
         def initialize thing
           case thing
           when Regexp
-            raise
+            @thing = thing
+            p :wtf => thing
           when String
             @thing = Regexp.new(thing)
           else

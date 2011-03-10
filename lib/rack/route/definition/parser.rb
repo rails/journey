@@ -141,17 +141,17 @@ def _reduce_3(val, _values, result)
 end
 
 def _reduce_4(val, _values, result)
- result = Node.new(:PATH, val.flatten) 
+ result = Node.new(:PATH, val) 
     result
 end
 
 def _reduce_5(val, _values, result)
- result = Node.new(:PATH, val.flatten) 
+ result = Node.new(:PATH, val) 
     result
 end
 
 def _reduce_6(val, _values, result)
- result = Node.new(:PATH, val.flatten) 
+ result = Node.new(:PATH, val) 
     result
 end
 
