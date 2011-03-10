@@ -25,6 +25,8 @@ module Rack
           # /
           when text = @ss.scan(/\//)
             [:SLASH, text]
+          when text = @ss.scan(/\*/)
+            [:STAR, text]
           when text = @ss.scan(/\(/)
             [:LPAREN, text]
           when text = @ss.scan(/\)/)

@@ -12,6 +12,7 @@ module Rack
         def test_tokens
           [
             ['/',      [[:SLASH, '/']]],
+            ['*omg',   [[:STAR, '*'], [:LITERAL, 'omg']]],
             ['/page',  [[:SLASH, '/'], [:LITERAL, 'page']]],
             ['/:page', [[:SLASH, '/'], [:SYMBOL, ':page']]],
             ['/(:page)', [

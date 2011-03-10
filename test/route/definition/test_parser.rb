@@ -13,6 +13,14 @@ module Rack
             node.children.map { |x| accept x }.join
           end
 
+          def visit_STAR node
+            "*" + node.children
+          end
+
+          def visit_DOT node
+            "." + node.children.map { |x| accept x }.join
+          end
+
           def visit_SEGMENT node
             "/" + node.children.map { |x| accept x }.join
           end
@@ -68,6 +76,22 @@ module Rack
           assert_round_trip '(/:foo(/:bar))'
         end
 
+        def test_dot_symbol
+          assert_round_trip('.:format')
+        end
+
+        def test_dot_literal
+          assert_round_trip('.xml')
+        end
+
+        def test_segment_dot
+          assert_round_trip('/foo.:bar')
+        end
+
+        def test_segment_group_dot
+          assert_round_trip('/foo(.:bar)')
+        end
+
         def test_segment_group
           assert_round_trip('/foo(/:action)')
         end
@@ -78,6 +102,12 @@ module Rack
 
         def test_segment_nested_groups
           assert_round_trip('/foo(/:action(/:bar))')
+        end
+
+        def test_star
+          assert_round_trip('*foo')
+          assert_round_trip('/bar/*foo')
+          assert_round_trip('/bar/(*foo)')
         end
 
         def assert_round_trip str
