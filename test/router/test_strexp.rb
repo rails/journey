@@ -1,6 +1,4 @@
-require 'rubygems'
-require 'minitest/autorun'
-require 'rack/router'
+require 'helper'
 
 module Rack
   class Router
