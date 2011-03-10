@@ -14,6 +14,7 @@ rule
   segment
     : SLASH literal      { result = Node.new(:SEGMENT, [val.last]) }
     | SLASH symbol       { result = Node.new(:SEGMENT, [val.last]) }
+    | SLASH star         { result = Node.new(:SEGMENT, [val.last]) }
     | SLASH              { result = Node.new(:SEGMENT, []) }
     ;
   dot

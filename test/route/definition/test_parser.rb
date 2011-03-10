@@ -110,6 +110,7 @@ module Rack
 
         def test_star
           assert_round_trip('*foo')
+          assert_round_trip('/*foo')
           assert_round_trip('/bar/*foo')
           assert_round_trip('/bar/(*foo)')
         end
