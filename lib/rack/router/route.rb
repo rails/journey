@@ -53,7 +53,6 @@ module Rack
       end
 
       def format options
-        p options => path.spec.to_s
         path_options = options.dup
 
         possible_keys = path.spec.find_all { |node|

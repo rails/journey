@@ -5,7 +5,7 @@ module Rack
     class TestRoute < MiniTest::Unit::TestCase
       def test_initialize
         app   = Object.new
-        path  = Object.new
+        path  = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
         verb  = Object.new
         route = Route.new(app, path, verb)
 
@@ -15,12 +15,11 @@ module Rack
       end
 
       def test_connects_all_match
-        route = Route.new(nil, nil, nil,
+        path  = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
+        route = Route.new(nil, path, nil,
                           { :controller => 'foo', :action => 'bar' })
 
-        assert !route.connects_to?({ :controller => 'foo' })
-        assert route.connects_to?({ :controller => 'foo', :action => 'bar' })
-        assert route.connects_to?({
+        assert_equal ['/foo/bar/10', {}], route.format({
           :controller => 'foo',
           :action     => 'bar',
           :id         => 10

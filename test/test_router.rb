@@ -7,6 +7,9 @@ module Rack
     end
 
     def test_generate_id
+      path  = Router::Path::Pattern.new '/:controller(/:action)'
+      @router.add_route nil, {:path_info => path}, {}, nil
+
       path, params = @router.generate(
         :path_info, nil, {:id=>1, :controller=>"tasks", :action=>"show"}, {})
       assert_equal '/tasks/show', path
@@ -14,6 +17,9 @@ module Rack
     end
 
     def test_generate_extra_params
+      path  = Router::Path::Pattern.new '/:controller(/:action)'
+      @router.add_route nil, {:path_info => path}, {}, nil
+
       path, params = @router.generate(:path_info,
         nil, { :id                => 1,
                :controller        => "tasks",
@@ -25,6 +31,9 @@ module Rack
     end
 
     def test_generate_with_name
+      path  = Router::Path::Pattern.new '/:controller(/:action)'
+      @router.add_route nil, {:path_info => path}, {}, nil
+
       path, params = @router.generate(:path_info,
         "tasks",
         {:controller=>"tasks"},

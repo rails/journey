@@ -12,7 +12,7 @@ module Rack
             @spec = thing
             p :wtf => thing
           when String
-            @spec = Regexp.new(thing)
+            @spec = parser.parse thing
           else
             @spec = parser.parse thing.path
           end
