@@ -16,7 +16,7 @@ module Rack
 
 racc_action_table = [
      4,    15,    16,     7,    12,     8,     9,     7,    12,     8,
-     9,     7,     4,     8,     9,     7,    24,     8,     9,    15,
+     9,     7,    12,     8,     9,     7,    24,     8,     9,    15,
     16,     7,    23,    25,     9,    15,    16,     7,    26,   nil,
      9 ]
 
@@ -37,18 +37,18 @@ racc_action_default = [
    -19,   -14,   -13,   -18,   -19,   -15,    27 ]
 
 racc_goto_table = [
-    17,    14,    21,    10,    11,    13,    22,   nil,    17,    14,
+    17,    14,    10,     1,    21,    11,    13,    22,    17,    14,
     20 ]
 
 racc_goto_check = [
-     6,     4,     7,     1,     2,     2,     8,   nil,     6,     4,
-     1 ]
+     6,     4,     1,     2,     7,     2,     2,     8,     6,     4,
+     2 ]
 
 racc_goto_pointer = [
-   nil,     3,     2,   nil,    -3,   nil,    -4,    -6,    -2 ]
+   nil,     2,     3,   nil,    -3,   nil,    -4,    -4,    -1 ]
 
 racc_goto_default = [
-   nil,   nil,     1,     2,     3,     5,     6,    18,    19 ]
+   nil,   nil,   nil,     2,     3,     5,     6,    18,    19 ]
 
 racc_reduce_table = [
   0, 0, :racc_error,
@@ -191,7 +191,7 @@ def _reduce_14(val, _values, result)
 end
 
 def _reduce_15(val, _values, result)
- result = Node.new(:GROUP, val[1]) 
+ result = Node.new(:GROUP, [val[1]].flatten) 
     result
 end
 

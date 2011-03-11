@@ -26,7 +26,7 @@ rule
     | DOT literal        { result = Node.new(:DOT, [val.last]) }
     ;
   group
-    : LPAREN path RPAREN { result = Node.new(:GROUP, val[1]) }
+    : LPAREN paths RPAREN { result = Node.new(:GROUP, [val[1]].flatten) }
     ;
   symbol
     : SYMBOL             { result = Node.new(:SYMBOL, val.first) }

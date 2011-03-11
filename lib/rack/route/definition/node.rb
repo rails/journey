@@ -20,15 +20,12 @@ module Rack
           alias :visit_PATH :nary
           alias :visit_DOT :nary
           alias :visit_SEGMENT :nary
+          alias :visit_GROUP :nary
 
           def terminal node; end
           alias :visit_STAR :terminal
           alias :visit_LITERAL :terminal
           alias :visit_SYMBOL :terminal
-
-          def visit_GROUP node
-            accept node.children
-          end
         end
 
         class String
@@ -61,7 +58,7 @@ module Rack
           end
 
           def visit_GROUP node
-            "(#{accept node.children})"
+            "(#{node.children.map { |x| accept x }.join})"
           end
         end
 
