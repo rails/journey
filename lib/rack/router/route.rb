@@ -13,13 +13,6 @@ module Rack
         @extras = extras
       end
 
-      ##
-      # Determines if this route object will connect given some constraint.
-      def connects_to? constraints
-        ex = extras.to_a
-        (constraints.to_a & ex) == ex
-      end
-
       def score constraints
         constraints.map { |k,v|
           if extras.key? k
@@ -30,26 +23,53 @@ module Rack
         }.inject(0) { |n,v| n + v}
       end
 
+      class Formatter < ::Rack::Route::Definition::Node::String
+        attr_reader :options, :consumed
+
+        def initialize options
+          @options  = options
+          @consumed = {}
+          @halt     = false
+        end
+
+        def accept node
+          super unless @halt || consumed == options
+        end
+
+        def visit_GROUP node
+          node.children.map { |x| accept x }.join
+        end
+
+        def visit_SYMBOL node
+          key = node.to_sym
+
+          if options.key? key
+            consumed[key] = options[key]
+          else
+            @halt = true
+            ''
+          end
+        end
+      end
+
       def format options
-        options = options.dup
+        p options => path.spec.to_s
+        path_options = options.dup
 
-        p path.spec.to_s => options
-        p path.spec
-        list = path.spec.map { |node|
-          p node.type
-          case node.type
-          when :SEGMENT then '/'
-          when :LITERAL then node.children
-          when :SYMBOL then options.delete(node.children.tr(':', '').to_sym)
-          else '' end
-        }
+        possible_keys = path.spec.find_all { |node|
+          node.type == :SYMBOL
+        }.map { |n| n.to_sym }
 
-        p list
-        formatted_path = list.join
+        # remove keys the path doesn't care about
+        (path_options.keys - possible_keys).each do |key|
+          path_options.delete key
+        end
 
+        formatter      = Formatter.new(path_options)
+        formatted_path = formatter.accept(path.spec)
+
+        options = Hash[options.to_a - formatter.consumed.to_a]
         options.delete(:controller)
-
-        p :zomg => formatted_path
 
         [formatted_path.chomp('/'), options]
       end

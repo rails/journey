@@ -1,7 +1,7 @@
 require 'rack/router/utils'
 require 'rack/router/strexp'
-require 'rack/router/route'
 require 'rack/route/definition/parser'
+require 'rack/router/route'
 require 'rack/router/path/pattern'
 
 module Rack

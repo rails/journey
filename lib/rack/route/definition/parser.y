@@ -10,6 +10,7 @@ rule
   paths
     : segment paths      { result = val.flatten }
     | group paths        { result = val.flatten }
+    | dot paths          { result = val.flatten }
     | segment
     | group
     | dot
@@ -27,6 +28,7 @@ rule
     ;
   group
     : LPAREN paths RPAREN { result = Node.new(:GROUP, [val[1]].flatten) }
+    | LPAREN symbol RPAREN { result = Node.new(:GROUP, [val[1]]) }
     ;
   symbol
     : SYMBOL             { result = Node.new(:SYMBOL, val.first) }

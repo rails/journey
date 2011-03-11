@@ -80,6 +80,14 @@ module Rack
           assert_round_trip('/bar/(*foo)')
         end
 
+        def test_literal_dot_paren
+          assert_round_trip "/sprockets.js(.:format)"
+        end
+
+        def test_groups_with_dot
+          assert_round_trip "/(:locale)(.:format)"
+        end
+
         def assert_round_trip str
           assert_equal str, @parser.parse(str).to_s
         end

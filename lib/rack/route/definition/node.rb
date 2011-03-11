@@ -4,11 +4,8 @@ module Rack
       class Node < Struct.new(:type, :children) # :nodoc:
         include Enumerable
 
-        ##
-        # Loop through the requirements AST
-        class Each < Struct.new(:block) # :nodoc:
+        class Visitor # :nodoc:
           def accept node
-            block.call node
             send "visit_#{node.type}", node
           end
 
@@ -28,10 +25,23 @@ module Rack
           alias :visit_SYMBOL :terminal
         end
 
-        class String
-          def accept node
-            send "visit_#{node.type}", node
+        ##
+        # Loop through the requirements AST
+        class Each < Visitor # :nodoc:
+          attr_reader :block
+
+          def initialize block
+            @block = block
           end
+
+          def accept node
+            block.call node
+            super
+          end
+        end
+
+        class String < Visitor
+          private
 
           def visit_PATH node
             node.children.map { |x| accept x }.join
@@ -72,6 +82,10 @@ module Rack
 
         def to_s
           String.new.accept(self)
+        end
+
+        def to_sym
+          children.tr(':', '').to_sym
         end
       end
     end

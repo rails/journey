@@ -16,36 +16,36 @@ module Rack
 
 racc_action_table = [
      4,    15,    16,     7,    12,     8,     9,     7,    12,     8,
-     9,     7,    12,     8,     9,     7,    24,     8,     9,    15,
-    16,     7,    23,    25,     9,    15,    16,     7,    26,   nil,
-     9 ]
+     9,     7,    26,     8,     9,    12,    25,    16,     7,    12,
+     8,     9,     7,    27,     8,     9,    15,    16,     7,    28,
+    29,     9,    15,    16,     7,   nil,   nil,     9 ]
 
 racc_action_check = [
      0,     8,     8,     0,     2,     0,     0,     2,     3,     2,
-     2,     3,     7,     3,     3,     7,    10,     7,     7,     4,
-     4,     4,     9,    20,     4,    12,    12,    12,    24,   nil,
-    12 ]
+     2,     3,    10,     3,     3,     7,     9,     7,     7,     5,
+     7,     7,     5,    21,     5,     5,     4,     4,     4,    22,
+    26,     4,    12,    12,    12,   nil,   nil,    12 ]
 
 racc_action_pointer = [
-    -2,   nil,     2,     6,    16,   nil,   nil,    10,    -2,    19,
-    16,   nil,    22,   nil,   nil,   nil,   nil,   nil,   nil,   nil,
-    17,   nil,   nil,   nil,    28,   nil,   nil ]
+    -2,   nil,     2,     6,    23,    17,   nil,    13,    -2,    13,
+    12,   nil,    29,   nil,   nil,   nil,   nil,   nil,   nil,   nil,
+   nil,    17,    23,   nil,   nil,   nil,    30,   nil,   nil,   nil ]
 
 racc_action_default = [
-   -19,    -1,    -5,    -6,    -2,    -7,    -8,   -19,   -19,   -19,
-   -19,    -3,   -19,    -4,   -12,   -17,   -16,   -11,    -9,   -10,
-   -19,   -14,   -13,   -18,   -19,   -15,    27 ]
+   -21,    -1,    -6,    -7,    -2,    -8,    -9,   -21,   -21,   -21,
+   -21,    -3,   -21,    -4,   -13,   -19,   -18,   -12,   -10,   -11,
+    -5,   -21,   -21,   -15,   -14,   -20,   -21,   -16,   -17,    30 ]
 
 racc_goto_table = [
-    17,    14,    10,     1,    21,    11,    13,    22,    17,    14,
-    20 ]
+    17,    14,    22,    24,    23,    10,   nil,   nil,    17,    14,
+     1,   nil,    11,    13,   nil,    20,   nil,    21 ]
 
 racc_goto_check = [
-     6,     4,     1,     2,     7,     2,     2,     8,     6,     4,
-     2 ]
+     6,     4,     8,     8,     7,     1,   nil,   nil,     6,     4,
+     2,   nil,     2,     2,   nil,     2,   nil,     2 ]
 
 racc_goto_pointer = [
-   nil,     2,     3,   nil,    -3,   nil,    -4,    -4,    -1 ]
+   nil,     5,    10,   nil,    -3,   nil,    -4,    -4,    -5 ]
 
 racc_goto_default = [
    nil,   nil,   nil,     2,     3,     5,     6,    18,    19 ]
@@ -56,24 +56,26 @@ racc_reduce_table = [
   1, 10, :_reduce_2,
   2, 11, :_reduce_3,
   2, 11, :_reduce_4,
+  2, 11, :_reduce_5,
   1, 11, :_reduce_none,
   1, 11, :_reduce_none,
   1, 11, :_reduce_none,
   1, 11, :_reduce_none,
-  2, 12, :_reduce_9,
   2, 12, :_reduce_10,
   2, 12, :_reduce_11,
   2, 12, :_reduce_12,
-  2, 14, :_reduce_13,
+  2, 12, :_reduce_13,
   2, 14, :_reduce_14,
-  3, 13, :_reduce_15,
-  1, 17, :_reduce_16,
-  1, 16, :_reduce_17,
-  2, 15, :_reduce_18 ]
+  2, 14, :_reduce_15,
+  3, 13, :_reduce_16,
+  3, 13, :_reduce_17,
+  1, 17, :_reduce_18,
+  1, 16, :_reduce_19,
+  2, 15, :_reduce_20 ]
 
-racc_reduce_n = 19
+racc_reduce_n = 21
 
-racc_shift_n = 27
+racc_shift_n = 30
 
 racc_token_table = {
   false => 0,
@@ -152,7 +154,10 @@ def _reduce_4(val, _values, result)
     result
 end
 
-# reduce 5 omitted
+def _reduce_5(val, _values, result)
+ result = val.flatten 
+    result
+end
 
 # reduce 6 omitted
 
@@ -160,10 +165,7 @@ end
 
 # reduce 8 omitted
 
-def _reduce_9(val, _values, result)
- result = Node.new(:SEGMENT, [val.last]) 
-    result
-end
+# reduce 9 omitted
 
 def _reduce_10(val, _values, result)
  result = Node.new(:SEGMENT, [val.last]) 
@@ -181,7 +183,7 @@ def _reduce_12(val, _values, result)
 end
 
 def _reduce_13(val, _values, result)
- result = Node.new(:DOT, [val.last]) 
+ result = Node.new(:SEGMENT, [val.last]) 
     result
 end
 
@@ -191,21 +193,31 @@ def _reduce_14(val, _values, result)
 end
 
 def _reduce_15(val, _values, result)
- result = Node.new(:GROUP, [val[1]].flatten) 
+ result = Node.new(:DOT, [val.last]) 
     result
 end
 
 def _reduce_16(val, _values, result)
- result = Node.new(:SYMBOL, val.first) 
+ result = Node.new(:GROUP, [val[1]].flatten) 
     result
 end
 
 def _reduce_17(val, _values, result)
- result = Node.new(:LITERAL, val.first) 
+ result = Node.new(:GROUP, [val[1]]) 
     result
 end
 
 def _reduce_18(val, _values, result)
+ result = Node.new(:SYMBOL, val.first) 
+    result
+end
+
+def _reduce_19(val, _values, result)
+ result = Node.new(:LITERAL, val.first) 
+    result
+end
+
+def _reduce_20(val, _values, result)
  result = Node.new(:STAR, val.last) 
     result
 end
