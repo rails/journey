@@ -4,18 +4,22 @@ token SLASH LITERAL SYMBOL LPAREN RPAREN DOT STAR
 
 rule
   path
-    : segment path       { result = Node.new(:PATH, val.flatten) }
-    | segment            { result = Node.new(:PATH, val.flatten) }
-    | group path         { result = Node.new(:PATH, val.flatten) }
-    | group              { result = Node.new(:PATH, val) }
-    | dot                { result = Node.new(:PATH, val) }
-    | star               { result = Node.new(:PATH, val) }
+    : paths              { result = Node.new(:PATH, val.flatten) }
+    | SLASH              { result = Node.new(:PATH, Node.new(:SEGMENT, [])) }
+    ;
+  paths
+    : segment paths      { result = val.flatten }
+    | group paths        { result = val.flatten }
+    | segment
+    | group
+    | dot
+    | star
     ;
   segment
     : SLASH literal      { result = Node.new(:SEGMENT, [val.last]) }
     | SLASH symbol       { result = Node.new(:SEGMENT, [val.last]) }
     | SLASH star         { result = Node.new(:SEGMENT, [val.last]) }
-    | SLASH              { result = Node.new(:SEGMENT, []) }
+    | SLASH group        { result = Node.new(:SEGMENT, [val.last]) }
     ;
   dot
     : DOT symbol         { result = Node.new(:DOT, [val.last]) }
