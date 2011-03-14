@@ -14,9 +14,13 @@ module Rack
       end
 
       def score constraints
+        possible_keys = path.names
+
         constraints.map { |k,v|
           if extras.key? k
             extras[k] == v ? 1 : -1
+          elsif possible_keys.include?(k.to_s) && v
+            1
           else
             0
           end
@@ -29,15 +33,14 @@ module Rack
         def initialize options
           @options  = options
           @consumed = {}
-          @halt     = false
-        end
-
-        def accept node
-          super unless @halt || consumed == options
         end
 
         def visit_GROUP node
-          node.children.map { |x| accept x }.join
+          if consumed == options
+            ''
+          else
+            node.children.map { |x| accept x }.join
+          end
         end
 
         def visit_SYMBOL node
@@ -46,18 +49,17 @@ module Rack
           if options.key? key
             consumed[key] = options[key]
           else
-            @halt = true
             ''
           end
         end
       end
 
       def format options
-        path_options = options.dup
+        path_options = Hash[options.reject { |k,v|
+          v.respond_to?(:to_param) && v.to_param.nil?
+        }]
 
-        possible_keys = path.spec.find_all { |node|
-          node.type == :SYMBOL
-        }.map { |n| n.to_sym }
+        possible_keys = path.names.map { |n| n.to_sym }
 
         # remove keys the path doesn't care about
         (path_options.keys - possible_keys).each do |key|
@@ -69,8 +71,9 @@ module Rack
 
         options = Hash[options.to_a - formatter.consumed.to_a]
         options.delete(:controller)
+        options.delete(:action)
 
-        [formatted_path.chomp('/'), options]
+        [formatted_path, options]
       end
     end
   end
