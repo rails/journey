@@ -1,4 +1,4 @@
-class Rack::Route::Definition::Parser
+class Journey::Route::Definition::Parser
 
 token SLASH LITERAL SYMBOL LPAREN RPAREN DOT STAR
 
@@ -43,4 +43,4 @@ end
 
 ---- header
 
-require 'rack/route/definition/parser_extras'
+require 'journey/route/definition/parser_extras'

@@ -1,4 +1,4 @@
-module Rack
+module Journey
   class Router
     class Route
       attr_reader :app, :path, :verb, :extras
@@ -27,7 +27,7 @@ module Rack
         }.inject(0) { |n,v| n + v}
       end
 
-      class Formatter < ::Rack::Route::Definition::Node::String
+      class Formatter < ::Journey::Route::Definition::Node::String
         attr_reader :options, :consumed
 
         def initialize options

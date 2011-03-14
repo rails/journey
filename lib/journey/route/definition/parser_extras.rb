@@ -1,7 +1,7 @@
-require 'rack/route/definition/scanner'
-require 'rack/route/definition/node'
+require 'journey/route/definition/scanner'
+require 'journey/route/definition/node'
 
-module Rack
+module Journey
   module Route
     module Definition
       class Parser < Racc::Parser

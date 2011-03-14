@@ -1,6 +1,6 @@
 require 'strscan'
 
-module Rack
+module Journey
   module Route
     module Definition
       class Scanner

@@ -1,10 +1,10 @@
-require 'rack/router/utils'
-require 'rack/router/strexp'
-require 'rack/route/definition/parser'
-require 'rack/router/route'
-require 'rack/router/path/pattern'
+require 'journey/router/utils'
+require 'journey/router/strexp'
+require 'journey/route/definition/parser'
+require 'journey/router/route'
+require 'journey/router/path/pattern'
 
-module Rack
+module Journey
   class Router
     class RoutingError < ::StandardError
     end

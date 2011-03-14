@@ -1,6 +1,6 @@
 require 'helper'
 
-module Rack
+module Journey
   class Router
     class TestStrexp < MiniTest::Unit::TestCase
       def test_many_names

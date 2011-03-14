@@ -1,4 +1,4 @@
-module Rack
+module Journey
   module Route
     module Definition
       class Node < Struct.new(:type, :children) # :nodoc:

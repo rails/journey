@@ -1,4 +1,4 @@
-module Rack
+module Journey
   class Router
     class Strexp
       class << self

@@ -7,8 +7,8 @@
 require 'racc/parser.rb'
 
 
-require 'rack/route/definition/parser_extras'
-module Rack
+require 'journey/route/definition/parser_extras'
+module Journey
   module Route
     module Definition
       class Parser < Racc::Parser
@@ -229,4 +229,4 @@ end
       end   # class Parser
       end   # module Definition
     end   # module Route
-  end   # module Rack
+  end   # module Journey

@@ -1,6 +1,6 @@
 require 'helper'
 
-module Rack
+module Journey
   class TestRouter < MiniTest::Unit::TestCase
     def setup
       @router = Router.new nil

@@ -1,6 +1,6 @@
 require 'helper'
 
-module Rack
+module Journey
   module Route
     module Definition
       class TestParser < MiniTest::Unit::TestCase

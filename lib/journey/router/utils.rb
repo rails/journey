@@ -1,6 +1,6 @@
 require 'uri'
 
-module Rack
+module Journey
   class Router
     class Utils
       # Normalizes URI path.
