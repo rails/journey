@@ -7,7 +7,7 @@ module Journey
     end
 
     def test_generate_id
-      path  = Router::Path::Pattern.new '/:controller(/:action)'
+      path  = Path::Pattern.new '/:controller(/:action)'
       @router.add_route nil, {:path_info => path}, {}, nil
 
       path, params = @router.generate(
@@ -17,7 +17,7 @@ module Journey
     end
 
     def test_generate_extra_params
-      path  = Router::Path::Pattern.new '/:controller(/:action)'
+      path  = Path::Pattern.new '/:controller(/:action)'
       @router.add_route nil, {:path_info => path}, {}, nil
 
       path, params = @router.generate(:path_info,
@@ -31,7 +31,7 @@ module Journey
     end
 
     def test_generate_with_name
-      path  = Router::Path::Pattern.new '/:controller(/:action)'
+      path  = Path::Pattern.new '/:controller(/:action)'
       @router.add_route nil, {:path_info => path}, {}, nil
 
       path, params = @router.generate(:path_info,

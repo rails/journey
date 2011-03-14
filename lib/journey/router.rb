@@ -2,7 +2,9 @@ require 'journey/router/utils'
 require 'journey/router/strexp'
 require 'journey/definition/parser'
 require 'journey/route'
-require 'journey/router/path/pattern'
+require 'journey/path/pattern'
+
+require 'journey/backwards' # backwards compat stuff
 
 module Journey
   class Router
@@ -41,10 +43,5 @@ module Journey
     def recognize req
       yield(nil, nil, nil)
     end
-
-    RegexpWithNamedGroups = Path::Pattern
   end
-
-  Mount = Router
-  Mount::RouteSet = Router
 end
