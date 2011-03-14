@@ -1,96 +1,94 @@
 require 'helper'
 
 module Journey
-  module Route
-    module Definition
-      class TestParser < MiniTest::Unit::TestCase
-        def setup
-          @parser = Definition::Parser.new
-        end
+  module Definition
+    class TestParser < MiniTest::Unit::TestCase
+      def setup
+        @parser = Definition::Parser.new
+      end
 
-        def test_slash
-          assert_equal :PATH, @parser.parse('/').type
-          assert_round_trip '/'
-        end
+      def test_slash
+        assert_equal :PATH, @parser.parse('/').type
+        assert_round_trip '/'
+      end
 
-        def test_segment
-          assert_round_trip '/foo'
-        end
+      def test_segment
+        assert_round_trip '/foo'
+      end
 
-        def test_segments
-          assert_round_trip '/foo/bar'
-        end
+      def test_segments
+        assert_round_trip '/foo/bar'
+      end
 
-        def test_segment_symbol
-          assert_round_trip '/foo/:id'
-        end
+      def test_segment_symbol
+        assert_round_trip '/foo/:id'
+      end
 
-        def test_symbol
-          assert_round_trip '/:foo'
-        end
+      def test_symbol
+        assert_round_trip '/:foo'
+      end
 
-        def test_group
-          assert_round_trip '(/:foo)'
-        end
+      def test_group
+        assert_round_trip '(/:foo)'
+      end
 
-        def test_groups
-          assert_round_trip '(/:foo)(/:bar)'
-        end
+      def test_groups
+        assert_round_trip '(/:foo)(/:bar)'
+      end
 
-        def test_nested_groups
-          assert_round_trip '(/:foo(/:bar))'
-        end
+      def test_nested_groups
+        assert_round_trip '(/:foo(/:bar))'
+      end
 
-        def test_dot_symbol
-          assert_round_trip('.:format')
-        end
+      def test_dot_symbol
+        assert_round_trip('.:format')
+      end
 
-        def test_dot_literal
-          assert_round_trip('.xml')
-        end
+      def test_dot_literal
+        assert_round_trip('.xml')
+      end
 
-        def test_segment_dot
-          assert_round_trip('/foo.:bar')
-        end
+      def test_segment_dot
+        assert_round_trip('/foo.:bar')
+      end
 
-        def test_segment_group_dot
-          assert_round_trip('/foo(.:bar)')
-        end
+      def test_segment_group_dot
+        assert_round_trip('/foo(.:bar)')
+      end
 
-        def test_segment_group
-          assert_round_trip('/foo(/:action)')
-        end
+      def test_segment_group
+        assert_round_trip('/foo(/:action)')
+      end
 
-        def test_segment_groups
-          assert_round_trip('/foo(/:action)(/:bar)')
-        end
+      def test_segment_groups
+        assert_round_trip('/foo(/:action)(/:bar)')
+      end
 
-        def test_segment_nested_groups
-          assert_round_trip('/foo(/:action(/:bar))')
-        end
+      def test_segment_nested_groups
+        assert_round_trip('/foo(/:action(/:bar))')
+      end
 
-        def test_group_followed_by_path
-          assert_round_trip('/foo(/:action)/:bar')
-        end
+      def test_group_followed_by_path
+        assert_round_trip('/foo(/:action)/:bar')
+      end
 
-        def test_star
-          assert_round_trip('*foo')
-          assert_round_trip('/*foo')
-          assert_round_trip('/bar/*foo')
-          assert_round_trip('/bar/(*foo)')
-        end
+      def test_star
+        assert_round_trip('*foo')
+        assert_round_trip('/*foo')
+        assert_round_trip('/bar/*foo')
+        assert_round_trip('/bar/(*foo)')
+      end
 
-        def test_literal_dot_paren
-          assert_round_trip "/sprockets.js(.:format)"
-        end
+      def test_literal_dot_paren
+        assert_round_trip "/sprockets.js(.:format)"
+      end
 
-        def test_groups_with_dot
-          assert_round_trip "/(:locale)(.:format)"
-        end
+      def test_groups_with_dot
+        assert_round_trip "/(:locale)(.:format)"
+      end
 
-        def assert_round_trip str
-          assert_equal str, @parser.parse(str).to_s
-        end
+      def assert_round_trip str
+        assert_equal str, @parser.parse(str).to_s
       end
     end
   end

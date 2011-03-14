@@ -5,7 +5,7 @@ module Journey
         attr_reader :spec
 
         def initialize thing
-          parser = Journey::Route::Definition::Parser.new
+          parser = Journey::Definition::Parser.new
 
           case thing
           when Regexp

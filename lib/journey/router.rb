@@ -1,7 +1,7 @@
 require 'journey/router/utils'
 require 'journey/router/strexp'
-require 'journey/route/definition/parser'
-require 'journey/router/route'
+require 'journey/definition/parser'
+require 'journey/route'
 require 'journey/router/path/pattern'
 
 module Journey
