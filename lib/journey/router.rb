@@ -34,11 +34,9 @@ module Journey
     end
 
     def generate part, name, options, recall = nil, parameterize = nil
-      # not sure what part or name is for yet.
-
       route = named_routes[name] || routes.sort_by { |r| r.score(options) }.last
 
-      route.format options
+      route.format(options.to_a - route.extras.to_a)
     end
 
     def call env

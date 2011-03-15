@@ -41,5 +41,19 @@ module Journey
       assert_equal '/tasks', path
       assert_equal({}, params)
     end
+
+    def test_extras_are_removed_when_formatting
+      path  = Path::Pattern.new "/page/:id(/:action)(.:format)"
+      @router.add_route nil, { :path_info => path }, {
+        :controller => 'paths',
+        :action => 'show'
+      }, nil
+      path = @router.generate(nil, nil, {
+        :controller =>"pages",
+        :id         =>20,
+        :action     =>"show"
+      })
+      assert_equal '/page/20', path.first
+    end
   end
 end
