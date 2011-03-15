@@ -1,6 +1,11 @@
 require 'journey/router/utils'
 require 'journey/router/strexp'
+
+before = $-w
+$-w = false
 require 'journey/definition/parser'
+$-w = before
+
 require 'journey/route'
 require 'journey/path/pattern'
 
