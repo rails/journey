@@ -10,9 +10,6 @@ module Journey
         when Regexp
           @spec = thing
           p :wtf => thing
-          puts "#" * 90
-          puts caller
-          puts "#" * 90
         when String
           @spec = parser.parse thing
         else

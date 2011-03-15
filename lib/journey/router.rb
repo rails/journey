@@ -24,7 +24,7 @@ module Journey
     def add_route app, conditions, extras, name
       path = conditions[:path_info]
       route = Route.new(app, path, nil, extras)
-      routes << Route.new(app, path, nil, extras)
+      routes << route
       named_routes[name] = route if name
     end
 
