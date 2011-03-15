@@ -17,13 +17,13 @@ module Journey
 
       constraints.map { |k,v|
         if extras.key? k
-          extras[k] == v ? 1 : -1
+          extras[k] == v ? 2 : -1
         elsif possible_keys.include?(k.to_s) && v
           1
         else
           0
         end
-      }.inject(0) { |n,v| n + v}
+      }.inject(0) { |n,v| n + v }
     end
 
     class Formatter < ::Journey::Definition::Node::String
