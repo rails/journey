@@ -8,7 +8,7 @@ module Journey
 
     def test_generate_id
       path  = Path::Pattern.new '/:controller(/:action)'
-      @router.add_route nil, {:path_info => path}, {}, nil
+      @router.add_route nil, {:path_info => path}, {}, {}
 
       path, params = @router.generate(
         :path_info, nil, {:id=>1, :controller=>"tasks", :action=>"show"}, {})
@@ -18,7 +18,7 @@ module Journey
 
     def test_generate_extra_params
       path  = Path::Pattern.new '/:controller(/:action)'
-      @router.add_route nil, {:path_info => path}, {}, nil
+      @router.add_route nil, {:path_info => path}, {}, {}
 
       path, params = @router.generate(:path_info,
         nil, { :id                => 1,
@@ -32,7 +32,7 @@ module Journey
 
     def test_generate_with_name
       path  = Path::Pattern.new '/:controller(/:action)'
-      @router.add_route nil, {:path_info => path}, {}, nil
+      @router.add_route nil, {:path_info => path}, {}, {}
 
       path, params = @router.generate(:path_info,
         "tasks",
@@ -47,7 +47,7 @@ module Journey
       @router.add_route nil, { :path_info => path }, {
         :controller => 'paths',
         :action => 'show'
-      }, nil
+      }, {}
       path = @router.generate(nil, nil, {
         :controller =>"pages",
         :id         =>20,
@@ -64,7 +64,7 @@ module Journey
       define_method("test_recognize_#{expected.keys.map(&:to_s).join('_')}") do
         path  = Path::Pattern.new "/:controller(/:action(/:id))"
         app   = Object.new
-        route = @router.add_route(app, { :path_info => path }, {}, nil)
+        route = @router.add_route(app, { :path_info => path }, {}, {})
 
         env = rails_env 'PATH_INFO' => request_path
         called   = false
@@ -77,6 +77,23 @@ module Journey
 
         assert called
       end
+    end
+
+    def test_recognize_literal
+      path   = Path::Pattern.new "/books(/:action(.:format))"
+      app    = Object.new
+      route  = @router.add_route(app, { :path_info => path }, {:controller => 'books'})
+
+      env    = rails_env 'PATH_INFO' => '/books/list.rss'
+      expected = { :controller => 'books', :action => 'list', :format => 'rss' }
+      called = false
+      @router.recognize(env) do |r, _, params|
+        assert_equal route, r
+        assert_equal(expected, params)
+        called = true
+      end
+
+      assert called
     end
 
     private

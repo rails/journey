@@ -24,8 +24,6 @@ module Journey
       end
 
       class Matcher < Journey::Definition::Node::Visitor # :nodoc:
-        attr_reader :contents
-
         def initialize scanner
           @scanner = scanner
           @contents = {}
@@ -40,13 +38,25 @@ module Journey
 
         def visit_SEGMENT node
           token, text = @scanner.next_token
-          raise unless token == :SLASH
+          raise "wrong token [#{token}, #{text}]" unless token == :SLASH
           super
         end
 
         def visit_SYMBOL node
           token, text = @scanner.next_token
           @contents[node.to_sym] = text
+          super
+        end
+
+        def visit_LITERAL node
+          token, text = @scanner.next_token
+          raise unless text == node.children
+          super
+        end
+
+        def visit_DOT node
+          token, text = @scanner.next_token
+          raise unless token == node.type
           super
         end
       end
@@ -56,7 +66,6 @@ module Journey
         scanner.scan_setup other
         matcher = Matcher.new scanner
         matcher.accept spec
-        matcher.contents
       end
     end
   end

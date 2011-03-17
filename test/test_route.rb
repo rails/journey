@@ -3,14 +3,14 @@ require 'helper'
 module Journey
   class TestRoute < MiniTest::Unit::TestCase
     def test_initialize
-      app   = Object.new
-      path  = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
-      verb  = Object.new
-      route = Route.new(app, path, verb)
+      app      = Object.new
+      path     = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
+      defaults = Object.new
+      route    = Route.new(app, path, nil, defaults)
 
       assert_equal app, route.app
       assert_equal path, route.path
-      assert_equal verb, route.verb
+      assert_equal defaults, route.extras
     end
 
     def test_connects_all_match

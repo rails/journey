@@ -26,9 +26,9 @@ module Journey
       @named_routes = {}
     end
 
-    def add_route app, conditions, extras, name
+    def add_route app, conditions, defaults, name = nil
       path = conditions[:path_info]
-      route = Route.new(app, path, nil, extras)
+      route = Route.new(app, path, nil, defaults)
       routes << route
       named_routes[name] = route if name
       route
@@ -50,7 +50,7 @@ module Journey
         match_data = route.path =~ req.env['PATH_INFO']
       end
 
-      yield(route, nil, match_data)
+      yield(route, nil, match_data.merge(route.extras))
     end
   end
 end
