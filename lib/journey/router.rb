@@ -31,6 +31,7 @@ module Journey
       route = Route.new(app, path, nil, extras)
       routes << route
       named_routes[name] = route if name
+      route
     end
 
     def generate part, name, options, recall = nil, parameterize = nil
@@ -44,7 +45,12 @@ module Journey
     end
 
     def recognize req
-      yield(nil, nil, nil)
+      match_data = nil
+      route = routes.find do |route|
+        match_data = route.path =~ req.env['PATH_INFO']
+      end
+
+      yield(route, nil, match_data)
     end
   end
 end

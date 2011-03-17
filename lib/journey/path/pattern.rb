@@ -22,6 +22,42 @@ module Journey
           node.type == :SYMBOL
         }.map { |n| n.children.tr(':', '') }
       end
+
+      class Matcher < Journey::Definition::Node::Visitor # :nodoc:
+        attr_reader :contents
+
+        def initialize scanner
+          @scanner = scanner
+          @contents = {}
+          super()
+        end
+
+        def accept node
+          return @contents if @scanner.eos?
+          super
+          @contents
+        end
+
+        def visit_SEGMENT node
+          token, text = @scanner.next_token
+          raise unless token == :SLASH
+          super
+        end
+
+        def visit_SYMBOL node
+          token, text = @scanner.next_token
+          @contents[node.to_sym] = text
+          super
+        end
+      end
+
+      def =~ other
+        scanner = Journey::Definition::Scanner.new
+        scanner.scan_setup other
+        matcher = Matcher.new scanner
+        matcher.accept spec
+        matcher.contents
+      end
     end
   end
 end

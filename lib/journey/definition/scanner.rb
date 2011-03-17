@@ -11,6 +11,10 @@ module Journey
         @ss = StringScanner.new str
       end
 
+      def eos?
+        @ss.eos?
+      end
+
       def next_token
         return if @ss.eos?
 
