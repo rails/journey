@@ -28,7 +28,7 @@ module Journey
 
     def add_route app, conditions, defaults, name = nil
       path = conditions[:path_info]
-      route = Route.new(app, path, nil, defaults)
+      route = Route.new(app, path, conditions[:request_method], defaults)
       routes << route
       named_routes[name] = route if name
       route
@@ -47,6 +47,7 @@ module Journey
     def recognize req
       match_data = nil
       route = routes.find do |route|
+        next unless route.verb === req.env['REQUEST_METHOD']
         match_data = route.path =~ req.env['PATH_INFO']
       end
 

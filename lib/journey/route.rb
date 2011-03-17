@@ -8,7 +8,7 @@ module Journey
     def initialize app, path, verb, extras = {}
       @app    = app
       @path   = path
-      @verb   = verb
+      @verb   = verb || //
       @extras = extras
     end
 

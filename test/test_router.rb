@@ -96,6 +96,32 @@ module Journey
       assert called
     end
 
+    def test_recognize_cares_about_verbs
+      path   = Path::Pattern.new "/books(/:action(.:format))"
+      app    = Object.new
+      conditions = {
+        :path_info      => path,
+        :request_method => 'GET'
+      }
+      get  = @router.add_route(app, conditions, {})
+
+      conditions = conditions.dup
+      conditions[:request_method] = 'POST'
+
+      post = @router.add_route(app, conditions, {})
+
+      env = rails_env 'PATH_INFO' => '/books/list.rss',
+                      "REQUEST_METHOD"    => "POST"
+
+      called = false
+      @router.recognize(env) do |r, _, params|
+        assert_equal post, r
+        called = true
+      end
+
+      assert called
+    end
+
     private
 
     RailsEnv = Struct.new(:env)
