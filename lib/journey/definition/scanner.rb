@@ -15,6 +15,14 @@ module Journey
         @ss.eos?
       end
 
+      def pos
+        @ss.pos
+      end
+
+      def pre_match
+        @ss.pre_match
+      end
+
       def next_token
         return if @ss.eos?
 

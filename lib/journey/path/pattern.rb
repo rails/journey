@@ -1,19 +1,21 @@
 module Journey
   module Path
     class Pattern
-      attr_reader :spec
+      attr_reader :spec, :strexp
 
-      def initialize thing
+      def initialize strexp
         parser = Journey::Definition::Parser.new
 
-        case thing
-        when Regexp
-          @spec = thing
-          p :wtf => thing
+        @strexp = strexp
+
+        case strexp
         when String
-          @spec = parser.parse thing
+          @spec   = parser.parse strexp
+          @strexp = nil
+        when Router::Strexp
+          @spec   = parser.parse strexp.path
         else
-          @spec = parser.parse thing.path
+          raise "wtf bro: #{strexp}"
         end
       end
 
@@ -23,7 +25,52 @@ module Journey
         }.map { |n| n.children.tr(':', '') }
       end
 
+      def to_regexp
+        viz = ToRegexp.new(strexp.separators.join, strexp.requirements)
+        viz.accept spec
+      end
+
+      class ToRegexp < Journey::Definition::Node::Visitor # :nodoc:
+        def initialize separator, matchers
+          @separator = separator
+          @matchers  = matchers
+          @separator_re = "[^#{separator}]+"
+          super()
+        end
+
+        def visit_PATH node
+          %r{\A#{node.children.map { |x| accept x }.join}\Z}
+        end
+
+        def visit_SEGMENT node
+          "/" + node.children.map { |x| accept x }.join
+        end
+
+        def visit_SYMBOL node
+          str = @separator_re
+          if re = @matchers[node.to_sym]
+            str = "#{re.source}?"
+          end
+
+          "(#{str})"
+        end
+
+        def visit_GROUP node
+          "(?:#{node.children.map { |x| accept x }.join})?"
+        end
+
+        def visit_LITERAL node
+          node.children
+        end
+      end
+
       class Matcher < Journey::Definition::Node::Visitor # :nodoc:
+        class SyntaxError < ::SyntaxError
+          def initialize expected, actual, pos, after
+            super("unexpected '#{actual}', expected '#{expected}' at #{pos} after #{after}")
+          end
+        end
+
         def initialize scanner
           @scanner = scanner
           @contents = {}
@@ -38,7 +85,9 @@ module Journey
 
         def visit_SEGMENT node
           token, text = @scanner.next_token
-          raise "wrong token [#{token}, #{text}]" unless token == :SLASH
+          unless token == :SLASH
+            raise SyntaxError.new('/', text, @scanner.pos, @scanner.pre_match)
+          end
           super
         end
 
@@ -56,7 +105,9 @@ module Journey
 
         def visit_DOT node
           token, text = @scanner.next_token
-          raise unless token == node.type
+          unless token == node.type
+            raise SyntaxError.new('.', text, @scanner.pos, @scanner.pre_match)
+          end
           super
         end
       end

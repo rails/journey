@@ -5,7 +5,7 @@ module Journey
         alias :compile :new
       end
 
-      attr_reader :path
+      attr_reader :path, :requirements, :separators, :anchor
 
       def initialize path, requirements, separators, anchor = true
         @path         = path

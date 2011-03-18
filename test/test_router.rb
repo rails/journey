@@ -79,6 +79,19 @@ module Journey
       end
     end
 
+    def test_namespaced_controller
+      skip
+      path  = Path::Pattern.new "/:controller(/:action(/:id))"
+      app   = Object.new
+      route = @router.add_route(app, { :path_info => path }, {}, {})
+
+      env = rails_env 'PATH_INFO' => '/admin/users'
+      called   = false
+
+      @router.recognize(env) do |r, _, params|
+      end
+    end
+
     def test_recognize_literal
       path   = Path::Pattern.new "/books(/:action(.:format))"
       app    = Object.new
