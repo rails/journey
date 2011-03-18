@@ -3,46 +3,22 @@ require 'helper'
 module Journey
   module Path
     class TestPattern < MiniTest::Unit::TestCase
-      def test_to_regexp_with_strexp_on_controller_and_optional_action
-        strexp = Router::Strexp.new(
-          '/:controller(/:action)',
-          { :controller => /.+/ },
-          ["/", ".", "?"]
-        )
-        path = Pattern.new strexp
-        re = path.to_regexp
-        x = %r{\A/(.+?)(?:/([^/.?]+))?\Z}
-
-        assert_equal(x.source, re.source)
-        assert_equal(x, re)
-      end
-
-      def test_to_regexp_with_strexp_on_controller_and_literal
-        strexp = Router::Strexp.new(
-          '/:controller/foo',
-          { :controller => /.+/ },
-          ["/", ".", "?"]
-        )
-        path = Pattern.new strexp
-        re = path.to_regexp
-        x = %r{\A/(.+?)/foo\Z}
-
-        assert_equal(x.source, re.source)
-        assert_equal(x, re)
-      end
-
-      def test_to_regexp_with_strexp_on_controller_and_action
-        strexp = Router::Strexp.new(
-          '/:controller/:action',
-          { :controller => /.+/ },
-          ["/", ".", "?"]
-        )
-        path = Pattern.new strexp
-        re = path.to_regexp
-        x = %r{\A/(.+?)/([^/.?]+)\Z}
-
-        assert_equal(x.source, re.source)
-        assert_equal(x, re)
+      {
+        '/:controller(/:action)' => %r{\A/(.+?)(?:/([^/.?]+))?\Z},
+        '/:controller/foo'       => %r{\A/(.+?)/foo\Z},
+        '/:controller/:action'   => %r{\A/(.+?)/([^/.?]+)\Z},
+        '/:controller'           => %r{\A/(.+?)\Z},
+      }.each do |path, expected|
+        define_method(:"test_to_regexp_#{path}") do
+          strexp = Router::Strexp.new(
+            path,
+            { :controller => /.+/ },
+            ["/", ".", "?"]
+          )
+          path = Pattern.new strexp
+          re = path.to_regexp
+          assert_equal(expected, re)
+        end
       end
 
       def test_to_regexp_with_strexp
@@ -50,20 +26,6 @@ module Journey
         path = Pattern.new strexp
         re = path.to_regexp
         x = %r{\A/([^/.?]+)\Z}
-
-        assert_equal(x.source, re.source)
-        assert_equal(x, re)
-      end
-
-      def test_to_regexp_with_strexp_on_controller
-        strexp = Router::Strexp.new(
-          '/:controller',
-          { :controller => /.+/ },
-          ["/", ".", "?"]
-        )
-        path = Pattern.new strexp
-        re = path.to_regexp
-        x = %r{\A/(.+?)\Z}
 
         assert_equal(x.source, re.source)
         assert_equal(x, re)
