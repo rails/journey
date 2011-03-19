@@ -37,6 +37,12 @@ module Journey
         assert_equal(x, re)
       end
 
+      def test_to_regexp_defaults
+        path = Pattern.new '/:controller(/:action(/:id))'
+        expected = %r{\A/([^/.?]+)(?:/([^/.?]+)(?:/([^/.?]+))?)?\Z}
+        assert_equal expected, path.to_regexp
+      end
+
       def test_match_controller
         path = Pattern.new '/:controller(/:action(/:id(.:format)))'
         uri = '/content'

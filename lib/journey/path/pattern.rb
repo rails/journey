@@ -1,19 +1,20 @@
 module Journey
   module Path
     class Pattern
-      attr_reader :spec, :strexp
+      attr_reader :spec
 
       def initialize strexp
         parser = Journey::Definition::Parser.new
 
-        @strexp = strexp
-
         case strexp
         when String
-          @spec   = parser.parse strexp
-          @strexp = nil
+          @spec         = parser.parse strexp
+          @requirements = {}
+          @separators   = "/.?"
         when Router::Strexp
-          @spec   = parser.parse strexp.path
+          @spec         = parser.parse strexp.path
+          @requirements = strexp.requirements
+          @separators   = strexp.separators.join
         else
           raise "wtf bro: #{strexp}"
         end
@@ -26,7 +27,7 @@ module Journey
       end
 
       def to_regexp
-        viz = ToRegexp.new(strexp.separators.join, strexp.requirements)
+        viz = ToRegexp.new(@separators, @requirements)
         viz.accept spec
       end
 
