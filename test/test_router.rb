@@ -80,16 +80,29 @@ module Journey
     end
 
     def test_namespaced_controller
-      skip
-      path  = Path::Pattern.new "/:controller(/:action(/:id))"
+      strexp = Router::Strexp.new(
+        "/:controller(/:action(/:id))",
+        { :controller => /.+/ },
+        ["/", ".", "?"]
+      )
+      path  = Path::Pattern.new strexp
       app   = Object.new
       route = @router.add_route(app, { :path_info => path }, {}, {})
 
-      env = rails_env 'PATH_INFO' => '/admin/users'
+      env = rails_env 'PATH_INFO' => '/admin/users/show/10'
       called   = false
+      expected = {
+        :controller => 'admin/users',
+        :action     => 'show',
+        :id         => '10'
+      }
 
       @router.recognize(env) do |r, _, params|
+        assert_equal route, r
+        assert_equal(expected, params)
+        called = true
       end
+      assert called
     end
 
     def test_recognize_literal

@@ -66,6 +66,13 @@ module Journey
         assert_equal expected, path.to_regexp
       end
 
+      def test_failed_match
+        path = Pattern.new '/:controller(/:action(/:id(.:format)))'
+        uri = 'content'
+
+        refute path =~ uri
+      end
+
       def test_match_controller
         path = Pattern.new '/:controller(/:action(/:id(.:format)))'
         uri = '/content'

@@ -122,10 +122,14 @@ module Journey
       end
 
       def =~ other
-        scanner = Journey::Definition::Scanner.new
-        scanner.scan_setup other
-        matcher = Matcher.new scanner
-        matcher.accept spec
+        return unless match = to_regexp.match(other)
+
+        Hash[match_names.zip(match.captures).find_all { |_,y| y }]
+      end
+
+      private
+      def match_names
+        names.map { |n| n.to_sym }
       end
     end
   end

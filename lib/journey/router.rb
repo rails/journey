@@ -41,17 +41,25 @@ module Journey
     end
 
     def call env
-      [200, {}, []]
+      match_data, route = route_for(env)
+      env['action_dispatch.request.path_parameters'] = match_data
+      route.app.call(env)
     end
 
     def recognize req
+      match_data, route = route_for req.env
+      yield(route, nil, match_data.merge(route.extras))
+    end
+
+    private
+    def route_for env
       match_data = nil
       route = routes.find do |route|
-        next unless route.verb === req.env['REQUEST_METHOD']
-        match_data = route.path =~ req.env['PATH_INFO']
+        next unless route.verb === env['REQUEST_METHOD']
+        match_data = route.path =~ env['PATH_INFO']
       end
 
-      yield(route, nil, match_data.merge(route.extras))
+      [match_data.merge(route.extras), route]
     end
   end
 end
