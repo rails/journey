@@ -66,6 +66,10 @@ module Journey
         def visit_DOT node
           '\.' + node.children.map { |x| accept x }.join
         end
+
+        def visit_STAR node
+          "(.+)"
+        end
       end
 
       class Matcher < Journey::Definition::Node::Visitor # :nodoc:

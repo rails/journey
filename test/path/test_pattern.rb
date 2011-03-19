@@ -12,6 +12,8 @@ module Journey
         '/:controller/:action.xml'     => %r{\A/(.+?)/([^/.?]+)\.xml\Z},
         '/:controller.:format'         => %r{\A/(.+?)\.([^/.?]+)\Z},
         '/:controller(.:format)'       => %r{\A/(.+?)(?:\.([^/.?]+))?\Z},
+        '/:controller/*foo'            => %r{\A/(.+?)/(.+)\Z},
+        '/:controller/*foo/bar'        => %r{\A/(.+?)/(.+)/bar\Z},
       }.each do |path, expected|
         define_method(:"test_to_regexp_#{path}") do
           strexp = Router::Strexp.new(
