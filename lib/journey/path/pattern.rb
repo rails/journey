@@ -22,7 +22,7 @@ module Journey
 
       def names
         @spec.find_all { |node|
-          node.type == :SYMBOL
+          node.type == :SYMBOL || node.type == :STAR
         }.map { |n| n.children.tr(':', '') }
       end
 

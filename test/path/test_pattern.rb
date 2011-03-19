@@ -27,6 +27,29 @@ module Journey
         end
       end
 
+      {
+        '/:controller(/:action)'       => %w{ controller action },
+        '/:controller/foo'             => %w{ controller },
+        '/:controller/:action'         => %w{ controller action },
+        '/:controller'                 => %w{ controller },
+        '/:controller(/:action(/:id))' => %w{ controller action id },
+        '/:controller/:action.xml'     => %w{ controller action },
+        '/:controller.:format'         => %w{ controller format },
+        '/:controller(.:format)'       => %w{ controller format },
+        '/:controller/*foo'            => %w{ controller foo },
+        '/:controller/*foo/bar'        => %w{ controller foo },
+      }.each do |path, expected|
+        define_method(:"test_names_#{path}") do
+          strexp = Router::Strexp.new(
+            path,
+            { :controller => /.+/ },
+            ["/", ".", "?"]
+          )
+          path = Pattern.new strexp
+          assert_equal(expected, path.names)
+        end
+      end
+
       def test_to_regexp_with_strexp
         strexp = Router::Strexp.new('/:controller', { }, ["/", ".", "?"])
         path = Pattern.new strexp
