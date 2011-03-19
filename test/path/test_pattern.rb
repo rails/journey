@@ -4,10 +4,14 @@ module Journey
   module Path
     class TestPattern < MiniTest::Unit::TestCase
       {
-        '/:controller(/:action)' => %r{\A/(.+?)(?:/([^/.?]+))?\Z},
-        '/:controller/foo'       => %r{\A/(.+?)/foo\Z},
-        '/:controller/:action'   => %r{\A/(.+?)/([^/.?]+)\Z},
-        '/:controller'           => %r{\A/(.+?)\Z},
+        '/:controller(/:action)'       => %r{\A/(.+?)(?:/([^/.?]+))?\Z},
+        '/:controller/foo'             => %r{\A/(.+?)/foo\Z},
+        '/:controller/:action'         => %r{\A/(.+?)/([^/.?]+)\Z},
+        '/:controller'                 => %r{\A/(.+?)\Z},
+        '/:controller(/:action(/:id))' => %r{\A/(.+?)(?:/([^/.?]+)(?:/([^/.?]+))?)?\Z},
+        '/:controller/:action.xml'     => %r{\A/(.+?)/([^/.?]+)\.xml\Z},
+        '/:controller.:format'         => %r{\A/(.+?)\.([^/.?]+)\Z},
+        '/:controller(.:format)'       => %r{\A/(.+?)(?:\.([^/.?]+))?\Z},
       }.each do |path, expected|
         define_method(:"test_to_regexp_#{path}") do
           strexp = Router::Strexp.new(
