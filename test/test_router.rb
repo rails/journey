@@ -6,6 +6,29 @@ module Journey
       @router = Router.new nil
     end
 
+    def test_path_not_found
+      add_routes @router, [
+        "/messages(.:format)",
+        "/messages/new(.:format)",
+        "/messages/:id/edit(.:format)",
+        "/messages/:id(.:format)"
+      ]
+      env = rails_env 'PATH_INFO' => '/messages/1.1.1'
+      yielded = false
+
+      @router.recognize(env) do |*whatever|
+        yielded = false
+      end
+      refute yielded
+    end
+
+    def add_routes router, paths
+      paths.each do |path|
+        path  = Path::Pattern.new path
+        router.add_route nil, {:path_info => path}, {}, {}
+      end
+    end
+
     def test_generate_id
       path  = Path::Pattern.new '/:controller(/:action)'
       @router.add_route nil, {:path_info => path}, {}, {}

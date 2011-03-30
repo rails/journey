@@ -48,7 +48,7 @@ module Journey
 
     def recognize req
       match_data, route = route_for req.env
-      yield(route, nil, match_data)
+      yield(route, nil, match_data) if route
     end
 
     private
