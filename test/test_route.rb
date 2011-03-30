@@ -13,6 +13,14 @@ module Journey
       assert_equal defaults, route.extras
     end
 
+    def test_format_empty
+      path  = Path::Pattern.new '/messages/:id(.:format)'
+      route = Route.new(nil, path, nil,
+                        { :controller => 'foo', :action => 'bar' })
+
+      assert_equal ['/messages', {}], route.format({})
+    end
+
     def test_connects_all_match
       path  = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
       route = Route.new(nil, path, nil,

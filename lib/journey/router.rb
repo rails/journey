@@ -48,7 +48,7 @@ module Journey
 
     def recognize req
       match_data, route = route_for req.env
-      yield(route, nil, match_data.merge(route.extras))
+      yield(route, nil, match_data)
     end
 
     private
@@ -58,6 +58,8 @@ module Journey
         next unless route.verb === env['REQUEST_METHOD']
         match_data = route.path =~ env['PATH_INFO']
       end
+
+      return unless route
 
       [match_data.merge(route.extras), route]
     end

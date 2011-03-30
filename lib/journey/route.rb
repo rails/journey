@@ -42,6 +42,11 @@ module Journey
         end
       end
 
+      def visit_SEGMENT node
+        segment = super
+        segment == '/' ? '' : segment
+      end
+
       def visit_SYMBOL node
         key = node.to_sym
 
