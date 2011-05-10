@@ -6,6 +6,14 @@ module Journey
       @router = Router.new nil
     end
 
+    def test_X_Cascade
+      add_routes @router, [ "/messages(.:format)" ]
+      resp = @router.call({ 'REQUEST_METHOD' => 'GET', 'PATH_INFO' => '/lol' })
+      assert_equal ['Not Found'], resp.last
+      assert_equal 'pass', resp[1]['X-Cascade']
+      assert_equal 404, resp.first
+    end
+
     def test_path_not_found
       add_routes @router, [
         "/messages(.:format)",

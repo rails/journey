@@ -42,6 +42,9 @@ module Journey
 
     def call env
       match_data, route = route_for(env)
+
+      return [404, {'X-Cascade' => 'pass'}, ['Not Found']] unless route
+
       env['action_dispatch.request.path_parameters'] = match_data
       route.app.call(env)
     end
