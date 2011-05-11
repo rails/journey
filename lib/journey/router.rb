@@ -28,7 +28,7 @@ module Journey
 
     def add_route app, conditions, defaults, name = nil
       path = conditions[:path_info]
-      route = Route.new(app, path, conditions[:request_method], defaults)
+      route = Route.new(app, path, conditions, defaults)
       routes << route
       named_routes[name] = route if name
       route
@@ -57,8 +57,11 @@ module Journey
     private
     def route_for env
       match_data = nil
+      addr       = env['REMOTE_ADDR']
+
       route = routes.find do |route|
         next unless route.verb === env['REQUEST_METHOD']
+        next if addr && !route.ip === addr
         match_data = route.path =~ env['PATH_INFO']
       end
 

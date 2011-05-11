@@ -6,16 +6,30 @@ module Journey
       app      = Object.new
       path     = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
       defaults = Object.new
-      route    = Route.new(app, path, nil, defaults)
+      route    = Route.new(app, path, {}, defaults)
 
       assert_equal app, route.app
       assert_equal path, route.path
       assert_equal defaults, route.extras
     end
 
+    def test_ip_address
+      path  = Path::Pattern.new '/messages/:id(.:format)'
+      route = Route.new(nil, path, {:ip => '192.168.1.1'},
+                        { :controller => 'foo', :action => 'bar' })
+      assert_equal '192.168.1.1', route.ip
+    end
+
+    def test_default_ip
+      path  = Path::Pattern.new '/messages/:id(.:format)'
+      route = Route.new(nil, path, {},
+                        { :controller => 'foo', :action => 'bar' })
+      assert_equal //, route.ip
+    end
+
     def test_format_empty
       path  = Path::Pattern.new '/messages/:id(.:format)'
-      route = Route.new(nil, path, nil,
+      route = Route.new(nil, path, {},
                         { :controller => 'foo', :action => 'bar' })
 
       assert_equal ['/messages', {}], route.format({})
@@ -23,7 +37,7 @@ module Journey
 
     def test_connects_all_match
       path  = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
-      route = Route.new(nil, path, nil,
+      route = Route.new(nil, path, {},
                         { :controller => 'foo', :action => 'bar' })
 
       assert_equal ['/foo/bar/10', {}], route.format({
@@ -35,7 +49,7 @@ module Journey
 
     def test_score
       path = Path::Pattern.new "/page/:id(/:action)(.:format)"
-      specific = Route.new nil, path, nil, {:controller=>"pages", :action=>"show"}
+      specific = Route.new nil, path, {}, {:controller=>"pages", :action=>"show"}
 
       path = Path::Pattern.new "/:controller(/:action(/:id))(.:format)"
       generic = Route.new nil, path, {}
