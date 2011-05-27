@@ -1,3 +1,5 @@
+require 'webrick/httputils'
+
 module Journey
   class Route
     attr_reader :app, :path, :verb, :extras, :ip
@@ -78,7 +80,10 @@ module Journey
       options.delete(:controller)
       options.delete(:action)
 
-      [formatted_path, options]
+      [escape(formatted_path), options]
     end
+
+    private
+    include WEBrick::HTTPUtils
   end
 end

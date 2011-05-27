@@ -47,6 +47,17 @@ module Journey
       assert_equal({:id => 1}, params)
     end
 
+    def test_generate_escapes
+      path  = Path::Pattern.new '/:controller(/:action)'
+      @router.add_route nil, {:path_info => path}, {}, {}
+
+      path, _ = @router.generate(:path_info,
+        nil, { :controller        => "tasks",
+               :action            => "show me",
+      }, {})
+      assert_equal '/tasks/show%20me', path
+    end
+
     def test_generate_extra_params
       path  = Path::Pattern.new '/:controller(/:action)'
       @router.add_route nil, {:path_info => path}, {}, {}
