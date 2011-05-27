@@ -35,7 +35,7 @@ module Journey
     end
 
     def generate part, name, options, recall = nil, parameterize = nil
-      route = named_routes[name] || routes.sort_by { |r| r.score(options) }.last
+      route = named_routes[name] || match_route(options)
 
       route.format(options.to_a - route.extras.to_a)
     end
@@ -55,14 +55,18 @@ module Journey
     end
 
     private
+    def match_route options
+      routes.sort_by { |r| r.score options }.last
+    end
+
     def route_for env
       match_data = nil
       addr       = env['REMOTE_ADDR']
 
-      route = routes.find do |route|
-        next unless route.verb === env['REQUEST_METHOD']
-        next if addr && !route.ip === addr
-        match_data = route.path =~ env['PATH_INFO']
+      route = routes.find do |r|
+        next unless r.verb === env['REQUEST_METHOD']
+        next if addr && !r.ip === addr
+        match_data = r.path =~ env['PATH_INFO']
       end
 
       return unless route

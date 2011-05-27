@@ -171,7 +171,7 @@ module Journey
         :path_info      => path,
         :request_method => 'GET'
       }
-      get  = @router.add_route(app, conditions, {})
+      @router.add_route(app, conditions, {})
 
       conditions = conditions.dup
       conditions[:request_method] = 'POST'
