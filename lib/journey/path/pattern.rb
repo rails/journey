@@ -55,9 +55,7 @@ module Journey
           re = @matchers[node.to_sym]
           str = "#{re.source}?"
           str = "(#{str})" unless re.source.start_with?('(')
-          if Regexp::IGNORECASE == re.options & Regexp::IGNORECASE
-            str = "(?:(?i)#{str})"
-          end
+          str = "(?i:#{str})" if re.casefold?
           str
         end
 
