@@ -72,6 +72,18 @@ module Journey
       assert_equal({:id => 1, :relative_url_root => nil}, params)
     end
 
+    def test_generate_uses_recall_if_needed
+      path  = Path::Pattern.new '/:controller(/:action(/:id))'
+      @router.add_route nil, {:path_info => path}, {}, {}
+
+      path, params = @router.generate(:path_info,
+        nil,
+        {:controller =>"tasks", :id => 10},
+        {:action     =>"index"})
+      assert_equal '/tasks/index/10', path
+      assert_equal({}, params)
+    end
+
     def test_generate_with_name
       path  = Path::Pattern.new '/:controller(/:action)'
       @router.add_route nil, {:path_info => path}, {}, {}

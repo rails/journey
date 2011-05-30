@@ -34,8 +34,22 @@ module Journey
       route
     end
 
-    def generate part, name, options, recall = nil, parameterize = nil
+    def generate part, name, options, recall = {}, parameterize = nil
       route = named_routes[name] || match_route(options)
+
+      provided_parts = route.parts.reverse.drop_while { |part|
+        !options.key?(part)
+      }.reverse
+
+      route_values = provided_parts.map { |part|
+        [part, options[part] || recall[part]]
+      } - route.extras.to_a
+
+      z = Hash[options.to_a - route_values]
+      z.delete :controller
+      z.delete :action
+
+      return [route.format(route_values), z]
 
       route.format(options.to_a - route.extras.to_a)
     end

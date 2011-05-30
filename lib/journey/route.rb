@@ -61,26 +61,25 @@ module Journey
       end
     end
 
+    def parts
+      path.names.map { |n| n.to_sym }
+    end
+
     def format options
       path_options = Hash[options.reject { |k,v|
         v.respond_to?(:to_param) && v.to_param.nil?
       }]
 
-      possible_keys = path.names.map { |n| n.to_sym }
-
       # remove keys the path doesn't care about
-      (path_options.keys - possible_keys).each do |key|
+      (path_options.keys - parts).each do |key|
         path_options.delete key
       end
 
       formatter      = Formatter.new(path_options)
+
       formatted_path = formatter.accept(path.spec)
 
-      options = Hash[options.to_a - formatter.consumed.to_a]
-      options.delete(:controller)
-      options.delete(:action)
-
-      [escape(formatted_path), options]
+      escape(formatted_path)
     end
 
     private

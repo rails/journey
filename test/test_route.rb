@@ -32,7 +32,7 @@ module Journey
       route = Route.new(nil, path, {},
                         { :controller => 'foo', :action => 'bar' })
 
-      assert_equal ['/messages', {}], route.format({})
+      assert_equal '/messages', route.format({})
     end
 
     def test_connects_all_match
@@ -40,7 +40,7 @@ module Journey
       route = Route.new(nil, path, {},
                         { :controller => 'foo', :action => 'bar' })
 
-      assert_equal ['/foo/bar/10', {}], route.format({
+      assert_equal '/foo/bar/10', route.format({
         :controller => 'foo',
         :action     => 'bar',
         :id         => 10
