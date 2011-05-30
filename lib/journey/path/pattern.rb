@@ -35,7 +35,7 @@ module Journey
         def initialize separator, matchers
           @separator = separator
           @matchers  = matchers
-          @separator_re = "[^#{separator}]+"
+          @separator_re = "([^#{separator}]+)"
           super()
         end
 
@@ -48,12 +48,14 @@ module Journey
         end
 
         def visit_SYMBOL node
-          str = @separator_re
-          if re = @matchers[node.to_sym]
-            str = "#{re.source}?"
-          end
+          node = node.to_sym
 
-          "(#{str})"
+          return @separator_re unless @matchers.key? node
+
+          re = @matchers[node.to_sym]
+          str = "#{re.source}?"
+          str = "(#{str})" unless re.source.start_with?('(')
+          str
         end
 
         def visit_GROUP node

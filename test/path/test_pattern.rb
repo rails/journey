@@ -50,6 +50,29 @@ module Journey
         end
       end
 
+      def test_to_regexp_with_group
+        strexp = Router::Strexp.new(
+          '/page/:name',
+          { :name => /(tender|love)/ },
+          ["/", ".", "?"]
+        )
+        path = Pattern.new strexp
+        assert_match('/page/tender', path.to_regexp)
+        assert_match('/page/love', path.to_regexp)
+        refute_match('/page/loving', path.to_regexp)
+      end
+
+      def test_match_data_with_group
+        strexp = Router::Strexp.new(
+          '/page/:name',
+          { :name => /(tender|love)/ },
+          ["/", ".", "?"]
+        )
+        path = Pattern.new strexp
+        match = path.to_regexp.match '/page/tender'
+        assert_equal 2, match.length
+      end
+
       def test_to_regexp_with_strexp
         strexp = Router::Strexp.new('/:controller', { }, ["/", ".", "?"])
         path = Pattern.new strexp
