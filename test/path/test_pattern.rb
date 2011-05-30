@@ -73,6 +73,18 @@ module Journey
         assert_equal 2, match.length
       end
 
+      def test_insensitive_regexp_with_group
+        strexp = Router::Strexp.new(
+          '/page/:name/aaron',
+          { :name => /(tender|love)/i },
+          ["/", ".", "?"]
+        )
+        path = Pattern.new strexp
+        assert_match('/page/TENDER/aaron', path.to_regexp)
+        assert_match('/page/loVE/aaron', path.to_regexp)
+        refute_match('/page/loVE/AAron', path.to_regexp)
+      end
+
       def test_to_regexp_with_strexp
         strexp = Router::Strexp.new('/:controller', { }, ["/", ".", "?"])
         path = Pattern.new strexp
