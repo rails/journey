@@ -66,9 +66,7 @@ module Journey
     end
 
     def format options
-      path_options = Hash[options.reject { |k,v|
-        v.respond_to?(:to_param) && v.to_param.nil?
-      }]
+      path_options = Hash[options]
 
       # remove keys the path doesn't care about
       (path_options.keys - parts).each do |key|

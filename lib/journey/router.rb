@@ -37,13 +37,17 @@ module Journey
     def generate part, name, options, recall = {}, parameterize = nil
       route = named_routes[name] || match_route(options)
 
+      # Find a list of url parts that were made available in the options hash.
       provided_parts = route.parts.reverse.drop_while { |part|
         !options.key?(part)
       }.reverse
 
+      # Pull the parts from the options hash or the "recall" hash.
       route_values = provided_parts.map { |part|
         [part, options[part] || recall[part]]
       } - route.extras.to_a
+
+      route_values.delete_if { |_,v| v.nil?  }
 
       z = Hash[options.to_a - route_values]
       z.delete :controller
