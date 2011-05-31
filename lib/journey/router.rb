@@ -49,9 +49,7 @@ module Journey
       z.delete :controller
       z.delete :action
 
-      return [route.format(route_values), z]
-
-      route.format(options.to_a - route.extras.to_a)
+      [route.format(route_values), z]
     end
 
     def call env
