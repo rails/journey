@@ -22,8 +22,7 @@ module Journey
             ["/", ".", "?"]
           )
           path = Pattern.new strexp
-          re = path.to_regexp
-          assert_equal(expected, re)
+          assert_equal(expected, path.send(:to_regexp))
         end
       end
 
@@ -57,9 +56,9 @@ module Journey
           ["/", ".", "?"]
         )
         path = Pattern.new strexp
-        assert_match('/page/tender', path.to_regexp)
-        assert_match('/page/love', path.to_regexp)
-        refute_match('/page/loving', path.to_regexp)
+        assert_match('/page/tender', path)
+        assert_match('/page/love', path)
+        refute_match('/page/loving', path)
       end
 
       def test_match_data_with_group
@@ -69,7 +68,7 @@ module Journey
           ["/", ".", "?"]
         )
         path = Pattern.new strexp
-        match = path.to_regexp.match '/page/tender'
+        match = path.match '/page/tender'
         assert_equal 2, match.length
       end
 
@@ -80,25 +79,23 @@ module Journey
           ["/", ".", "?"]
         )
         path = Pattern.new strexp
-        assert_match('/page/TENDER/aaron', path.to_regexp)
-        assert_match('/page/loVE/aaron', path.to_regexp)
-        refute_match('/page/loVE/AAron', path.to_regexp)
+        assert_match('/page/TENDER/aaron', path)
+        assert_match('/page/loVE/aaron', path)
+        refute_match('/page/loVE/AAron', path)
       end
 
       def test_to_regexp_with_strexp
         strexp = Router::Strexp.new('/:controller', { }, ["/", ".", "?"])
         path = Pattern.new strexp
-        re = path.to_regexp
         x = %r{\A/([^/.?]+)\Z}
 
-        assert_equal(x.source, re.source)
-        assert_equal(x, re)
+        assert_equal(x.source, path.source)
       end
 
       def test_to_regexp_defaults
         path = Pattern.new '/:controller(/:action(/:id))'
         expected = %r{\A/([^/.?]+)(?:/([^/.?]+)(?:/([^/.?]+))?)?\Z}
-        assert_equal expected, path.to_regexp
+        assert_equal expected, path.send(:to_regexp)
       end
 
       def test_failed_match

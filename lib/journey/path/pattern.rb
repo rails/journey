@@ -26,11 +26,6 @@ module Journey
         }.map { |n| n.children.tr(':', '') }
       end
 
-      def to_regexp
-        viz = ToRegexp.new(@separators, @requirements)
-        viz.accept spec
-      end
-
       class ToRegexp < Journey::Definition::Node::Visitor # :nodoc:
         def initialize separator, matchers
           @separator = separator
@@ -125,15 +120,29 @@ module Journey
       end
 
       def =~ other
-        return unless match = to_regexp.match(other)
+        return unless match = self.match(other)
 
         Hash[match_names.zip(match.captures).find_all { |_,y| y }]
+      end
+
+      def match other
+        to_regexp.match(other)
+      end
+
+      def source
+        to_regexp.source
       end
 
       private
       def match_names
         names.map { |n| n.to_sym }
       end
+
+      def to_regexp
+        viz = ToRegexp.new(@separators, @requirements)
+        viz.accept spec
+      end
+
     end
   end
 end
