@@ -34,7 +34,7 @@ module Journey
       route
     end
 
-    def generate part, name, options, recall = {}, parameterize = nil
+    def generate key, name, options, recall = {}, parameterize = nil
       route = named_routes[name] || match_route(options)
 
       # Find a list of url parts that were made available in the options hash.
@@ -47,13 +47,21 @@ module Journey
         [part, options[part] || recall[part]]
       } - route.extras.to_a
 
-      route_values.delete_if { |_,v| v.nil?  }
+      parameterized_parts = route_values
+
+      if parameterize
+        parameterized_parts = route_values.map { |k,v|
+          [k, parameterize[:parameterize].call(k, v)]
+        }
+      end
+
+      parameterized_parts.delete_if { |_,v| v.nil?  }
 
       z = Hash[options.to_a - route_values]
       z.delete :controller
       z.delete :action
 
-      [route.format(route_values), z]
+      [route.format(parameterized_parts), z]
     end
 
     def call env

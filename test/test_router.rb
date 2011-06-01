@@ -37,6 +37,24 @@ module Journey
       end
     end
 
+    def test_generate_calls_param_proc
+      path  = Path::Pattern.new '/:controller(/:action)'
+      @router.add_route nil, {:path_info => path}, {}, {}
+
+      parameterized = []
+      params = [ [:controller, "tasks"],
+                 [:action, "show"] ]
+
+      @router.generate(
+        :path_info,
+        nil,
+        Hash[params],
+        {},
+        { :parameterize => lambda { |k,v| parameterized << [k,v]; v } })
+
+      assert_equal params.sort, parameterized.sort
+    end
+
     def test_generate_id
       path  = Path::Pattern.new '/:controller(/:action)'
       @router.add_route nil, {:path_info => path}, {}, {}
