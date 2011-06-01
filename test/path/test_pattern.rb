@@ -110,7 +110,11 @@ module Journey
         uri = '/content'
 
         match = path =~ uri
-        assert_equal({:controller => 'content'}, match)
+        assert_equal %w{ controller action id format }, match.names
+        assert_equal 'content', match[1]
+        assert_nil match[2]
+        assert_nil match[3]
+        assert_nil match[4]
       end
 
       def test_match_controller_action
@@ -118,7 +122,11 @@ module Journey
         uri = '/content/list'
 
         match = path =~ uri
-        assert_equal({:controller => 'content', :action => 'list'}, match)
+        assert_equal %w{ controller action id format }, match.names
+        assert_equal 'content', match[1]
+        assert_equal 'list', match[2]
+        assert_nil match[3]
+        assert_nil match[4]
       end
 
       def test_match_controller_action_id
@@ -126,7 +134,11 @@ module Journey
         uri = '/content/list/10'
 
         match = path =~ uri
-        assert_equal({:controller => 'content', :action => 'list', :id => '10'}, match)
+        assert_equal %w{ controller action id format }, match.names
+        assert_equal 'content', match[1]
+        assert_equal 'list', match[2]
+        assert_equal '10', match[3]
+        assert_nil match[4]
       end
 
       def test_match_literal
@@ -134,7 +146,9 @@ module Journey
 
         uri = '/books'
         match = path =~ uri
-        assert_equal({}, match)
+        assert_equal %w{ action format }, match.names
+        assert_nil match[1]
+        assert_nil match[2]
       end
 
       def test_match_literal_with_action
@@ -142,7 +156,9 @@ module Journey
 
         uri = '/books/list'
         match = path =~ uri
-        assert_equal({:action => 'list'}, match)
+        assert_equal %w{ action format }, match.names
+        assert_equal 'list', match[1]
+        assert_nil match[2]
       end
 
       def test_match_literal_with_action_and_format
@@ -150,7 +166,9 @@ module Journey
 
         uri = '/books/list.rss'
         match = path =~ uri
-        assert_equal({:action => 'list', :format => 'rss'}, match)
+        assert_equal %w{ action format }, match.names
+        assert_equal 'list', match[1]
+        assert_equal 'rss', match[2]
       end
     end
   end

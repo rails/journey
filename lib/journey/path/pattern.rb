@@ -119,15 +119,32 @@ module Journey
         end
       end
 
-      def =~ other
-        return unless match = self.match(other)
+      class MatchData
+        attr_reader :names
 
-        Hash[match_names.zip(match.captures).find_all { |_,y| y }]
+        def initialize names, match
+          @names    = names
+          @match    = match
+        end
+
+        def captures
+          @match.captures
+        end
+
+        def [] x
+          @match[x]
+        end
+
+        def length
+          @match.length
+        end
       end
 
       def match other
-        to_regexp.match(other)
+        return unless match = to_regexp.match(other)
+        MatchData.new names, match
       end
+      alias :=~ :match
 
       def source
         to_regexp.source

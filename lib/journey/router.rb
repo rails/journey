@@ -90,12 +90,14 @@ module Journey
       route = routes.find do |r|
         next unless r.verb === env['REQUEST_METHOD']
         next if addr && !r.ip === addr
-        match_data = r.path =~ env['PATH_INFO']
+        match_data = r.path.match env['PATH_INFO']
       end
 
       return unless route
 
-      [match_data.merge(route.extras), route]
+      match_names = match_data.names.map { |n| n.to_sym }
+      info = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
+      [info.merge(route.extras), route]
     end
   end
 end
