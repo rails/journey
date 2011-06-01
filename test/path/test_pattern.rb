@@ -73,6 +73,20 @@ module Journey
         assert_equal 2, match.length
       end
 
+      def test_match_data_with_multi_group
+        strexp = Router::Strexp.new(
+          '/page/:name/:id',
+          { :name => /t(((ender|love)))()/ },
+          ["/", ".", "?"]
+        )
+        path = Pattern.new strexp
+        match = path.match '/page/tender/10'
+        assert_equal 'tender', match[1]
+        assert_equal '10', match[2]
+        assert_equal 3, match.length
+        assert_equal %w{ tender 10 }, match.captures
+      end
+
       def test_insensitive_regexp_with_group
         strexp = Router::Strexp.new(
           '/page/:name/aaron',

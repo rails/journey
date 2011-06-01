@@ -26,6 +26,31 @@ module Journey
         }.map { |n| n.children.tr(':', '') }
       end
 
+      class RegexpOffsets < Journey::Definition::Node::Visitor # :nodoc:
+        attr_reader :offsets
+
+        def initialize matchers
+          @matchers      = matchers
+          @capture_count = [0]
+        end
+
+        def accept node
+          super
+          @capture_count
+        end
+
+        def visit_SYMBOL node
+          node = node.to_sym
+
+          if @matchers.key? node
+            re = /#{@matchers[node]}|/
+            @capture_count.push re.match('').length - 1
+          else
+            @capture_count << 0
+          end
+        end
+      end
+
       class ToRegexp < Journey::Definition::Node::Visitor # :nodoc:
         def initialize separator, matchers
           @separator = separator
@@ -47,9 +72,9 @@ module Journey
 
           return @separator_re unless @matchers.key? node
 
-          re = @matchers[node.to_sym]
+          re = @matchers[node]
           str = "#{re.source}?"
-          str = "(#{str})" unless re.source =~ /^\(.*\)$/
+          str = "(#{str})"
           str = "(?i:#{str})" if re.casefold?
           str
         end
@@ -122,27 +147,29 @@ module Journey
       class MatchData
         attr_reader :names
 
-        def initialize names, match
-          @names    = names
-          @match    = match
+        def initialize names, offsets, match
+          @names   = names
+          @offsets = offsets
+          @match   = match
         end
 
         def captures
-          @match.captures
+          (length - 1).times.map { |i| self[i + 1] }
         end
 
         def [] x
-          @match[x]
+          idx = @offsets[x - 1] + x
+          @match[idx]
         end
 
         def length
-          @match.length
+          @offsets.length
         end
       end
 
       def match other
         return unless match = to_regexp.match(other)
-        MatchData.new names, match
+        MatchData.new names, offsets, match
       end
       alias :=~ :match
 
@@ -160,6 +187,10 @@ module Journey
         viz.accept spec
       end
 
+      def offsets
+        viz = RegexpOffsets.new @requirements
+        viz.accept spec
+      end
     end
   end
 end
