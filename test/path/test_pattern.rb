@@ -69,6 +69,7 @@ module Journey
         )
         path = Pattern.new strexp
         match = path.match '/page/tender'
+        assert_equal 'tender', match[1]
         assert_equal 2, match.length
       end
 
