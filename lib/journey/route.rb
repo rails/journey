@@ -77,7 +77,7 @@ module Journey
 
       formatted_path = formatter.accept(path.spec)
 
-      escape(formatted_path)
+      escape(formatted_path.empty? ? '/' : formatted_path)
     end
 
     private

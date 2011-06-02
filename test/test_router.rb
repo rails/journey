@@ -37,6 +37,18 @@ module Journey
       end
     end
 
+    def test_generate_slash
+      path  = Path::Pattern.new '/'
+      @router.add_route nil, {:path_info => path}, {}, {}
+
+      parameterized = []
+      params = [ [:controller, "tasks"],
+                 [:action, "show"] ]
+
+      path, _ = @router.generate(:path_info, nil, Hash[params], {})
+      assert_equal '/', path
+    end
+
     def test_generate_calls_param_proc
       path  = Path::Pattern.new '/:controller(/:action)'
       @router.add_route nil, {:path_info => path}, {}, {}
