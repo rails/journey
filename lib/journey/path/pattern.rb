@@ -73,10 +73,8 @@ module Journey
           return @separator_re unless @matchers.key? node
 
           re = @matchers[node]
-          str = "#{re.source}?"
-          str = "(#{str})"
-          str = "(?i:#{str})" if re.casefold?
-          str
+          # FIXME: is the question mark needed?
+          "(#{re}?)"
         end
 
         def visit_GROUP node

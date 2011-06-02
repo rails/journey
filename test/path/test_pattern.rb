@@ -3,17 +3,18 @@ require 'helper'
 module Journey
   module Path
     class TestPattern < MiniTest::Unit::TestCase
+      x = /.+/
       {
-        '/:controller(/:action)'       => %r{\A/(.+?)(?:/([^/.?]+))?\Z},
-        '/:controller/foo'             => %r{\A/(.+?)/foo\Z},
-        '/:controller/:action'         => %r{\A/(.+?)/([^/.?]+)\Z},
-        '/:controller'                 => %r{\A/(.+?)\Z},
-        '/:controller(/:action(/:id))' => %r{\A/(.+?)(?:/([^/.?]+)(?:/([^/.?]+))?)?\Z},
-        '/:controller/:action.xml'     => %r{\A/(.+?)/([^/.?]+)\.xml\Z},
-        '/:controller.:format'         => %r{\A/(.+?)\.([^/.?]+)\Z},
-        '/:controller(.:format)'       => %r{\A/(.+?)(?:\.([^/.?]+))?\Z},
-        '/:controller/*foo'            => %r{\A/(.+?)/(.+)\Z},
-        '/:controller/*foo/bar'        => %r{\A/(.+?)/(.+)/bar\Z},
+        '/:controller(/:action)'       => %r{\A/(#{x}?)(?:/([^/.?]+))?\Z},
+        '/:controller/foo'             => %r{\A/(#{x}?)/foo\Z},
+        '/:controller/:action'         => %r{\A/(#{x}?)/([^/.?]+)\Z},
+        '/:controller'                 => %r{\A/(#{x}?)\Z},
+        '/:controller(/:action(/:id))' => %r{\A/(#{x}?)(?:/([^/.?]+)(?:/([^/.?]+))?)?\Z},
+        '/:controller/:action.xml'     => %r{\A/(#{x}?)/([^/.?]+)\.xml\Z},
+        '/:controller.:format'         => %r{\A/(#{x}?)\.([^/.?]+)\Z},
+        '/:controller(.:format)'       => %r{\A/(#{x}?)(?:\.([^/.?]+))?\Z},
+        '/:controller/*foo'            => %r{\A/(#{x}?)/(.+)\Z},
+        '/:controller/*foo/bar'        => %r{\A/(#{x}?)/(.+)/bar\Z},
       }.each do |path, expected|
         define_method(:"test_to_regexp_#{path}") do
           strexp = Router::Strexp.new(
@@ -47,6 +48,22 @@ module Journey
           path = Pattern.new strexp
           assert_equal(expected, path.names)
         end
+      end
+
+      def test_to_regexp_with_extended_group
+        strexp = Router::Strexp.new(
+          '/page/:name',
+          { :name => /
+            #ROFL
+            (tender|love
+            #MAO
+            )/x },
+          ["/", ".", "?"]
+        )
+        path = Pattern.new strexp
+        assert_match('/page/tender', path)
+        assert_match('/page/love', path)
+        refute_match('/page/loving', path)
       end
 
       def test_to_regexp_with_group

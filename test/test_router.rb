@@ -154,7 +154,7 @@ module Journey
     def test_namespaced_controller
       strexp = Router::Strexp.new(
         "/:controller(/:action(/:id))",
-        { :controller => /.+/ },
+        { :controller => /.+?/ },
         ["/", ".", "?"]
       )
       path  = Path::Pattern.new strexp
