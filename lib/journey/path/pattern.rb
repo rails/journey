@@ -176,10 +176,6 @@ module Journey
       end
 
       private
-      def match_names
-        names.map { |n| n.to_sym }
-      end
-
       def to_regexp
         viz = ToRegexp.new(@separators, @requirements)
         viz.accept spec
