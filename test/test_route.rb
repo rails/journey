@@ -24,7 +24,7 @@ module Journey
       path  = Path::Pattern.new '/messages/:id(.:format)'
       route = Route.new(nil, path, {},
                         { :controller => 'foo', :action => 'bar' })
-      assert_equal //, route.ip
+      assert_equal(//, route.ip)
     end
 
     def test_format_empty

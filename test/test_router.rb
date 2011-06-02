@@ -41,7 +41,6 @@ module Journey
       path  = Path::Pattern.new '/'
       @router.add_route nil, {:path_info => path}, {}, {}
 
-      parameterized = []
       params = [ [:controller, "tasks"],
                  [:action, "show"] ]
 
