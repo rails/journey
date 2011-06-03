@@ -30,7 +30,7 @@ module Journey
       Parser = URI.const_defined?(:Parser) ? URI::Parser.new : URI
 
       def self.escape_uri(uri)
-        Parser.escape(uri.to_s)
+        Parser.escape(uri.to_s, UNSAFE_PCHAR)
       end
     end
   end
