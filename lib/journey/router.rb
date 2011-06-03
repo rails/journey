@@ -45,7 +45,7 @@ module Journey
       # Pull the parts from the options hash or the "recall" hash.
       route_values = provided_parts.map { |part|
         [part, options[part] || recall[part]]
-      } - route.extras.to_a
+      }
 
       parameterized_parts = route_values
 
