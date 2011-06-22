@@ -104,6 +104,7 @@ module Journey
       assert_equal({:id => 1}, params)
     end
 
+    # FIXME I *guess* this isn't required??
     def test_generate_escapes
       path  = Path::Pattern.new '/:controller(/:action)'
       @router.add_route nil, {:path_info => path}, {}, {}
@@ -112,7 +113,7 @@ module Journey
         nil, { :controller        => "tasks",
                :action            => "show me",
       }, {})
-      assert_equal '/tasks/show%20me', path
+      assert_equal '/tasks/show me', path
     end
 
     def test_generate_extra_params
