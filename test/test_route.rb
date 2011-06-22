@@ -35,6 +35,16 @@ module Journey
       assert_equal '/messages', route.format({})
     end
 
+    def test_format_with_star
+      path  = Path::Pattern.new '/:controller/*extra'
+      route = Route.new(nil, path, {},
+                        { :controller => 'foo', :action => 'bar' })
+      assert_equal '/foo/himom', route.format({
+        :controller => 'foo',
+        :extra      => 'himom',
+      })
+    end
+
     def test_connects_all_match
       path  = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
       route = Route.new(nil, path, {},

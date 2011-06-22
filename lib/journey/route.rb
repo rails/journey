@@ -59,6 +59,7 @@ module Journey
           ''
         end
       end
+      alias :visit_STAR :visit_SYMBOL
     end
 
     def parts
