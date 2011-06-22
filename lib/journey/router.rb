@@ -95,6 +95,11 @@ module Journey
 
       return unless route
 
+      unless match_data.post_match.empty?
+        env['SCRIPT_NAME'] = match_data.to_s
+        env['PATH_INFO']   = match_data.post_match
+      end
+
       match_names = match_data.names.map { |n| n.to_sym }
       info = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
       [info.merge(route.extras), route]

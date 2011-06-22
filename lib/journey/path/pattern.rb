@@ -6,6 +6,8 @@ module Journey
       def initialize strexp
         parser = Journey::Definition::Parser.new
 
+        @anchored = true
+
         case strexp
         when String
           @spec         = parser.parse strexp
@@ -15,6 +17,7 @@ module Journey
           @spec         = parser.parse strexp.path
           @requirements = strexp.requirements
           @separators   = strexp.separators.join
+          @anchored     = strexp.anchor
         else
           raise "wtf bro: #{strexp}"
         end
@@ -51,7 +54,7 @@ module Journey
         end
       end
 
-      class ToRegexp < Journey::Definition::Node::Visitor # :nodoc:
+      class AnchoredRegexp < Journey::Definition::Node::Visitor # :nodoc:
         def initialize separator, matchers
           @separator = separator
           @matchers  = matchers
@@ -91,6 +94,12 @@ module Journey
 
         def visit_STAR node
           "(.+)"
+        end
+      end
+
+      class UnanchoredRegexp < AnchoredRegexp # :nodoc:
+        def visit_PATH node
+          %r{\A#{node.children.map { |x| accept x }.join}}
         end
       end
 
@@ -163,6 +172,14 @@ module Journey
         def length
           @offsets.length
         end
+
+        def post_match
+          @match.post_match
+        end
+
+        def to_s
+          @match.to_s
+        end
       end
 
       def match other
@@ -177,8 +194,12 @@ module Journey
 
       private
       def to_regexp
-        viz = ToRegexp.new(@separators, @requirements)
+        viz = regexp_visitor.new(@separators, @requirements)
         viz.accept spec
+      end
+
+      def regexp_visitor
+        @anchored ? AnchoredRegexp : UnanchoredRegexp
       end
 
       def offsets

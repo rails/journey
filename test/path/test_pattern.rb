@@ -28,6 +28,30 @@ module Journey
       end
 
       {
+        '/:controller(/:action)'       => %r{\A/(#{x}?)(?:/([^/.?]+))?},
+        '/:controller/foo'             => %r{\A/(#{x}?)/foo},
+        '/:controller/:action'         => %r{\A/(#{x}?)/([^/.?]+)},
+        '/:controller'                 => %r{\A/(#{x}?)},
+        '/:controller(/:action(/:id))' => %r{\A/(#{x}?)(?:/([^/.?]+)(?:/([^/.?]+))?)?},
+        '/:controller/:action.xml'     => %r{\A/(#{x}?)/([^/.?]+)\.xml},
+        '/:controller.:format'         => %r{\A/(#{x}?)\.([^/.?]+)},
+        '/:controller(.:format)'       => %r{\A/(#{x}?)(?:\.([^/.?]+))?},
+        '/:controller/*foo'            => %r{\A/(#{x}?)/(.+)},
+        '/:controller/*foo/bar'        => %r{\A/(#{x}?)/(.+)/bar},
+      }.each do |path, expected|
+        define_method(:"test_to_non_anchored_regexp_#{path}") do
+          strexp = Router::Strexp.new(
+            path,
+            { :controller => /.+/ },
+            ["/", ".", "?"],
+            false
+          )
+          path = Pattern.new strexp
+          assert_equal(expected, path.send(:to_regexp))
+        end
+      end
+
+      {
         '/:controller(/:action)'       => %w{ controller action },
         '/:controller/foo'             => %w{ controller },
         '/:controller/:action'         => %w{ controller action },

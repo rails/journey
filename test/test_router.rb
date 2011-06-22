@@ -14,6 +14,34 @@ module Journey
       assert_equal 404, resp.first
     end
 
+    def test_recognize_with_unbound_regexp
+      add_routes @router, [
+        Router::Strexp.new("/foo", { }, ['/', '.', '?'], false)
+      ]
+
+      env = rails_env 'PATH_INFO' => '/foo/bar'
+
+      @router.recognize(env) { |*_| }
+
+      assert_equal '/foo', env.env['SCRIPT_NAME']
+      assert_equal '/bar', env.env['PATH_INFO']
+    end
+
+    def test_bound_regexp_keeps_path_info
+      add_routes @router, [
+        Router::Strexp.new("/foo", { }, ['/', '.', '?'], true)
+      ]
+
+      env = rails_env 'PATH_INFO' => '/foo'
+
+      before = env.env['SCRIPT_NAME']
+
+      @router.recognize(env) { |*_| }
+
+      assert_equal before, env.env['SCRIPT_NAME']
+      assert_equal '/foo', env.env['PATH_INFO']
+    end
+
     def test_path_not_found
       add_routes @router, [
         "/messages(.:format)",
