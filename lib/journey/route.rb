@@ -1,5 +1,3 @@
-require 'webrick/httputils'
-
 module Journey
   class Route
     attr_reader :app, :path, :verb, :extras, :ip
@@ -80,8 +78,5 @@ module Journey
 
       formatted_path.empty? ? '/' : formatted_path
     end
-
-    private
-    include WEBrick::HTTPUtils
   end
 end
