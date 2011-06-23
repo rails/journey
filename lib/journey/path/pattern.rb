@@ -24,9 +24,19 @@ module Journey
       end
 
       def names
-        @spec.find_all { |node|
+        spec.find_all { |node|
           node.type == :SYMBOL || node.type == :STAR
         }.map { |n| n.children.tr(':', '') }
+      end
+
+      def optional_names
+        spec.find_all { |node|
+          node.type == :GROUP
+        }.map { |group|
+          group.find_all { |node|
+            node.type == :SYMBOL || node.type == :STAR
+          }
+        }.flatten.map { |n| n.children.tr ':', '' }.uniq
       end
 
       class RegexpOffsets < Journey::Definition::Node::Visitor # :nodoc:

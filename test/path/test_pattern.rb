@@ -90,6 +90,17 @@ module Journey
         refute_match('/page/loving', path)
       end
 
+      def test_optional_names
+        [
+          ['/:foo(/:bar(/:baz))', %w{ bar baz }],
+          ['/:foo(/:bar)', %w{ bar }],
+          ['/:foo(/:bar)/:lol(/:baz)', %w{ bar baz }],
+        ].each do |pattern, list|
+          path = Pattern.new pattern
+          assert_equal list, path.optional_names
+        end
+      end
+
       def test_to_regexp_with_group
         strexp = Router::Strexp.new(
           '/page/:name',

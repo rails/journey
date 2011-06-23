@@ -47,14 +47,20 @@ module Journey
 
     def test_connects_all_match
       path  = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
-      route = Route.new(nil, path, {},
-                        { :controller => 'foo', :action => 'bar' })
+      route = Route.new(nil, path, {:action => 'bar'}, { :controller => 'foo' })
 
       assert_equal '/foo/bar/10', route.format({
         :controller => 'foo',
         :action     => 'bar',
         :id         => 10
       })
+    end
+
+    def test_extras_are_not_included_if_optional
+      path  = Path::Pattern.new '/page/:id(/:action)'
+      route = Route.new(nil, path, { }, { :action => 'show' })
+
+      assert_equal '/page/10', route.format({ :id => 10 })
     end
 
     def test_score

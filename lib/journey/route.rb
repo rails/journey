@@ -72,11 +72,20 @@ module Journey
         path_options.delete key
       end
 
+      (optional_parts & extras.keys).each do |key|
+        path_options.delete key
+      end
+
       formatter      = Formatter.new(path_options)
 
       formatted_path = formatter.accept(path.spec)
 
       formatted_path.empty? ? '/' : formatted_path
+    end
+
+    private
+    def optional_parts
+      path.optional_names.map { |n| n.to_sym }
     end
   end
 end
