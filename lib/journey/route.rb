@@ -83,9 +83,12 @@ module Journey
       formatted_path.empty? ? '/' : formatted_path
     end
 
-    private
     def optional_parts
       path.optional_names.map { |n| n.to_sym }
+    end
+
+    def required_parts
+      path.required_names.map { |n| n.to_sym }
     end
   end
 end

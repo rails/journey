@@ -58,6 +58,20 @@ module Journey
       refute yielded
     end
 
+    def test_required_part_in_recall
+      add_routes @router, [ "/messages/:a/:b" ]
+
+      path, _ = @router.generate(:path_info, nil, { :a => 'a' }, { :b => 'b' })
+      assert_equal "/messages/a/b", path
+    end
+
+    def test_splat_in_recall
+      add_routes @router, [ "/*path" ]
+
+      path, _ = @router.generate(:path_info, nil, { }, { :path => 'b' })
+      assert_equal "/b", path
+    end
+
     def test_recall_should_be_used_when_scoring
       add_routes @router, [
         "/messages/:action(/:id(.:format))",

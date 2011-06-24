@@ -29,6 +29,10 @@ module Journey
         }.map { |n| n.children.tr(':', '') }
       end
 
+      def required_names
+        names - optional_names
+      end
+
       def optional_names
         spec.find_all { |node|
           node.type == :GROUP

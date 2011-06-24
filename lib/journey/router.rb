@@ -41,7 +41,9 @@ module Journey
       # Find a list of url parts that were made available in the options hash.
       provided_parts = route.parts.reverse.drop_while { |part|
         !segment_values.key?(part)
-      }.reverse
+      }
+
+      provided_parts |= route.required_parts
 
       # Pull the parts from the options hash or the "recall" hash.
       route_values = provided_parts.map { |part|
