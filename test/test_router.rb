@@ -58,6 +58,16 @@ module Journey
       refute yielded
     end
 
+    def test_recall_should_be_used_when_scoring
+      add_routes @router, [
+        "/messages/:action(/:id(.:format))",
+        "/messages/:id(.:format)"
+      ]
+
+      path, _ = @router.generate(:path_info, nil, { :id => 10 }, { :action => 'index' })
+      assert_equal "/messages/index/10", path
+    end
+
     def add_routes router, paths
       paths.each do |path|
         path  = Path::Pattern.new path
