@@ -56,13 +56,14 @@ module Journey
         }
       end
 
+      parameterized_parts = Hash[parameterized_parts]
       parameterized_parts.keep_if { |_,v| v  }
 
       z = Hash[options.to_a - route_values]
       z.delete :controller
       z.delete :action
 
-      [route.format(Hash[parameterized_parts]), z]
+      [route.format(parameterized_parts), z]
     end
 
     def call env
