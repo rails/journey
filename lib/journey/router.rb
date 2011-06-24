@@ -56,8 +56,10 @@ module Journey
         }
       end
 
-      parameterized_parts = Hash[parameterized_parts]
       parameterized_parts.keep_if { |_,v| v  }
+      parameterized_parts = Hash[parameterized_parts]
+
+      verify_required_parts!(route, parameterized_parts)
 
       z = Hash[options.to_a - route_values]
       z.delete :controller
@@ -105,6 +107,13 @@ module Journey
       match_names = match_data.names.map { |n| n.to_sym }
       info = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
       [info.merge(route.extras), route]
+    end
+
+    def verify_required_parts! route, parts
+      tests = route.path.requirements
+      raise RoutingError unless (tests.keys & route.required_parts).all? { |key|
+        tests[key] === parts[key]
+      }
     end
   end
 end

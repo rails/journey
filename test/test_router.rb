@@ -6,6 +6,34 @@ module Journey
       @router = Router.new nil
     end
 
+    def test_required_parts_are_verified_when_building
+      add_routes @router, [
+        Router::Strexp.new("/foo/:id", { :id => /\d/ }, ['/', '.', '?'], false)
+      ]
+
+      path, _ = @router.generate(:path_info, nil, { :id => '10' }, { })
+      assert_equal '/foo/10', path
+
+      assert_raises(Router::RoutingError) do
+        path, _ = @router.generate(:path_info, nil, { :id => 'aa' }, { })
+      end
+    end
+
+    def test_only_required_parts_are_verified
+      add_routes @router, [
+        Router::Strexp.new("/foo(/:id)", {:id => /\d/}, ['/', '.', '?'], false)
+      ]
+
+      path, _ = @router.generate(:path_info, nil, { :id => '10' }, { })
+      assert_equal '/foo/10', path
+
+      path, _ = @router.generate(:path_info, nil, { }, { })
+      assert_equal '/foo', path
+
+      path, _ = @router.generate(:path_info, nil, { :id => 'aa' }, { })
+      assert_equal '/foo/aa', path
+    end
+
     def test_X_Cascade
       add_routes @router, [ "/messages(.:format)" ]
       resp = @router.call({ 'REQUEST_METHOD' => 'GET', 'PATH_INFO' => '/lol' })
