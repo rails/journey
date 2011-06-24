@@ -65,6 +65,17 @@ module Journey
       end
     end
 
+    def test_nil_path_parts_are_ignored
+      path  = Path::Pattern.new "/:controller(/:action(.:format))"
+      @router.add_route nil, {:path_info => path}, {}, {}
+
+      params = { :controller => "tasks", :format => nil }
+      extras = { :action => 'lol' }
+
+      path, _ = @router.generate(:path_info, nil, params, extras)
+      assert_equal '/tasks', path
+    end
+
     def test_generate_slash
       path  = Path::Pattern.new '/'
       @router.add_route nil, {:path_info => path}, {}, {}

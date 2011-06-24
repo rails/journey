@@ -35,16 +35,17 @@ module Journey
     end
 
     def generate key, name, options, recall = {}, parameterize = nil
-      route = named_routes[name] || match_route(options)
+      route          = named_routes[name] || match_route(options)
+      segment_values = options.dup.keep_if { |_,v| v }
 
       # Find a list of url parts that were made available in the options hash.
       provided_parts = route.parts.reverse.drop_while { |part|
-        !options.key?(part)
+        !segment_values.key?(part)
       }.reverse
 
       # Pull the parts from the options hash or the "recall" hash.
       route_values = provided_parts.map { |part|
-        [part, options[part] || recall[part]]
+        [part, segment_values[part] || recall[part]]
       }
 
       parameterized_parts = route_values
@@ -55,7 +56,7 @@ module Journey
         }
       end
 
-      parameterized_parts.delete_if { |_,v| v.nil?  }
+      parameterized_parts.keep_if { |_,v| v  }
 
       z = Hash[options.to_a - route_values]
       z.delete :controller
