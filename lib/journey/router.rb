@@ -62,7 +62,7 @@ module Journey
       z.delete :controller
       z.delete :action
 
-      [route.format(parameterized_parts), z]
+      [route.format(Hash[parameterized_parts]), z]
     end
 
     def call env

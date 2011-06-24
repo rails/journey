@@ -64,9 +64,7 @@ module Journey
       path.names.map { |n| n.to_sym }
     end
 
-    def format options
-      path_options = Hash[options]
-
+    def format path_options
       # remove keys the path doesn't care about
       (path_options.keys - parts).each do |key|
         path_options.delete key
