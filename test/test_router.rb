@@ -42,6 +42,21 @@ module Journey
       assert_equal 404, resp.first
     end
 
+    def test_defaults_merge_correctly
+      path  = Path::Pattern.new '/foo(/:id)'
+      @router.add_route nil, {:path_info => path}, {:id => nil}, {}
+
+      env = rails_env 'PATH_INFO' => '/foo/10'
+      @router.recognize(env) do |r, _, params|
+        assert_equal({:id => '10'}, params)
+      end
+
+      env = rails_env 'PATH_INFO' => '/foo'
+      @router.recognize(env) do |r, _, params|
+        assert_equal({:id => nil}, params)
+      end
+    end
+
     def test_recognize_with_unbound_regexp
       add_routes @router, [
         Router::Strexp.new("/foo", { }, ['/', '.', '?'], false)
