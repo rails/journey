@@ -35,7 +35,7 @@ module Journey
     end
 
     def generate key, name, options, recall = {}, parameterize = nil
-      route          = named_routes[name] || match_route(options.merge(recall))
+      route          = named_routes[name] || match_route(recall.merge(options))
       segment_values = options.dup.keep_if { |_,v| v }
 
       # Find a list of url parts that were made available in the options hash.
