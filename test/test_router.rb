@@ -3,7 +3,87 @@ require 'helper'
 module Journey
   class TestRouter < MiniTest::Unit::TestCase
     def setup
-      @router = Router.new nil
+      @router = Router.new({})
+    end
+
+    def test_request_class_reader
+      klass = Object.new
+      router = Router.new(:request_class => klass)
+      assert_equal klass, router.request_class
+    end
+
+    class FakeRequestFeeler < Struct.new(:env)
+      def new env
+        self.env = env
+        self
+      end
+
+      def hello
+        'world'
+      end
+    end
+
+    def test_request_class_and_requirements_success
+      klass  = FakeRequestFeeler.new nil
+      router = Router.new({:request_class => klass })
+
+      requirements = { :hello => 'world' }
+
+      exp = Router::Strexp.new '/foo(/:id)', requirements, ['/.?']
+      path  = Path::Pattern.new exp
+
+      assert_equal requirements, path.requirements
+
+      router.add_route nil, {:path_info => path}, {:id => nil}, {}
+
+      env = rails_env 'PATH_INFO' => '/foo/10'
+      router.recognize(env) do |r, _, params|
+        assert_equal({:id => '10'}, params)
+      end
+
+      assert_equal env.env, klass.env
+    end
+
+    def test_request_class_and_requirements_fail
+      klass  = FakeRequestFeeler.new nil
+      router = Router.new({:request_class => klass })
+
+      requirements = { :hello => 'mom' }
+
+      exp = Router::Strexp.new '/foo(/:id)', requirements, ['/.?']
+      path  = Path::Pattern.new exp
+
+      assert_equal requirements, path.requirements
+
+      router.add_route nil, {:path_info => path}, {:id => nil}, {}
+
+      env = rails_env 'PATH_INFO' => '/foo/10'
+      router.recognize(env) do |r, _, params|
+        flunk 'route should not be found'
+      end
+
+      assert_equal env.env, klass.env
+    end
+
+    def test_request_class_absent_method
+      klass  = FakeRequestFeeler.new nil
+      router = Router.new({:request_class => klass })
+
+      requirements = { :lol => 'hello' }
+
+      exp = Router::Strexp.new '/foo(/:id)', requirements, ['/.?']
+      path  = Path::Pattern.new exp
+
+      assert_equal requirements, path.requirements
+
+      router.add_route nil, {:path_info => path}, {:id => nil}, {}
+
+      env = rails_env 'PATH_INFO' => '/foo/10'
+      router.recognize(env) do |r, _, params|
+        assert_equal({:id => '10'}, params)
+      end
+
+      assert_equal env.env, klass.env
     end
 
     def test_required_parts_are_verified_when_building

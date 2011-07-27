@@ -18,12 +18,18 @@ module Journey
 
     VERSION = '1.0.0'
 
-    attr_reader :routes, :named_routes
+    class NullReq # :nodoc:
+      def self.new env; env; end
+    end
+
+    attr_reader :routes, :named_routes, :request_class
 
     def initialize options
-      @options      = options
-      @routes       = []
-      @named_routes = {}
+      @options       = options
+      @routes        = []
+      @named_routes  = {}
+      @params_key    = options[:parameters_key]
+      @request_class = options[:request_class] || NullReq
     end
 
     def add_route app, conditions, defaults, name = nil
@@ -90,10 +96,16 @@ module Journey
     def route_for env
       match_data = nil
       addr       = env['REMOTE_ADDR']
+      req        = request_class.new env
 
       route = routes.find do |r|
         next unless r.verb === env['REQUEST_METHOD']
         next if addr && !r.ip === addr
+
+        next unless r.path.requirements.all? { |k,v|
+          req.respond_to?(k) ? v === req.send(k) : true
+        }
+
         match_data = r.path.match env['PATH_INFO']
       end
 
