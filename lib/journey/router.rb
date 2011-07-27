@@ -82,7 +82,6 @@ module Journey
 
       env[@params_key] = match_data
 
-      env["action_dispatch.request.parameters"] = match_data
       route.app.call(env)
     end
 
