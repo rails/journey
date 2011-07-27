@@ -80,7 +80,9 @@ module Journey
 
       return [404, {'X-Cascade' => 'pass'}, ['Not Found']] unless route
 
-      env['action_dispatch.request.path_parameters'] = match_data
+      env[@params_key] = match_data
+
+      env["action_dispatch.request.parameters"] = match_data
       route.app.call(env)
     end
 
@@ -103,8 +105,8 @@ module Journey
         next unless r.verb === env['REQUEST_METHOD']
         next if addr && !r.ip === addr
 
-        next unless r.path.requirements.all? { |k,v|
-          req.respond_to?(k) ? v === req.send(k) : true
+        next unless r.constraints.all? { |k,v|
+          v === req.send(k)
         }
 
         match_data = r.path.match env['PATH_INFO']

@@ -12,13 +12,14 @@ module Journey
       assert_equal klass, router.request_class
     end
 
-    class FakeRequestFeeler < Struct.new(:env)
+    class FakeRequestFeeler < Struct.new(:env, :called)
       def new env
         self.env = env
         self
       end
 
       def hello
+        self.called = true
         'world'
       end
     end
@@ -27,20 +28,19 @@ module Journey
       klass  = FakeRequestFeeler.new nil
       router = Router.new({:request_class => klass })
 
-      requirements = { :hello => 'world' }
+      requirements = { :hello => /world/ }
 
-      exp = Router::Strexp.new '/foo(/:id)', requirements, ['/.?']
+      exp = Router::Strexp.new '/foo(/:id)', {}, ['/.?']
       path  = Path::Pattern.new exp
 
-      assert_equal requirements, path.requirements
-
-      router.add_route nil, {:path_info => path}, {:id => nil}, {}
+      router.add_route nil, {:path_info => path}.merge(requirements), {:id => nil}, {}
 
       env = rails_env 'PATH_INFO' => '/foo/10'
       router.recognize(env) do |r, _, params|
         assert_equal({:id => '10'}, params)
       end
 
+      assert klass.called, 'hello should have been called'
       assert_equal env.env, klass.env
     end
 
@@ -48,41 +48,19 @@ module Journey
       klass  = FakeRequestFeeler.new nil
       router = Router.new({:request_class => klass })
 
-      requirements = { :hello => 'mom' }
+      requirements = { :hello => /mom/ }
 
-      exp = Router::Strexp.new '/foo(/:id)', requirements, ['/.?']
+      exp = Router::Strexp.new '/foo(/:id)', {}, ['/.?']
       path  = Path::Pattern.new exp
 
-      assert_equal requirements, path.requirements
-
-      router.add_route nil, {:path_info => path}, {:id => nil}, {}
+      router.add_route nil, {:path_info => path}.merge(requirements), {:id => nil}, {}
 
       env = rails_env 'PATH_INFO' => '/foo/10'
       router.recognize(env) do |r, _, params|
         flunk 'route should not be found'
       end
 
-      assert_equal env.env, klass.env
-    end
-
-    def test_request_class_absent_method
-      klass  = FakeRequestFeeler.new nil
-      router = Router.new({:request_class => klass })
-
-      requirements = { :lol => 'hello' }
-
-      exp = Router::Strexp.new '/foo(/:id)', requirements, ['/.?']
-      path  = Path::Pattern.new exp
-
-      assert_equal requirements, path.requirements
-
-      router.add_route nil, {:path_info => path}, {:id => nil}, {}
-
-      env = rails_env 'PATH_INFO' => '/foo/10'
-      router.recognize(env) do |r, _, params|
-        assert_equal({:id => '10'}, params)
-      end
-
+      assert klass.called, 'hello should have been called'
       assert_equal env.env, klass.env
     end
 
