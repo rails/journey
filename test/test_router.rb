@@ -86,16 +86,26 @@ module Journey
       assert_equal env.env, klass.env
     end
 
-    def test_required_parts_are_verified_when_building
+    def test_required_parts_verified_are_anchored
       add_routes @router, [
         Router::Strexp.new("/foo/:id", { :id => /\d/ }, ['/', '.', '?'], false)
+      ]
+
+      assert_raises(Router::RoutingError) do
+        @router.generate(:path_info, nil, { :id => '10' }, { })
+      end
+    end
+
+    def test_required_parts_are_verified_when_building
+      add_routes @router, [
+        Router::Strexp.new("/foo/:id", { :id => /\d+/ }, ['/', '.', '?'], false)
       ]
 
       path, _ = @router.generate(:path_info, nil, { :id => '10' }, { })
       assert_equal '/foo/10', path
 
       assert_raises(Router::RoutingError) do
-        path, _ = @router.generate(:path_info, nil, { :id => 'aa' }, { })
+        @router.generate(:path_info, nil, { :id => 'aa' }, { })
       end
     end
 

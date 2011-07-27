@@ -42,6 +42,7 @@ module Journey
 
     def generate key, name, options, recall = {}, parameterize = nil
       route          = named_routes[name] || match_route(recall.merge(options))
+
       segment_values = options.dup.keep_if { |_,v| v }
 
       # Find a list of url parts that were made available in the options hash.
@@ -124,7 +125,7 @@ module Journey
     def verify_required_parts! route, parts
       tests = route.path.requirements
       raise RoutingError unless (tests.keys & route.required_parts).all? { |key|
-        tests[key] === parts[key]
+        /\A#{tests[key]}\Z/ === parts[key]
       }
     end
   end
