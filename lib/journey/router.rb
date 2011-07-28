@@ -76,18 +76,33 @@ module Journey
     end
 
     def call env
-      match_data, route = route_for(env)
+      find_routes(env) do |match, parameters, route|
+        unless match.post_match.empty?
+          env['SCRIPT_NAME'] = match.to_s
+          env['PATH_INFO']   = match.post_match
+        end
 
-      return [404, {'X-Cascade' => 'pass'}, ['Not Found']] unless route
+        env[@params_key] = parameters
 
-      env[@params_key] = match_data
+        status, headers, body = route.app.call(env)
 
-      route.app.call(env)
+        next if headers.key?('X-Cascade') && headers['X-Cascade'] == 'pass'
+
+        return [status, headers, body]
+      end
+
+      return [404, {'X-Cascade' => 'pass'}, ['Not Found']]
     end
 
     def recognize req
-      match_data, route = route_for req.env
-      yield(route, nil, match_data) if route
+      find_routes(req.env) do |match, parameters, route|
+        unless match.post_match.empty?
+          req.env['SCRIPT_NAME'] = match.to_s
+          req.env['PATH_INFO']   = match.post_match
+        end
+
+        yield(route, nil, parameters)
+      end
     end
 
     private
@@ -95,12 +110,11 @@ module Journey
       routes.sort_by { |r| r.score options }.last
     end
 
-    def route_for env
-      match_data = nil
+    def find_routes env
       addr       = env['REMOTE_ADDR']
       req        = request_class.new env
 
-      route = routes.find do |r|
+      routes.each do |r|
         next unless r.verb === env['REQUEST_METHOD']
         next if addr && !r.ip === addr
 
@@ -109,18 +123,13 @@ module Journey
         }
 
         match_data = r.path.match env['PATH_INFO']
+
+        next unless match_data
+
+        match_names = match_data.names.map { |n| n.to_sym }
+        info = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
+        yield(match_data, r.extras.merge(info), r)
       end
-
-      return unless route
-
-      unless match_data.post_match.empty?
-        env['SCRIPT_NAME'] = match_data.to_s
-        env['PATH_INFO']   = match_data.post_match
-      end
-
-      match_names = match_data.names.map { |n| n.to_sym }
-      info = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
-      [route.extras.merge(info), route]
     end
 
     def verify_required_parts! route, parts
