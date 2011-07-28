@@ -79,7 +79,7 @@ module Journey
       find_routes(env) do |match, parameters, route|
         unless match.post_match.empty?
           env['SCRIPT_NAME'] = match.to_s
-          env['PATH_INFO']   = match.post_match
+          env['PATH_INFO']   = match.post_match.sub(/^([^\/])/, '/\1')
         end
 
         env[@params_key] = parameters
@@ -98,7 +98,7 @@ module Journey
       find_routes(req.env) do |match, parameters, route|
         unless match.post_match.empty?
           req.env['SCRIPT_NAME'] = match.to_s
-          req.env['PATH_INFO']   = match.post_match
+          req.env['PATH_INFO']   = match.post_match.sub(/^([^\/])/, '/\1')
         end
 
         yield(route, nil, parameters)
