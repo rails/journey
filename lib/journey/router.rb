@@ -107,7 +107,8 @@ module Journey
 
     private
     def match_route options
-      routes.sort_by { |r| r.score options }.last
+      hash = routes.group_by { |r| r.score options }
+      hash[hash.keys.sort.last].first
     end
 
     def find_routes env
@@ -128,7 +129,7 @@ module Journey
 
         match_names = match_data.names.map { |n| n.to_sym }
         info = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
-        yield(match_data, r.extras.merge(info), r)
+        yield(match_data, r.defaults.merge(info), r)
       end
     end
 

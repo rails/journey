@@ -10,7 +10,7 @@ module Journey
 
       assert_equal app, route.app
       assert_equal path, route.path
-      assert_equal defaults, route.extras
+      assert_equal defaults, route.defaults
     end
 
     def test_ip_address

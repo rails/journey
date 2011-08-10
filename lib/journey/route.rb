@@ -1,13 +1,13 @@
 module Journey
   class Route
-    attr_reader :app, :path, :verb, :extras, :ip
+    attr_reader :app, :path, :verb, :defaults, :ip
 
     attr_reader :constraints
 
     ##
     # +path+ is a path constraint.
     # +constraints+ is a hash of constraints to be applied to this route.
-    def initialize app, path, constraints, extras = {}
+    def initialize app, path, constraints, defaults = {}
       @app         = app
       @path        = path
       @verb        = constraints[:request_method] || //
@@ -15,21 +15,24 @@ module Journey
 
       @constraints = constraints.dup
       @constraints.keep_if { |_,v| Regexp === v }
-      @extras = extras
+      @defaults = defaults
     end
 
     def score constraints
-      possible_keys = path.names
+      required_keys = path.required_names
+      optional_keys = path.optional_names
 
       constraints.map { |k,v|
-        if extras.key? k
-          extras[k] == v ? 2 : -1
-        elsif possible_keys.include?(k.to_s) && v
+        if defaults.key? k
+          defaults[k] == v ? 2 : -1
+        elsif required_keys.delete(k.to_s)
+          1
+        elsif optional_keys.delete(k.to_s)
           1
         else
           0
         end
-      }.inject(0) { |n,v| n + v }
+      }.inject(0) { |n,v| n + v } - required_keys.length
     end
 
     class Formatter < ::Journey::Definition::Node::String
