@@ -78,8 +78,8 @@ module Journey
         path_options.delete key
       end
 
-      (optional_parts & extras.keys).each do |key|
-        path_options.delete key
+      (defaults.keys - required_parts).each do |key|
+        path_options.delete key if defaults[key].to_s == path_options[key].to_s
       end
 
       formatter      = Formatter.new(path_options)
