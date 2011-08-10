@@ -41,38 +41,42 @@ module Journey
     end
 
     def generate key, name, options, recall = {}, parameterize = nil
-      route          = named_routes[name] || match_route(recall.merge(options))
+      constraints = recall.merge(options).keep_if { |_,v| !v.nil? }
 
-      segment_values = options.dup.keep_if { |_,v| v }
+      match_route(name, constraints) do |route|
+        data = recall.merge options
 
-      # Find a list of url parts that were made available in the options hash.
-      provided_parts = route.parts.reverse.drop_while { |part|
-        !segment_values.key?(part)
-      } | route.required_parts
+        keys_to_keep = route.parts.reverse.drop_while { |part|
+          !options.key?(part)
+        } | route.required_parts
 
-      # Pull the parts from the options hash or the "recall" hash.
-      route_values = provided_parts.map { |part|
-        [part, segment_values[part] || recall[part]]
-      }
+        (data.keys - keys_to_keep).each do |key|
+          data.delete key
+        end
 
-      parameterized_parts = route_values
+        route_values = data.to_a
 
-      if parameterize
-        parameterized_parts = route_values.map { |k,v|
-          [k, parameterize[:parameterize].call(k, v)]
-        }
+        parameterized_parts = route_values
+
+        if parameterize
+          parameterized_parts = route_values.map { |k,v|
+            [k, parameterize[:parameterize].call(k, v)]
+          }
+        end
+
+        parameterized_parts.keep_if { |_,v| v  }
+        parameterized_parts = Hash[parameterized_parts]
+
+        next unless verify_required_parts!(route, parameterized_parts)
+
+        z = Hash[options.to_a - route_values - route.defaults.to_a]
+        z.delete :controller
+        z.delete :action
+
+        return [route.format(parameterized_parts), z]
       end
 
-      parameterized_parts.keep_if { |_,v| v  }
-      parameterized_parts = Hash[parameterized_parts]
-
-      verify_required_parts!(route, parameterized_parts)
-
-      z = Hash[options.to_a - route_values]
-      z.delete :controller
-      z.delete :action
-
-      [route.format(parameterized_parts), z]
+      raise RoutingError
     end
 
     def call env
@@ -106,9 +110,19 @@ module Journey
     end
 
     private
-    def match_route options
-      hash = routes.group_by { |r| r.score options }
-      hash[hash.keys.sort.last].first
+    def match_route name, options
+      if named_routes.key? name
+        yield named_routes[name]
+      else
+        hash = routes.group_by { |r| r.score options }
+        hash.keys.sort.reverse_each do |score|
+          next if score < 0
+
+          hash[score].each do |route|
+            yield route
+          end
+        end
+      end
     end
 
     def find_routes env
@@ -135,7 +149,7 @@ module Journey
 
     def verify_required_parts! route, parts
       tests = route.path.requirements
-      raise RoutingError unless (tests.keys & route.required_parts).all? { |key|
+      (tests.keys & route.required_parts).all? { |key|
         /\A#{tests[key]}\Z/ === parts[key]
       }
     end
