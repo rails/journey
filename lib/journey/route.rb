@@ -14,7 +14,7 @@ module Journey
       @ip          = constraints[:ip] || //
 
       @constraints = constraints.dup
-      @constraints.keep_if { |_,v| Regexp === v }
+      @constraints.keep_if { |_,v| Regexp === v || String === v }
       @defaults = defaults
     end
 
