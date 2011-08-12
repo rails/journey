@@ -27,7 +27,7 @@ module Journey
         if defaults.key? k
           if defaults[k] == v
             defaults.delete(k)
-            1
+            2
           else
             0
           end

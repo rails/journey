@@ -41,7 +41,7 @@ module Journey
     end
 
     def generate key, name, options, recall = {}, parameterize = nil
-      constraints = recall.merge(options).keep_if { |_,v| !v.nil? }
+      constraints = recall.merge(options)
 
       match_route(name, constraints) do |route|
         data = recall.merge options
@@ -54,22 +54,19 @@ module Journey
           data.delete key
         end
 
-        route_values = data.to_a
-
-        parameterized_parts = route_values
+        parameterized_parts = data.dup
 
         if parameterize
-          parameterized_parts = route_values.map { |k,v|
-            [k, parameterize[:parameterize].call(k, v)]
-          }
+          parameterized_parts.each do |k,v|
+            parameterized_parts[k] = parameterize[:parameterize].call(k, v)
+          end
         end
 
         parameterized_parts.keep_if { |_,v| v  }
-        parameterized_parts = Hash[parameterized_parts]
 
         next unless verify_required_parts!(route, parameterized_parts)
 
-        z = Hash[options.to_a - route_values - route.defaults.to_a]
+        z = Hash[options.to_a - data.to_a - route.defaults.to_a]
         z.delete :controller
         z.delete :action
 
@@ -114,7 +111,13 @@ module Journey
       if named_routes.key? name
         yield named_routes[name]
       else
-        hash = routes.group_by { |r| r.score options }
+        hash = routes.group_by { |r|
+          options.delete_if { |k,v|
+            v.nil? && !r.defaults.key?(k)
+          }
+          r.score options
+        }
+
         hash.keys.sort.reverse_each do |score|
           next if score < 0
 
@@ -130,12 +133,12 @@ module Journey
       req        = request_class.new env
 
       routes.each do |r|
-        next unless r.verb === env['REQUEST_METHOD']
-        next if addr && !r.ip === addr
-
         next unless r.constraints.all? { |k,v|
           v === req.send(k)
         }
+
+        next unless r.verb === env['REQUEST_METHOD']
+        next if addr && !r.ip === addr
 
         match_data = r.path.match env['PATH_INFO']
 
