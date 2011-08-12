@@ -8,10 +8,11 @@ module Journey
     # +path+ is a path constraint.
     # +constraints+ is a hash of constraints to be applied to this route.
     def initialize app, path, constraints, defaults = {}
+      constraints  = constraints.dup
       @app         = app
       @path        = path
-      @verb        = constraints[:request_method] || //
-      @ip          = constraints[:ip] || //
+      @verb        = constraints.delete(:request_method) || //
+      @ip          = constraints.delete(:ip) || //
 
       @constraints = constraints.dup
       @constraints.keep_if { |_,v| Regexp === v || String === v }

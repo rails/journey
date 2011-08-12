@@ -1,3 +1,4 @@
+require 'journey/core-ext/hash'
 require 'journey/router/utils'
 require 'journey/router/strexp'
 

@@ -237,7 +237,7 @@ module Journey
         {},
         { :parameterize => lambda { |k,v| parameterized << [k,v]; v } })
 
-      assert_equal params.sort, parameterized.sort
+      assert_equal params.map(&:to_s).sort, parameterized.map(&:to_s).sort
     end
 
     def test_generate_id
