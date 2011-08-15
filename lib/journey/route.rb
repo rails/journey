@@ -19,6 +19,10 @@ module Journey
       @defaults = defaults
     end
 
+    def required_keys
+      (path.required_names.map { |x| x.to_sym } + required_defaults.keys).sort
+    end
+
     def score constraints
       required_keys = path.required_names
       optional_keys = path.optional_names
@@ -110,7 +114,6 @@ module Journey
       path.required_names.map { |n| n.to_sym }
     end
 
-    private
     def required_defaults
       matches = parts
       @defaults.dup.delete_if { |k,_| matches.include? k }
