@@ -40,15 +40,12 @@ module Journey
       @named_routes  = {}
       @params_key    = options[:parameters_key]
       @request_class = options[:request_class] || NullReq
-      @required_keys = []
       @cache         = {}
     end
 
     def add_route app, conditions, defaults, name = nil
       path = conditions[:path_info]
       route = Route.new(app, path, conditions, defaults)
-
-      @required_keys |= route.required_keys
 
       cache = @cache
       route.required_defaults.each do |tuple|
@@ -130,9 +127,11 @@ module Journey
     end
 
     private
-    def possibles cache, options
-      (cache[:___routes] || []) + (cache.keys & options.to_a).map { |pair|
-        possibles(cache[pair], options)
+    def possibles cache, options, depth = 0
+      (cache[:___routes] || []) + options.find_all { |pair|
+        cache.key? pair
+      }.map { |pair|
+        possibles(cache[pair], options, depth + 1)
       }.flatten(1)
     end
 
@@ -140,15 +139,9 @@ module Journey
       if named_routes.key? name
         yield named_routes[name]
       else
-
-
-        routes = possibles(@cache, options)
+        routes = possibles(@cache, options.to_a)
 
         hash = routes.group_by { |_, r|
-          options = options.dup
-          options.delete_if { |k,v|
-            v.nil? && !r.defaults.key?(k)
-          }
           r.score options
         }
 

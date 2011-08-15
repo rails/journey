@@ -16,11 +16,11 @@ module Journey
 
       @constraints = constraints
       @constraints.keep_if { |_,v| Regexp === v || String === v }
-      @defaults = defaults
+      @defaults    = defaults
     end
 
     def required_keys
-      (path.required_names.map { |x| x.to_sym } + required_defaults.keys).sort
+      path.required_names.map { |x| x.to_sym } + required_defaults.keys
     end
 
     def score constraints
@@ -36,7 +36,7 @@ module Journey
           else
             0
           end
-        elsif required_keys.delete(k.to_s)
+        elsif v && required_keys.delete(k.to_s)
           1
         elsif optional_keys.delete(k.to_s)
           1
