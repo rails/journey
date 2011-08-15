@@ -20,7 +20,16 @@ module Journey
     VERSION = '1.0.0'
 
     class NullReq # :nodoc:
-      def self.new env; env; end
+      attr_reader :env
+      def initialize env
+        @env = env
+      end
+
+      def request_method
+        env['REQUEST_METHOD']
+      end
+
+      def [](k); env[k]; end
     end
 
     attr_reader :routes, :named_routes, :request_class
