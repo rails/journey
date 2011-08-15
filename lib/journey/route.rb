@@ -11,10 +11,10 @@ module Journey
       constraints  = constraints.dup
       @app         = app
       @path        = path
-      @verb        = constraints.delete(:request_method) || //
+      @verb        = constraints[:request_method] || //
       @ip          = constraints.delete(:ip) || //
 
-      @constraints = constraints.dup
+      @constraints = constraints
       @constraints.keep_if { |_,v| Regexp === v || String === v }
       @defaults = defaults
     end

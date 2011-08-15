@@ -51,8 +51,8 @@ module Journey
           !options.key?(part) || (options[part] || recall[part]).nil?
         } | route.required_parts
 
-        (data.keys - keys_to_keep).each do |key|
-          data.delete key
+        (data.keys - keys_to_keep).each do |bad_key|
+          data.delete bad_key
         end
 
         parameterized_parts = data.dup
@@ -139,7 +139,7 @@ module Journey
         }
 
         next unless r.verb === env['REQUEST_METHOD']
-        next if addr && !r.ip === addr
+        next if addr && !(r.ip === addr)
 
         match_data = r.path.match env['PATH_INFO']
 
