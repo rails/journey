@@ -125,7 +125,7 @@ module Journey
 
     private
     def possibles cache, options
-      (cache[:___routes] || []) + options.find_all { |pair|
+      cache.fetch(:___routes) { [] } + options.find_all { |pair|
         cache.key? pair
       }.map { |pair|
         possibles(cache[pair], options)
