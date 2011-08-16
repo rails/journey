@@ -124,11 +124,27 @@ module Journey
     end
 
     private
-    def possibles cache, options
+    def non_recursive cache, options
+      routes = []
+      stack  = [cache]
+
+      while stack.any?
+        c = stack.shift
+        routes.concat c[:___routes] if c.key? :___routes
+
+        options.each do |pair|
+          stack << c[pair] if c.key? pair
+        end
+      end
+
+      routes
+    end
+
+    def possibles cache, options, depth = 0
       cache.fetch(:___routes) { [] } + options.find_all { |pair|
         cache.key? pair
       }.map { |pair|
-        possibles(cache[pair], options)
+        possibles(cache[pair], options, depth + 1)
       }.flatten(1)
     end
 
@@ -136,7 +152,8 @@ module Journey
       if named_routes.key? name
         yield named_routes[name]
       else
-        routes = possibles(@cache, options.to_a)
+        #routes = possibles(@cache, options.to_a)
+        routes = non_recursive(@cache, options.to_a)
 
         hash = routes.group_by { |_, r|
           r.score options
@@ -176,8 +193,12 @@ module Journey
 
     def verify_required_parts! route, parts
       tests = route.path.requirements
-      (tests.keys & route.required_parts).all? { |key|
-        /\A#{tests[key]}\Z/ === parts[key]
+      route.required_parts.all? { |key|
+        if tests.key? key
+          /\A#{tests[key]}\Z/ === parts[key]
+        else
+          true
+        end
       }
     end
   end
