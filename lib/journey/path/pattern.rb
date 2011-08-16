@@ -21,10 +21,13 @@ module Journey
         else
           raise "wtf bro: #{strexp}"
         end
+
+        @names          = nil
+        @optional_names = nil
       end
 
       def names
-        spec.find_all { |node|
+        @names ||= spec.find_all { |node|
           node.type == :SYMBOL || node.type == :STAR
         }.map { |n| n.children.tr(':', '') }
       end
@@ -34,7 +37,7 @@ module Journey
       end
 
       def optional_names
-        spec.find_all { |node|
+        @optional_names ||= spec.find_all { |node|
           node.type == :GROUP
         }.map { |group|
           group.find_all { |node|

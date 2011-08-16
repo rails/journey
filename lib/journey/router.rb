@@ -54,7 +54,6 @@ module Journey
       end
       (cache[:___routes] ||= []) << [routes.length, route]
 
-
       routes << route
       named_routes[name] = route if name
       route
@@ -127,11 +126,11 @@ module Journey
     end
 
     private
-    def possibles cache, options, depth = 0
+    def possibles cache, options
       (cache[:___routes] || []) + options.find_all { |pair|
         cache.key? pair
       }.map { |pair|
-        possibles(cache[pair], options, depth + 1)
+        possibles(cache[pair], options)
       }.flatten(1)
     end
 

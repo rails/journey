@@ -17,6 +17,7 @@ module Journey
       @constraints = constraints
       @constraints.keep_if { |_,v| Regexp === v || String === v }
       @defaults    = defaults
+      @required_defaults = nil
     end
 
     def required_keys
@@ -98,8 +99,10 @@ module Journey
     end
 
     def required_defaults
-      matches = parts
-      @defaults.dup.delete_if { |k,_| matches.include? k }
+      @required_defaults ||= begin
+        matches = parts
+        @defaults.dup.delete_if { |k,_| matches.include? k }
+      end
     end
   end
 end
