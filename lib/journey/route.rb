@@ -18,6 +18,8 @@ module Journey
       @constraints.keep_if { |_,v| Regexp === v || String === v }
       @defaults    = defaults
       @required_defaults = nil
+      @required_parts    = nil
+      @parts             = nil
     end
 
     def required_keys
@@ -68,7 +70,7 @@ module Journey
     end
 
     def parts
-      path.names.map { |n| n.to_sym }
+      @parts ||= path.names.map { |n| n.to_sym }
     end
 
     def format path_options
@@ -88,7 +90,7 @@ module Journey
     end
 
     def required_parts
-      path.required_names.map { |n| n.to_sym }
+      @required_parts ||= path.required_names.map { |n| n.to_sym }
     end
 
     def required_defaults
