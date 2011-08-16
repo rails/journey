@@ -27,29 +27,12 @@ module Journey
       required_keys = path.required_names
       optional_keys = path.optional_names
       defaults      = required_defaults
+      supplied_keys = constraints.map { |k,v| v && k.to_s }.compact
 
-      score = constraints.map { |k,v|
-        if defaults.key? k
-          if defaults[k] == v
-            defaults.delete(k)
-            2
-          else
-            0
-          end
-        elsif v && required_keys.delete(k.to_s)
-          1
-        elsif optional_keys.delete(k.to_s)
-          1
-        else
-          0
-        end
-      }.inject(0) { |n,v| n + v }
+      return -1 unless (required_keys - supplied_keys).empty?
 
-      if required_keys.any? || defaults.any?
-        return -1
-      end
-
-      score
+      score = (supplied_keys & path.names).length
+      score + (required_defaults.length * 2)
     end
 
     class Formatter < ::Journey::Definition::Node::String
