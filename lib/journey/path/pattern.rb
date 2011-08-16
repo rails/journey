@@ -24,6 +24,7 @@ module Journey
 
         @names          = nil
         @optional_names = nil
+        @required_names = nil
       end
 
       def names
@@ -33,7 +34,7 @@ module Journey
       end
 
       def required_names
-        names - optional_names
+        @required_names ||= names - optional_names
       end
 
       def optional_names

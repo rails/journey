@@ -26,8 +26,6 @@ module Journey
 
     def score constraints
       required_keys = path.required_names
-      optional_keys = path.optional_names
-      defaults      = required_defaults
       supplied_keys = constraints.map { |k,v| v && k.to_s }.compact
 
       return -1 unless (required_keys - supplied_keys).empty?
@@ -74,11 +72,6 @@ module Journey
     end
 
     def format path_options
-      # remove keys the path doesn't care about
-      (path_options.keys - parts).each do |key|
-        path_options.delete key
-      end
-
       (defaults.keys - required_parts).each do |key|
         path_options.delete key if defaults[key].to_s == path_options[key].to_s
       end

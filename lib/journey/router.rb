@@ -60,10 +60,10 @@ module Journey
     end
 
     def generate key, name, options, recall = {}, parameterize = nil
-      constraints = recall.merge(options)
+      constraints = recall.merge options
 
       match_route(name, constraints) do |route|
-        data = recall.merge options
+        data = constraints.dup
 
         keys_to_keep = route.parts.reverse.drop_while { |part|
           !options.key?(part) || (options[part] || recall[part]).nil?
@@ -86,8 +86,6 @@ module Journey
         next unless verify_required_parts!(route, parameterized_parts)
 
         z = Hash[options.to_a - data.to_a - route.defaults.to_a]
-        z.delete :controller
-        z.delete :action
 
         return [route.format(parameterized_parts), z]
       end
