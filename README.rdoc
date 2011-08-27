@@ -1,26 +1,26 @@
-= rack_router
+= Journey
 
-* FIX (url)
+* http://github.com/tenderlove/journey
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Journey is a router.  It routes requests.
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+* Designed for rails
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+  Too complex right now. :(
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* None
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* gem install journey
 
 == LICENSE:
 
