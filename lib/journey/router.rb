@@ -100,7 +100,7 @@ module Journey
                                                            @params_key)
 
         unless route.path.anchored
-          env['SCRIPT_NAME'] = match.to_s
+          env['SCRIPT_NAME'] = script_name.to_s + match.to_s
           env['PATH_INFO']   = match.post_match
         end
 
