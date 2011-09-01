@@ -10,8 +10,6 @@ $-w = before
 require 'journey/route'
 require 'journey/path/pattern'
 
-require 'journey/backwards' # backwards compat stuff
-
 module Journey
   class Router
     class RoutingError < ::StandardError
