@@ -1,7 +1,7 @@
 module Journey
   module Path
     class Pattern
-      attr_reader :spec, :requirements
+      attr_reader :spec, :requirements, :anchored
 
       def initialize strexp
         parser = Journey::Definition::Parser.new

@@ -92,17 +92,28 @@ module Journey
     end
 
     def call env
+      env['PATH_INFO'] = Utils.normalize_path env['PATH_INFO']
+
       find_routes(env) do |match, parameters, route|
-        unless match.post_match.empty?
+        script_name, path_info, set_params = env.values_at('SCRIPT_NAME',
+                                                           'PATH_INFO',
+                                                           @params_key)
+
+        unless route.path.anchored
           env['SCRIPT_NAME'] = match.to_s
-          env['PATH_INFO']   = match.post_match.sub(/^([^\/])/, '/\1')
+          env['PATH_INFO']   = match.post_match
         end
 
-        env[@params_key] = parameters
+        env[@params_key] = (set_params || {}).merge parameters
 
         status, headers, body = route.app.call(env)
 
-        next if headers.key?('X-Cascade') && headers['X-Cascade'] == 'pass'
+        if 'pass' == headers['X-Cascade']
+          env['SCRIPT_NAME'] = script_name
+          env['PATH_INFO']   = path_info
+          env[@params_key]   = set_params
+          next
+        end
 
         return [status, headers, body]
       end
@@ -112,7 +123,7 @@ module Journey
 
     def recognize req
       find_routes(req.env) do |match, parameters, route|
-        unless match.post_match.empty?
+        unless route.path.anchored
           req.env['SCRIPT_NAME'] = match.to_s
           req.env['PATH_INFO']   = match.post_match.sub(/^([^\/])/, '/\1')
         end
