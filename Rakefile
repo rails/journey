@@ -9,7 +9,7 @@ Hoe.plugin :gemspec # `gem install hoe-gemspec`
 Hoe.plugin :git     # `gem install hoe-git`
 Hoe.plugin :bundler # `gem install hoe-bundler`
 
-Hoe.spec 'rack-router' do
+Hoe.spec 'journey' do
   developer('Aaron Patterson', 'aaron@tenderlovemaking.com')
   self.readme_file      = 'README.rdoc'
   self.history_file     = 'CHANGELOG.rdoc'

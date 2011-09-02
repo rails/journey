@@ -1,5 +1,6 @@
 .autotest
 CHANGELOG.rdoc
+Gemfile
 Manifest.txt
 README.rdoc
 Rakefile
