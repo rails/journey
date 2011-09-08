@@ -28,7 +28,7 @@ module Journey
 
         if parameterize
           parameterized_parts.each do |k,v|
-            parameterized_parts[k] = parameterize[:parameterize].call(k, v)
+            parameterized_parts[k] = parameterize.call(k, v)
           end
         end
 

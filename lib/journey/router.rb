@@ -32,22 +32,14 @@ module Journey
       def [](k); env[k]; end
     end
 
-    attr_reader :request_class, :routes, :formatter
+    attr_reader :request_class, :formatter
+    attr_accessor :routes
 
-    def initialize options
+    def initialize routes, options
       @options       = options
       @params_key    = options[:parameters_key]
       @request_class = options[:request_class] || NullReq
-      @routes        = Routes.new
-      @formatter     = Formatter.new @routes
-    end
-
-    def add_route app, conditions, defaults, name = nil
-      routes.add_route app, conditions, defaults, name
-    end
-
-    def generate key, name, options, recall = {}, parameterize = nil
-      formatter.generate key, name, options, recall, parameterize
+      @routes        = routes
     end
 
     def call env
