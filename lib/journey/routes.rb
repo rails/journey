@@ -20,6 +20,10 @@ module Journey
       routes.each(&block)
     end
 
+    def clear
+      routes.clear
+    end
+
     ###
     # Add a route to the routing table.
     def add_route app, conditions, defaults, name = nil

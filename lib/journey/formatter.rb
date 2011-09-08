@@ -44,6 +44,10 @@ module Journey
       raise Router::RoutingError
     end
 
+    def clear
+      @cache = nil
+    end
+
     private
     def named_routes
       routes.named_routes
