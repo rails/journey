@@ -39,9 +39,8 @@ module Journey
       @named_routes  = {}
       @params_key    = options[:parameters_key]
       @request_class = options[:request_class] || NullReq
-      @cache         = {}
       @routes        = Routes.new
-      @formatter     = Formatter.new @routes, @cache
+      @formatter     = Formatter.new @routes
     end
 
     def named_routes
@@ -53,16 +52,7 @@ module Journey
     end
 
     def add_route app, conditions, defaults, name = nil
-      route = routes.add_route app, conditions, defaults, name
-
-      cache = @cache
-      route.required_defaults.each do |tuple|
-        hash = (cache[tuple] ||= {})
-        cache = hash
-      end
-      (cache[:___routes] ||= []) << [routes.length - 1, route]
-
-      route
+      routes.add_route app, conditions, defaults, name
     end
 
     def generate key, name, options, recall = {}, parameterize = nil

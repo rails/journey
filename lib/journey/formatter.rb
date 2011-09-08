@@ -5,9 +5,9 @@ module Journey
   class Formatter
     attr_reader :routes
 
-    def initialize routes, cache
+    def initialize routes
       @routes = routes
-      @cache  = cache
+      @cache  = nil
     end
 
     def generate key, name, options, recall = {}, parameterize = nil
@@ -105,8 +105,21 @@ module Journey
       }
     end
 
+    def build_cache
+      kash = {}
+      routes.each_with_index do |route, i|
+        money = kash
+        route.required_defaults.each do |tuple|
+          hash = (money[tuple] ||= {})
+          money = hash
+        end
+        (money[:___routes] ||= []) << [i, route]
+      end
+      kash
+    end
+
     def cache
-      @cache
+      @cache ||= build_cache
     end
   end
 end
