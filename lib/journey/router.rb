@@ -1,6 +1,7 @@
 require 'journey/core-ext/hash'
 require 'journey/router/utils'
 require 'journey/router/strexp'
+require 'journey/routes'
 
 before = $-w
 $-w = false
@@ -30,30 +31,35 @@ module Journey
       def [](k); env[k]; end
     end
 
-    attr_reader :routes, :named_routes, :request_class
+    attr_reader :request_class
 
     def initialize options
       @options       = options
-      @routes        = []
       @named_routes  = {}
       @params_key    = options[:parameters_key]
       @request_class = options[:request_class] || NullReq
       @cache         = {}
+      @routes        = Routes.new
+    end
+
+    def named_routes
+      @routes.named_routes
+    end
+
+    def routes
+      @routes
     end
 
     def add_route app, conditions, defaults, name = nil
-      path = conditions[:path_info]
-      route = Route.new(app, path, conditions, defaults)
+      route = routes.add_route app, conditions, defaults, name
 
       cache = @cache
       route.required_defaults.each do |tuple|
         hash = (cache[tuple] ||= {})
         cache = hash
       end
-      (cache[:___routes] ||= []) << [routes.length, route]
+      (cache[:___routes] ||= []) << [routes.length - 1, route]
 
-      routes << route
-      named_routes[name] = route if name
       route
     end
 
