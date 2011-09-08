@@ -1,14 +1,15 @@
 module Journey
   class Route
-    attr_reader :app, :path, :verb, :defaults, :ip
+    attr_reader :app, :path, :verb, :defaults, :ip, :name
 
     attr_reader :constraints
 
     ##
     # +path+ is a path constraint.
     # +constraints+ is a hash of constraints to be applied to this route.
-    def initialize app, path, constraints, defaults = {}
+    def initialize name, app, path, constraints, defaults = {}
       constraints  = constraints.dup
+      @name        = name
       @app         = app
       @path        = path
       @verb        = constraints[:request_method] || //

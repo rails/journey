@@ -6,7 +6,7 @@ module Journey
       app      = Object.new
       path     = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
       defaults = Object.new
-      route    = Route.new(app, path, {}, defaults)
+      route    = Route.new("name", app, path, {}, defaults)
 
       assert_equal app, route.app
       assert_equal path, route.path
@@ -15,21 +15,21 @@ module Journey
 
     def test_ip_address
       path  = Path::Pattern.new '/messages/:id(.:format)'
-      route = Route.new(nil, path, {:ip => '192.168.1.1'},
+      route = Route.new("name", nil, path, {:ip => '192.168.1.1'},
                         { :controller => 'foo', :action => 'bar' })
       assert_equal '192.168.1.1', route.ip
     end
 
     def test_default_ip
       path  = Path::Pattern.new '/messages/:id(.:format)'
-      route = Route.new(nil, path, {},
+      route = Route.new("name", nil, path, {},
                         { :controller => 'foo', :action => 'bar' })
       assert_equal(//, route.ip)
     end
 
     def test_format_empty
       path  = Path::Pattern.new '/messages/:id(.:format)'
-      route = Route.new(nil, path, {},
+      route = Route.new("name", nil, path, {},
                         { :controller => 'foo', :action => 'bar' })
 
       assert_equal '/messages', route.format({})
@@ -37,7 +37,7 @@ module Journey
 
     def test_format_with_star
       path  = Path::Pattern.new '/:controller/*extra'
-      route = Route.new(nil, path, {},
+      route = Route.new("name", nil, path, {},
                         { :controller => 'foo', :action => 'bar' })
       assert_equal '/foo/himom', route.format({
         :controller => 'foo',
@@ -47,7 +47,7 @@ module Journey
 
     def test_connects_all_match
       path  = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
-      route = Route.new(nil, path, {:action => 'bar'}, { :controller => 'foo' })
+      route = Route.new("name", nil, path, {:action => 'bar'}, { :controller => 'foo' })
 
       assert_equal '/foo/bar/10', route.format({
         :controller => 'foo',
@@ -58,17 +58,17 @@ module Journey
 
     def test_extras_are_not_included_if_optional
       path  = Path::Pattern.new '/page/:id(/:action)'
-      route = Route.new(nil, path, { }, { :action => 'show' })
+      route = Route.new("name", nil, path, { }, { :action => 'show' })
 
       assert_equal '/page/10', route.format({ :id => 10 })
     end
 
     def test_score
       path = Path::Pattern.new "/page/:id(/:action)(.:format)"
-      specific = Route.new nil, path, {}, {:controller=>"pages", :action=>"show"}
+      specific = Route.new "name", nil, path, {}, {:controller=>"pages", :action=>"show"}
 
       path = Path::Pattern.new "/:controller(/:action(/:id))(.:format)"
-      generic = Route.new nil, path, {}
+      generic = Route.new "name", nil, path, {}
 
       knowledge = {:id=>20, :controller=>"pages", :action=>"show"}
 
