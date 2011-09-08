@@ -2,6 +2,7 @@ require 'journey/core-ext/hash'
 require 'journey/router/utils'
 require 'journey/router/strexp'
 require 'journey/routes'
+require 'journey/formatter'
 
 before = $-w
 $-w = false
@@ -40,6 +41,7 @@ module Journey
       @request_class = options[:request_class] || NullReq
       @cache         = {}
       @routes        = Routes.new
+      @formatter     = Formatter.new @routes, @cache
     end
 
     def named_routes
@@ -64,37 +66,7 @@ module Journey
     end
 
     def generate key, name, options, recall = {}, parameterize = nil
-      constraints = recall.merge options
-
-      match_route(name, constraints) do |route|
-        data = constraints.dup
-
-        keys_to_keep = route.parts.reverse.drop_while { |part|
-          !options.key?(part) || (options[part] || recall[part]).nil?
-        } | route.required_parts
-
-        (data.keys - keys_to_keep).each do |bad_key|
-          data.delete bad_key
-        end
-
-        parameterized_parts = data.dup
-
-        if parameterize
-          parameterized_parts.each do |k,v|
-            parameterized_parts[k] = parameterize[:parameterize].call(k, v)
-          end
-        end
-
-        parameterized_parts.keep_if { |_,v| v  }
-
-        next unless verify_required_parts!(route, parameterized_parts)
-
-        z = Hash[options.to_a - data.to_a - route.defaults.to_a]
-
-        return [route.format(parameterized_parts), z]
-      end
-
-      raise RoutingError
+      @formatter.generate key, name, options, recall, parameterize
     end
 
     def call env
@@ -139,50 +111,6 @@ module Journey
     end
 
     private
-    def non_recursive cache, options
-      routes = []
-      stack  = [cache]
-
-      while stack.any?
-        c = stack.shift
-        routes.concat c[:___routes] if c.key? :___routes
-
-        options.each do |pair|
-          stack << c[pair] if c.key? pair
-        end
-      end
-
-      routes
-    end
-
-    def possibles cache, options, depth = 0
-      cache.fetch(:___routes) { [] } + options.find_all { |pair|
-        cache.key? pair
-      }.map { |pair|
-        possibles(cache[pair], options, depth + 1)
-      }.flatten(1)
-    end
-
-    def match_route name, options
-      if named_routes.key? name
-        yield named_routes[name]
-      else
-        #routes = possibles(@cache, options.to_a)
-        routes = non_recursive(@cache, options.to_a)
-
-        hash = routes.group_by { |_, r|
-          r.score options
-        }
-
-        hash.keys.sort.reverse_each do |score|
-          next if score < 0
-
-          hash[score].sort_by { |i,_| i }.each do |_,route|
-            yield route
-          end
-        end
-      end
-    end
 
     def find_routes env
       addr       = env['REMOTE_ADDR']
@@ -204,17 +132,6 @@ module Journey
         info = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
         yield(match_data, r.defaults.merge(info), r)
       end
-    end
-
-    def verify_required_parts! route, parts
-      tests = route.path.requirements
-      route.required_parts.all? { |key|
-        if tests.key? key
-          /\A#{tests[key]}\Z/ === parts[key]
-        else
-          true
-        end
-      }
     end
   end
 end
