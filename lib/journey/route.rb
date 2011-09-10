@@ -63,7 +63,7 @@ module Journey
         end
       end
 
-      def visit_SEGMENT node
+      def visit_SLASH node
         segment = super
         segment == '/' ? '' : segment
       end

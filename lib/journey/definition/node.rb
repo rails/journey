@@ -15,7 +15,7 @@ module Journey
         end
         alias :visit_PATH :nary
         alias :visit_DOT :nary
-        alias :visit_SEGMENT :nary
+        alias :visit_SLASH :nary
         alias :visit_GROUP :nary
 
         def terminal node; end
@@ -54,7 +54,7 @@ module Journey
           "." + node.children.map { |x| accept x }.join
         end
 
-        def visit_SEGMENT node
+        def visit_SLASH node
           "/" + node.children.map { |x| accept x }.join
         end
 

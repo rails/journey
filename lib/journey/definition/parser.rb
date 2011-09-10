@@ -14,40 +14,40 @@ module Journey
 ##### State transition tables begin ###
 
 racc_action_table = [
-     4,    15,    16,     7,    12,     8,     9,     7,    12,     8,
-     9,     7,    26,     8,     9,    12,    25,    16,     7,    12,
-     8,     9,     7,    27,     8,     9,    15,    16,     7,    28,
-    29,     9,    15,    16,     7,   nil,   nil,     9 ]
+     3,    17,    16,     9,    26,     8,    10,    19,    27,    16,
+     9,    19,     8,    10,     9,    19,     8,    10,     9,    19,
+     8,    10,     9,    11,     8,    10,    17,    16,     9,    28,
+    29,    10,    17,    16,     9,   nil,   nil,    10 ]
 
 racc_action_check = [
-     0,     8,     8,     0,     2,     0,     0,     2,     3,     2,
-     2,     3,    10,     3,     3,     7,     9,     7,     7,     5,
-     7,     7,     5,    21,     5,     5,     4,     4,     4,    22,
-    26,     4,    12,    12,    12,   nil,   nil,    12 ]
+     0,     8,     8,     0,    10,     0,     0,     9,    11,     9,
+     9,     6,     9,     9,     6,     5,     6,     6,     5,     4,
+     5,     5,     4,     1,     4,     4,     3,     3,     3,    24,
+    25,     3,    19,    19,    19,   nil,   nil,    19 ]
 
 racc_action_pointer = [
-    -2,   nil,     2,     6,    23,    17,   nil,    13,    -2,    13,
-    12,   nil,    29,   nil,   nil,   nil,   nil,   nil,   nil,   nil,
-   nil,    17,    23,   nil,   nil,   nil,    30,   nil,   nil,   nil ]
+    -2,    23,   nil,    23,    17,    13,     9,   nil,    -2,     5,
+     1,     8,   nil,   nil,   nil,   nil,   nil,   nil,   nil,    29,
+   nil,   nil,   nil,   nil,    23,    24,   nil,   nil,   nil,   nil ]
 
 racc_action_default = [
-   -21,    -1,    -6,    -7,    -2,    -8,    -9,   -21,   -21,   -21,
-   -21,    -3,   -21,    -4,   -13,   -19,   -18,   -12,   -10,   -11,
-    -5,   -21,   -21,   -15,   -14,   -20,   -21,   -16,   -17,    30 ]
+   -21,   -21,    -1,    -2,    -6,    -7,    -8,    -9,   -21,   -21,
+   -21,   -21,   -10,   -11,   -12,   -13,   -18,   -19,    -3,   -21,
+    -4,    -5,   -14,   -15,   -21,   -21,   -20,    30,   -16,   -17 ]
 
 racc_goto_table = [
-    17,    14,    22,    24,    23,    10,   nil,   nil,    17,    14,
-     1,   nil,    11,    13,   nil,    20,   nil,    21 ]
+    14,    15,     2,    22,    25,    23,    18,    20,    21,     1,
+   nil,    24,   nil,   nil,   nil,   nil,    14,    15 ]
 
 racc_goto_check = [
-     6,     4,     8,     8,     7,     1,   nil,   nil,     6,     4,
-     2,   nil,     2,     2,   nil,     2,   nil,     2 ]
+     6,     4,     2,     8,     8,     7,     2,     2,     2,     1,
+   nil,     2,   nil,   nil,   nil,   nil,     6,     4 ]
 
 racc_goto_pointer = [
-   nil,     5,    10,   nil,    -3,   nil,    -4,    -4,    -5 ]
+   nil,     9,     2,   nil,    -2,   nil,    -3,    -3,    -5 ]
 
 racc_goto_default = [
-   nil,   nil,   nil,     2,     3,     5,     6,    18,    19 ]
+   nil,   nil,   nil,     4,     5,     6,     7,    12,    13 ]
 
 racc_reduce_table = [
   0, 0, :racc_error,
@@ -139,7 +139,7 @@ def _reduce_1(val, _values, result)
 end
 
 def _reduce_2(val, _values, result)
- result = Node.new(:PATH, Node.new(:SEGMENT, [])) 
+ result = Node.new(:PATH, Node.new(:SLASH, [])) 
     result
 end
 
@@ -167,22 +167,22 @@ end
 # reduce 9 omitted
 
 def _reduce_10(val, _values, result)
- result = Node.new(:SEGMENT, [val.last]) 
+ result = Node.new(:SLASH, [val.last]) 
     result
 end
 
 def _reduce_11(val, _values, result)
- result = Node.new(:SEGMENT, [val.last]) 
+ result = Node.new(:SLASH, [val.last]) 
     result
 end
 
 def _reduce_12(val, _values, result)
- result = Node.new(:SEGMENT, [val.last]) 
+ result = Node.new(:SLASH, [val.last]) 
     result
 end
 
 def _reduce_13(val, _values, result)
- result = Node.new(:SEGMENT, [val.last]) 
+ result = Node.new(:SLASH, [val.last]) 
     result
 end
 

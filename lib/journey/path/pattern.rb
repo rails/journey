@@ -84,7 +84,7 @@ module Journey
           %r{\A#{node.children.map { |x| accept x }.join}\Z}
         end
 
-        def visit_SEGMENT node
+        def visit_SLASH node
           "/" + node.children.map { |x| accept x }.join
         end
 
@@ -140,7 +140,7 @@ module Journey
           @contents
         end
 
-        def visit_SEGMENT node
+        def visit_SLASH node
           token, text = @scanner.next_token
           unless token == :SLASH
             raise SyntaxError.new('/', text, @scanner.pos, @scanner.pre_match)
