@@ -3,6 +3,7 @@ module Journey
     attr_reader :app, :path, :verb, :defaults, :ip, :name
 
     attr_reader :constraints
+    alias :conditions :constraints
 
     ##
     # +path+ is a path constraint.
@@ -21,6 +22,15 @@ module Journey
       @required_defaults = nil
       @required_parts    = nil
       @parts             = nil
+    end
+
+    def requirements # :nodoc:
+      # needed for rails `rake routes`
+      path.requirements.merge required_defaults
+    end
+
+    def segments
+      @path.names
     end
 
     def required_keys
@@ -71,8 +81,9 @@ module Journey
     end
 
     def parts
-      @parts ||= path.names.map { |n| n.to_sym }
+      @parts ||= segments.map { |n| n.to_sym }
     end
+    alias :segment_keys :parts
 
     def format path_options
       (defaults.keys - required_parts).each do |key|

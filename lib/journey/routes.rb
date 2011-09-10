@@ -15,6 +15,11 @@ module Journey
     def length
       @routes.length
     end
+    alias :size :length
+
+    def last
+      @routes.last
+    end
 
     def each(&block)
       routes.each(&block)
