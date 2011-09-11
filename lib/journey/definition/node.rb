@@ -5,13 +5,17 @@ module Journey
 
       class Visitor # :nodoc:
         def accept node
-          send "visit_#{node.type}", node
+          visit node
         end
 
         private
 
+        def visit node
+          send "visit_#{node.type}", node
+        end
+
         def nary node
-          node.children.each { |x| accept x }
+          node.children.each { |x| visit x }
         end
         alias :visit_PATH :nary
         alias :visit_DOT :nary
@@ -33,7 +37,7 @@ module Journey
           @block = block
         end
 
-        def accept node
+        def visit node
           block.call node
           super
         end

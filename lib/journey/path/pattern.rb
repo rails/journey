@@ -55,7 +55,7 @@ module Journey
           @capture_count = [0]
         end
 
-        def accept node
+        def visit node
           super
           @capture_count
         end
@@ -134,7 +134,7 @@ module Journey
           super()
         end
 
-        def accept node
+        def visit node
           return @contents if @scanner.eos?
           super
           @contents
