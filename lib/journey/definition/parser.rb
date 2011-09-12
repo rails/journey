@@ -131,7 +131,7 @@ def _reduce_1(val, _values, result)
 end
 
 def _reduce_2(val, _values, result)
- result = Node.new(:CAT, val) 
+ result = Cat.new(val) 
     result
 end
 
@@ -142,12 +142,12 @@ end
 # reduce 5 omitted
 
 def _reduce_6(val, _values, result)
- result = Node.new(:GROUP, [val[1]]) 
+ result = Group.new([val[1]]) 
     result
 end
 
 def _reduce_7(val, _values, result)
- result = Node.new(:STAR, [Node.new(:SYMBOL, val.last.children)]) 
+ result = Star.new([Symbol.new(val.last.children)]) 
     result
 end
 
@@ -160,22 +160,22 @@ end
 # reduce 11 omitted
 
 def _reduce_12(val, _values, result)
- result = Node.new(:SLASH, '/') 
+ result = Slash.new('/') 
     result
 end
 
 def _reduce_13(val, _values, result)
- result = Node.new(:SYMBOL, val.first) 
+ result = Symbol.new(val.first) 
     result
 end
 
 def _reduce_14(val, _values, result)
- result = Node.new(:LITERAL, val.first) 
+ result = Literal.new(val.first) 
     result
 end
 
 def _reduce_15(val, _values, result)
- result = Node.new(:DOT, val.first) 
+ result = Dot.new(val.first) 
     result
 end
 

@@ -5,7 +5,7 @@ token SLASH LITERAL SYMBOL LPAREN RPAREN DOT STAR
 rule
   paths
     : path               { result = val.first }
-    | path paths         { result = Node.new(:CAT, val) }
+    | path paths  { result = Cat.new(val) }
     ;
   path
     : terminal
@@ -13,10 +13,10 @@ rule
     | star
     ;
   group
-    : LPAREN paths RPAREN { result = Node.new(:GROUP, [val[1]]) }
+    : LPAREN paths RPAREN { result = Group.new([val[1]]) }
     ;
   star
-    : STAR literal       { result = Node.new(:STAR, [Node.new(:SYMBOL, val.last.children)]) }
+    : STAR literal       { result = Star.new([Symbol.new(val.last.children)]) }
     ;
   terminal
     : symbol
@@ -25,15 +25,15 @@ rule
     | dot
     ;
   slash
-    : SLASH              { result = Node.new(:SLASH, '/') }
+    : SLASH              { result = Slash.new('/') }
     ;
   symbol
-    : SYMBOL             { result = Node.new(:SYMBOL, val.first) }
+    : SYMBOL             { result = Symbol.new(val.first) }
     ;
   literal
-    : LITERAL            { result = Node.new(:LITERAL, val.first) }
+    : LITERAL            { result = Literal.new(val.first) }
   dot
-    : DOT                { result = Node.new(:DOT, val.first) }
+    : DOT                { result = Dot.new(val.first) }
     ;
 
 end

@@ -1,6 +1,6 @@
 module Journey
   module Definition
-    class Node < Struct.new(:type, :children) # :nodoc:
+    class Node # :nodoc:
       include Enumerable
 
       class Visitor # :nodoc:
@@ -67,8 +67,10 @@ module Journey
         end
       end
 
-      def initialize type, children = []
-        super
+      attr_reader :children
+
+      def initialize children = []
+        @children = children
       end
 
       def each(&block)
@@ -82,6 +84,14 @@ module Journey
       def to_sym
         children.tr(':', '').to_sym
       end
+    end
+
+    %w{ Cat Group Star Symbol Slash Literal Dot }.each do |t|
+      class_eval %{
+        class #{t} < Node
+          def type; :#{t.upcase}; end
+        end
+      }
     end
   end
 end
