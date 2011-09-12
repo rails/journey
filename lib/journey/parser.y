@@ -3,17 +3,17 @@ class Journey::Parser
 token SLASH LITERAL SYMBOL LPAREN RPAREN DOT STAR
 
 rule
-  paths
-    : path               { result = val.first }
-    | path paths  { result = Cat.new(val) }
+  expressions
+    : expression              { result = val.first }
+    | expression expressions  { result = Cat.new(val) }
     ;
-  path
+  expression
     : terminal
     | group
     | star
     ;
   group
-    : LPAREN paths RPAREN { result = Group.new([val[1]]) }
+    : LPAREN expressions RPAREN { result = Group.new([val[1]]) }
     ;
   star
     : STAR literal       { result = Star.new([Symbol.new(val.last.children)]) }
