@@ -37,7 +37,7 @@ module Journey
       exp = Router::Strexp.new '/foo(/:id)', {}, ['/.?']
       path  = Path::Pattern.new exp
 
-      routes.add_route nil, {:path_info => path}.merge(requirements), {:id => nil}, {}
+      routes.add_route nil, path, requirements, {:id => nil}, {}
 
       env = rails_env 'PATH_INFO' => '/foo/10'
       router.recognize(env) do |r, _, params|
@@ -57,7 +57,7 @@ module Journey
       exp = Router::Strexp.new '/foo(/:id)', {}, ['/.?']
       path  = Path::Pattern.new exp
 
-      router.routes.add_route nil, {:path_info => path}.merge(requirements), {:id => nil}, {}
+      router.routes.add_route nil, path, requirements, {:id => nil}, {}
 
       env = rails_env 'PATH_INFO' => '/foo/10'
       router.recognize(env) do |r, _, params|
@@ -116,7 +116,7 @@ module Journey
 
     def test_defaults_merge_correctly
       path  = Path::Pattern.new '/foo(/:id)'
-      @router.routes.add_route nil, {:path_info => path}, {:id => nil}, {}
+      @router.routes.add_route nil, path, {}, {:id => nil}, {}
 
       env = rails_env 'PATH_INFO' => '/foo/10'
       @router.recognize(env) do |r, _, params|
@@ -200,13 +200,13 @@ module Journey
     def add_routes router, paths
       paths.each do |path|
         path  = Path::Pattern.new path
-        router.routes.add_route nil, {:path_info => path}, {}, {}
+        router.routes.add_route nil, path, {}, {}, {}
       end
     end
 
     def test_nil_path_parts_are_ignored
       path  = Path::Pattern.new "/:controller(/:action(.:format))"
-      @router.routes.add_route nil, {:path_info => path}, {}, {}
+      @router.routes.add_route nil, path, {}, {}, {}
 
       params = { :controller => "tasks", :format => nil }
       extras = { :action => 'lol' }
@@ -217,7 +217,7 @@ module Journey
 
     def test_generate_slash
       path  = Path::Pattern.new '/'
-      @router.routes.add_route nil, {:path_info => path}, {}, {}
+      @router.routes.add_route nil, path, {}, {}, {}
 
       params = [ [:controller, "tasks"],
                  [:action, "show"] ]
@@ -228,7 +228,7 @@ module Journey
 
     def test_generate_calls_param_proc
       path  = Path::Pattern.new '/:controller(/:action)'
-      @router.routes.add_route nil, {:path_info => path}, {}, {}
+      @router.routes.add_route nil, path, {}, {}, {}
 
       parameterized = []
       params = [ [:controller, "tasks"],
@@ -246,7 +246,7 @@ module Journey
 
     def test_generate_id
       path  = Path::Pattern.new '/:controller(/:action)'
-      @router.routes.add_route nil, {:path_info => path}, {}, {}
+      @router.routes.add_route nil, path, {}, {}, {}
 
       path, params = @formatter.generate(
         :path_info, nil, {:id=>1, :controller=>"tasks", :action=>"show"}, {})
@@ -257,7 +257,7 @@ module Journey
     # FIXME I *guess* this isn't required??
     def test_generate_escapes
       path  = Path::Pattern.new '/:controller(/:action)'
-      @router.routes.add_route nil, {:path_info => path}, {}, {}
+      @router.routes.add_route nil, path, {}, {}, {}
 
       path, _ = @formatter.generate(:path_info,
         nil, { :controller        => "tasks",
@@ -268,7 +268,7 @@ module Journey
 
     def test_generate_extra_params
       path  = Path::Pattern.new '/:controller(/:action)'
-      @router.routes.add_route nil, {:path_info => path}, {}, {}
+      @router.routes.add_route nil, path, {}, {}, {}
 
       path, params = @formatter.generate(:path_info,
         nil, { :id                => 1,
@@ -282,7 +282,7 @@ module Journey
 
     def test_generate_uses_recall_if_needed
       path  = Path::Pattern.new '/:controller(/:action(/:id))'
-      @router.routes.add_route nil, {:path_info => path}, {}, {}
+      @router.routes.add_route nil, path, {}, {}, {}
 
       path, params = @formatter.generate(:path_info,
         nil,
@@ -294,7 +294,7 @@ module Journey
 
     def test_generate_with_name
       path  = Path::Pattern.new '/:controller(/:action)'
-      @router.routes.add_route nil, {:path_info => path}, {}, {}
+      @router.routes.add_route nil, path, {}, {}, {}
 
       path, params = @formatter.generate(:path_info,
         "tasks",
@@ -312,7 +312,7 @@ module Journey
       define_method("test_recognize_#{expected.keys.map(&:to_s).join('_')}") do
         path  = Path::Pattern.new "/:controller(/:action(/:id))"
         app   = Object.new
-        route = @router.routes.add_route(app, { :path_info => path }, {}, {})
+        route = @router.routes.add_route(app, path, {}, {}, {})
 
         env = rails_env 'PATH_INFO' => request_path
         called   = false
@@ -335,7 +335,7 @@ module Journey
       )
       path  = Path::Pattern.new strexp
       app   = Object.new
-      route = @router.routes.add_route(app, { :path_info => path }, {}, {})
+      route = @router.routes.add_route(app, path, {}, {}, {})
 
       env = rails_env 'PATH_INFO' => '/admin/users/show/10'
       called   = false
@@ -356,7 +356,7 @@ module Journey
     def test_recognize_literal
       path   = Path::Pattern.new "/books(/:action(.:format))"
       app    = Object.new
-      route  = @router.routes.add_route(app, { :path_info => path }, {:controller => 'books'})
+      route  = @router.routes.add_route(app, path, {}, {:controller => 'books'})
 
       env    = rails_env 'PATH_INFO' => '/books/list.rss'
       expected = { :controller => 'books', :action => 'list', :format => 'rss' }
@@ -374,15 +374,14 @@ module Journey
       path   = Path::Pattern.new "/books(/:action(.:format))"
       app    = Object.new
       conditions = {
-        :path_info      => path,
         :request_method => 'GET'
       }
-      @router.routes.add_route(app, conditions, {})
+      @router.routes.add_route(app, path, conditions, {})
 
       conditions = conditions.dup
       conditions[:request_method] = 'POST'
 
-      post = @router.routes.add_route(app, conditions, {})
+      post = @router.routes.add_route(app, path, conditions, {})
 
       env = rails_env 'PATH_INFO' => '/books/list.rss',
                       "REQUEST_METHOD"    => "POST"

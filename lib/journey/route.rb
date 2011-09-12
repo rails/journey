@@ -26,7 +26,9 @@ module Journey
 
     def requirements # :nodoc:
       # needed for rails `rake routes`
-      path.requirements.merge required_defaults
+      path.requirements.merge(@defaults).delete_if { |_,v|
+        /.+?/ == v
+      }
     end
 
     def segments

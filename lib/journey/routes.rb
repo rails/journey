@@ -31,8 +31,7 @@ module Journey
 
     ###
     # Add a route to the routing table.
-    def add_route app, conditions, defaults, name = nil
-      path = conditions[:path_info]
+    def add_route app, path, conditions, defaults, name = nil
       route = Route.new(name, app, path, conditions, defaults)
 
       routes << route
