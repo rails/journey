@@ -1,11 +1,12 @@
 class Journey::Parser
 
-token SLASH LITERAL SYMBOL LPAREN RPAREN DOT STAR
+token SLASH LITERAL SYMBOL LPAREN RPAREN DOT STAR OR
 
 rule
   expressions
-    : expression              { result = val.first }
-    | expression expressions  { result = Cat.new(val) }
+    : expressions expression  { result = Cat.new(val) }
+    | expression              { result = val.first }
+    | or
     ;
   expression
     : terminal
@@ -14,6 +15,9 @@ rule
     ;
   group
     : LPAREN expressions RPAREN { result = Group.new([val[1]]) }
+    ;
+  or
+    : expressions OR expression { result = Or.new([val.first, val.last]) }
     ;
   star
     : STAR literal       { result = Star.new([Symbol.new(val.last.children)]) }

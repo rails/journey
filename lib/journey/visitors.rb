@@ -14,7 +14,7 @@ module Journey
       def nary node
         node.children.each { |x| visit x }
       end
-      %w{ GROUP CAT STAR }.each do |t|
+      %w{ GROUP CAT STAR OR }.each do |t|
         class_eval %{ def visit_#{t}(n); nary(n); end }
       end
 
@@ -56,6 +56,10 @@ module Journey
 
       def visit_GROUP node
         "(#{node.children.map { |x| visit x }.join})"
+      end
+
+      def visit_OR node
+        node.children.map { |x| visit x }.join '|'
       end
     end
 
@@ -136,6 +140,11 @@ digraph parse_tree {
 
       def visit_STAR node
         @nodes << "#{node.object_id} [label=\"*\"];"
+        super
+      end
+
+      def visit_OR node
+        @nodes << "#{node.object_id} [label=\"|\"];"
         super
       end
 

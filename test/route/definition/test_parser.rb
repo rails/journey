@@ -79,6 +79,15 @@ module Journey
         assert_round_trip('/bar/(*foo)')
       end
 
+      def test_or
+        assert_round_trip('a|b')
+        assert_round_trip('a|b|c')
+        assert_round_trip('(a|b)|c')
+        assert_round_trip('a|(b|c)')
+        assert_round_trip('*a|(b|c)')
+        assert_round_trip('*a|:b|c')
+      end
+
       def test_arbitrary
         assert_round_trip('/bar/*foo#')
       end
