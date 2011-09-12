@@ -68,9 +68,11 @@ module Journey
       end
 
       attr_reader :children
+      attr_accessor :position
 
       def initialize children = []
         @children = children
+        @position = nil
       end
 
       def each(&block)
@@ -84,9 +86,27 @@ module Journey
       def to_sym
         children.tr(':', '').to_sym
       end
+
+      def terminal?
+        false
+      end
     end
 
-    %w{ Cat Group Star Symbol Slash Literal Dot }.each do |t|
+    class Terminal < Node
+      def terminal?
+        true
+      end
+    end
+
+    %w{ Symbol Slash Literal Dot }.each do |t|
+      class_eval %{
+        class #{t} < Terminal
+          def type; :#{t.upcase}; end
+        end
+      }
+    end
+
+    %w{ Cat Group Star Or }.each do |t|
       class_eval %{
         class #{t} < Node
           def type; :#{t.upcase}; end
