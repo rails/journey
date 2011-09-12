@@ -97,7 +97,7 @@ module Journey
           ['/:foo(/:bar)/:lol(/:baz)', %w{ bar baz }],
         ].each do |pattern, list|
           path = Pattern.new pattern
-          assert_equal list, path.optional_names
+          assert_equal list.sort, path.optional_names.sort
         end
       end
 

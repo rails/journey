@@ -34,8 +34,8 @@ module Journey
       end
 
       def visit node
-        block.call node
         super
+        block.call node
       end
     end
 
