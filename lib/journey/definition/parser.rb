@@ -14,34 +14,36 @@ module Journey
 ##### State transition tables begin ###
 
 racc_action_table = [
-    11,    13,    12,     6,    14,    13,     7,    11,    13,    12,
-     6,    18,    19,     7,    11,    13,    12,     6,   nil,   nil,
-     7 ]
+    12,    14,    13,     6,    16,    15,     7,    12,    14,    13,
+     6,    14,    15,     7,    12,    14,    13,     6,    20,    15,
+     7,    21 ]
 
 racc_action_check = [
-     0,     0,     0,     0,     1,     7,     0,     2,     2,     2,
-     2,    14,    16,     2,     6,     6,     6,     6,   nil,   nil,
-     6 ]
+     0,     0,     0,     0,     1,     0,     0,     2,     2,     2,
+     2,     7,     2,     2,     6,     6,     6,     6,    16,     6,
+     6,    18 ]
 
 racc_action_pointer = [
-    -2,     4,     5,   nil,   nil,   nil,    12,     2,   nil,   nil,
-   nil,   nil,   nil,   nil,    11,   nil,     6,   nil,   nil,   nil ]
+    -2,     4,     5,   nil,   nil,   nil,    12,     8,   nil,   nil,
+   nil,   nil,   nil,   nil,   nil,   nil,    18,   nil,    15,   nil,
+   nil,   nil ]
 
 racc_action_default = [
-   -14,   -14,    -1,    -3,    -4,    -5,   -14,   -14,    -8,    -9,
-   -10,   -11,   -12,   -13,   -14,    -2,   -14,    -7,    20,    -6 ]
+   -16,   -16,    -1,    -3,    -4,    -5,   -16,   -16,    -8,    -9,
+   -10,   -11,   -12,   -13,   -14,   -15,   -16,    -2,   -16,    -7,
+    22,    -6 ]
 
 racc_goto_table = [
-     1,    17,    15,   nil,   nil,   nil,    16 ]
+     1,    19,    17,   nil,   nil,   nil,    18 ]
 
 racc_goto_check = [
      1,     6,     1,   nil,   nil,   nil,     1 ]
 
 racc_goto_pointer = [
-   nil,     0,   nil,   nil,   nil,   nil,    -6,   nil,   nil ]
+   nil,     0,   nil,   nil,   nil,   nil,    -6,   nil,   nil,   nil ]
 
 racc_goto_default = [
-   nil,   nil,     2,     3,     4,     5,     9,     8,    10 ]
+   nil,   nil,     2,     3,     4,     5,     9,     8,    10,    11 ]
 
 racc_reduce_table = [
   0, 0, :racc_error,
@@ -55,13 +57,15 @@ racc_reduce_table = [
   1, 12, :_reduce_none,
   1, 12, :_reduce_none,
   1, 12, :_reduce_none,
-  1, 17, :_reduce_11,
-  1, 16, :_reduce_12,
-  1, 15, :_reduce_13 ]
+  1, 12, :_reduce_none,
+  1, 17, :_reduce_12,
+  1, 16, :_reduce_13,
+  1, 15, :_reduce_14,
+  1, 18, :_reduce_15 ]
 
-racc_reduce_n = 14
+racc_reduce_n = 16
 
-racc_shift_n = 20
+racc_shift_n = 22
 
 racc_token_table = {
   false => 0,
@@ -112,7 +116,8 @@ Racc_token_to_s_table = [
   "star",
   "literal",
   "symbol",
-  "slash" ]
+  "slash",
+  "dot" ]
 
 Racc_debug_parser = false
 
@@ -152,18 +157,25 @@ end
 
 # reduce 10 omitted
 
-def _reduce_11(val, _values, result)
+# reduce 11 omitted
+
+def _reduce_12(val, _values, result)
  result = Node.new(:SLASH, '/') 
     result
 end
 
-def _reduce_12(val, _values, result)
+def _reduce_13(val, _values, result)
  result = Node.new(:SYMBOL, val.first) 
     result
 end
 
-def _reduce_13(val, _values, result)
+def _reduce_14(val, _values, result)
  result = Node.new(:LITERAL, val.first) 
+    result
+end
+
+def _reduce_15(val, _values, result)
+ result = Node.new(:DOT, val.first) 
     result
 end
 

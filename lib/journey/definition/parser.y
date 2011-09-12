@@ -22,6 +22,7 @@ rule
     : symbol
     | literal
     | slash
+    | dot
     ;
   slash
     : SLASH              { result = Node.new(:SLASH, '/') }
@@ -31,6 +32,8 @@ rule
     ;
   literal
     : LITERAL            { result = Node.new(:LITERAL, val.first) }
+  dot
+    : DOT                { result = Node.new(:DOT, val.first) }
     ;
 
 end

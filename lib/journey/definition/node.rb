@@ -25,6 +25,7 @@ module Journey
         alias :visit_LITERAL :terminal
         alias :visit_SYMBOL :terminal
         alias :visit_SLASH :terminal
+        alias :visit_DOT :terminal
       end
 
       ##
@@ -53,20 +54,16 @@ module Journey
           "*" + visit_CAT(node)
         end
 
-        def visit_SLASH node
+        def terminal node
           node.children
         end
-
-        def visit_LITERAL node
-          node.children
-        end
-
-        def visit_SYMBOL node
-          node.children
-        end
+        alias :visit_SLASH :terminal
+        alias :visit_LITERAL :terminal
+        alias :visit_SYMBOL :terminal
+        alias :visit_DOT :terminal
 
         def visit_GROUP node
-          "(#{node.children.map { |x| accept x }.join})"
+          "(#{node.children.map { |x| visit x }.join})"
         end
       end
 

@@ -25,6 +25,7 @@ module Journey
         @names          = nil
         @optional_names = nil
         @required_names = nil
+        @re = nil
       end
 
       def names
@@ -105,6 +106,7 @@ module Journey
         def visit_LITERAL node
           Regexp.escape node.children
         end
+        alias :visit_DOT :visit_LITERAL
 
         def visit_SLASH node
           node.children
@@ -164,8 +166,7 @@ module Journey
 
       private
       def to_regexp
-        viz = regexp_visitor.new(@separators, @requirements)
-        viz.accept spec
+        @re ||= regexp_visitor.new(@separators, @requirements).accept spec
       end
 
       def regexp_visitor
