@@ -49,7 +49,7 @@ module Journey
         [:LITERAL, text]
         # any char
       when text = @ss.scan(/./)
-        [text, text]
+        [:LITERAL, text]
       end
     end
   end

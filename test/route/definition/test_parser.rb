@@ -79,6 +79,10 @@ module Journey
         assert_round_trip('/bar/(*foo)')
       end
 
+      def test_arbitrary
+        assert_round_trip('/bar/*foo#')
+      end
+
       def test_literal_dot_paren
         assert_round_trip "/sprockets.js(.:format)"
       end
