@@ -4,7 +4,7 @@ module Journey
   module Definition
     class TestParser < MiniTest::Unit::TestCase
       def setup
-        @parser = Definition::Parser.new
+        @parser = Parser.new
       end
 
       def test_slash

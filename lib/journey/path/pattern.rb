@@ -4,7 +4,7 @@ module Journey
       attr_reader :spec, :requirements, :anchored
 
       def initialize strexp
-        parser = Journey::Definition::Parser.new
+        parser = Journey::Parser.new
 
         @anchored = true
 
@@ -48,7 +48,7 @@ module Journey
         }.flatten.map { |n| n.children.tr ':', '' }.uniq
       end
 
-      class RegexpOffsets < Journey::Definition::Node::Visitor # :nodoc:
+      class RegexpOffsets < Journey::Visitors::Visitor # :nodoc:
         attr_reader :offsets
 
         def initialize matchers
@@ -73,7 +73,7 @@ module Journey
         end
       end
 
-      class AnchoredRegexp < Journey::Definition::Node::Visitor # :nodoc:
+      class AnchoredRegexp < Journey::Visitors::Visitor # :nodoc:
         def initialize separator, matchers
           @separator = separator
           @matchers  = matchers

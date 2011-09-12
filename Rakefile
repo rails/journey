@@ -20,8 +20,8 @@ rule '.rb' => '.y' do |t|
   sh "racc -l -o #{t.name} #{t.source}"
 end
 
-task :compile => "lib/journey/definition/parser.rb"
+task :compile => "lib/journey/parser.rb"
 
-Rake::Task[:test].prerequisites.unshift "lib/journey/definition/parser.rb"
+Rake::Task[:test].prerequisites.unshift "lib/journey/parser.rb"
 
 # vim: syntax=ruby

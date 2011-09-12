@@ -4,7 +4,7 @@ module Journey
   module Definition
     class TestScanner < MiniTest::Unit::TestCase
       def setup
-        @scanner = Definition::Scanner.new
+        @scanner = Scanner.new
       end
 
       # /page/:id(/:action)(.:format)

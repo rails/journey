@@ -7,10 +7,9 @@
 require 'racc/parser.rb'
 
 
-require 'journey/definition/parser_extras'
+require 'journey/parser_extras'
 module Journey
-  module Definition
-    class Parser < Racc::Parser
+  class Parser < Racc::Parser
 ##### State transition tables begin ###
 
 racc_action_table = [
@@ -183,6 +182,5 @@ def _reduce_none(val, _values, result)
   val[0]
 end
 
-    end   # class Parser
-    end   # module Definition
+  end   # class Parser
   end   # module Journey

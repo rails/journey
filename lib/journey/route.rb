@@ -49,39 +49,6 @@ module Journey
       score + (required_defaults.length * 2)
     end
 
-    class Formatter < ::Journey::Definition::Node::String
-      attr_reader :options, :consumed
-
-      def initialize options
-        @options  = options
-        @consumed = {}
-      end
-
-      def visit_GROUP node
-        if consumed == options
-          nil
-        else
-          node.children.map { |x| accept x }
-        end
-      end
-
-      def visit_LITERAL node
-        node.children
-      end
-
-      alias :visit_STAR :visit_CAT
-
-      def visit_SYMBOL node
-        key = node.children.tr(':', '').to_sym
-
-        if options.key? key
-          consumed[key] = options[key]
-        else
-          "\0"
-        end
-      end
-    end
-
     def parts
       @parts ||= segments.map { |n| n.to_sym }
     end
@@ -92,7 +59,7 @@ module Journey
         path_options.delete key if defaults[key].to_s == path_options[key].to_s
       end
 
-      formatter      = Formatter.new(path_options)
+      formatter      = Visitors::Formatter.new(path_options)
 
       formatted_path = formatter.accept(path.spec)
       formatted_path.gsub(/\/\x00/, '')

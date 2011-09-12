@@ -1,4 +1,4 @@
-class Journey::Definition::Parser
+class Journey::Parser
 
 token SLASH LITERAL SYMBOL LPAREN RPAREN DOT STAR
 
@@ -40,4 +40,4 @@ end
 
 ---- header
 
-require 'journey/definition/parser_extras'
+require 'journey/parser_extras'

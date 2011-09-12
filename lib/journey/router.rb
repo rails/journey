@@ -6,7 +6,7 @@ require 'journey/formatter'
 
 before = $-w
 $-w = false
-require 'journey/definition/parser'
+require 'journey/parser'
 $-w = before
 
 require 'journey/route'
