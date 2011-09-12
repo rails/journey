@@ -21,6 +21,10 @@ module Journey
         Visitors::String.new.accept(self)
       end
 
+      def to_dot
+        Visitors::Dot.new.accept(self)
+      end
+
       def to_sym
         children.tr(':', '').to_sym
       end

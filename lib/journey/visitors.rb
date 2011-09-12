@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Journey
   module Visitors
     class Visitor # :nodoc:
@@ -96,5 +97,54 @@ module Journey
       end
     end
 
+    class Dot < Visitor
+      def initialize
+        @nodes = []
+        @edges = []
+      end
+
+      def accept node
+        super
+        <<-eodot
+digraph parse_tree {
+  size="8,5"
+  node [shape = none];
+  edge [dir = none];
+  #{@nodes.join "\n"}
+  #{@edges.join("\n")}
+}
+        eodot
+      end
+
+      private
+      def nary node
+        node.children.each do |c|
+          @edges << "#{node.object_id} -> #{c.object_id};"
+        end
+        super
+      end
+
+      def visit_GROUP node
+        @nodes << "#{node.object_id} [label=\"()\"];"
+        super
+      end
+
+      def visit_CAT node
+        @nodes << "#{node.object_id} [label=\"○\"];"
+        super
+      end
+
+      def visit_STAR node
+        @nodes << "#{node.object_id} [label=\"*\"];"
+        super
+      end
+
+      def terminal node
+        label = node.position && "(#{node.position})"
+        value = [label, node.children].compact.join '\\n'
+
+        @nodes << "#{node.object_id} [label=\"#{value}\"];"
+      end
+    end
   end
 end
