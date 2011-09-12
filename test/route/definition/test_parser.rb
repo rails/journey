@@ -8,7 +8,7 @@ module Journey
       end
 
       def test_slash
-        assert_equal :PATH, @parser.parse('/').type
+        assert_equal :SLASH, @parser.parse('/').type
         assert_round_trip '/'
       end
 

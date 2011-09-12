@@ -17,15 +17,14 @@ module Journey
         def nary node
           node.children.each { |x| visit x }
         end
-        alias :visit_PATH :nary
-        alias :visit_DOT :nary
-        alias :visit_SLASH :nary
         alias :visit_GROUP :nary
+        alias :visit_CAT :nary
+        alias :visit_STAR :nary
 
         def terminal node; end
-        alias :visit_STAR :terminal
         alias :visit_LITERAL :terminal
         alias :visit_SYMBOL :terminal
+        alias :visit_SLASH :terminal
       end
 
       ##
@@ -46,20 +45,16 @@ module Journey
       class String < Visitor
         private
 
-        def visit_PATH node
-          node.children.map { |x| accept x }.join
+        def visit_CAT node
+          node.children.map { |x| visit x }.join
         end
 
         def visit_STAR node
-          "*" + node.children
-        end
-
-        def visit_DOT node
-          "." + node.children.map { |x| accept x }.join
+          "*" + visit_CAT(node)
         end
 
         def visit_SLASH node
-          "/" + node.children.map { |x| accept x }.join
+          node.children
         end
 
         def visit_LITERAL node

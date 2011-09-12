@@ -59,27 +59,27 @@ module Journey
 
       def visit_GROUP node
         if consumed == options
-          ''
+          nil
         else
-          node.children.map { |x| accept x }.join
+          node.children.map { |x| accept x }
         end
       end
 
-      def visit_SLASH node
-        segment = super
-        segment == '/' ? '' : segment
+      def visit_LITERAL node
+        node.children
       end
 
+      alias :visit_STAR :visit_CAT
+
       def visit_SYMBOL node
-        key = node.to_sym
+        key = node.children.tr(':', '').to_sym
 
         if options.key? key
           consumed[key] = options[key]
         else
-          ''
+          "\0"
         end
       end
-      alias :visit_STAR :visit_SYMBOL
     end
 
     def parts
@@ -95,8 +95,7 @@ module Journey
       formatter      = Formatter.new(path_options)
 
       formatted_path = formatter.accept(path.spec)
-
-      formatted_path.empty? ? '/' : formatted_path
+      formatted_path.gsub(/\/\x00/, '')
     end
 
     def optional_parts

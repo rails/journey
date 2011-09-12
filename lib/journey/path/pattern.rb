@@ -29,7 +29,7 @@ module Journey
 
       def names
         @names ||= spec.find_all { |node|
-          node.type == :SYMBOL || node.type == :STAR
+          node.type == :SYMBOL
         }.map { |n| n.children.tr(':', '') }
       end
 
@@ -42,7 +42,7 @@ module Journey
           node.type == :GROUP
         }.map { |group|
           group.find_all { |node|
-            node.type == :SYMBOL || node.type == :STAR
+            node.type == :SYMBOL
           }
         }.flatten.map { |n| n.children.tr ':', '' }.uniq
       end
@@ -80,12 +80,12 @@ module Journey
           super()
         end
 
-        def visit_PATH node
-          %r{\A#{node.children.map { |x| accept x }.join}\Z}
+        def accept node
+          %r{\A#{visit node}\Z}
         end
 
-        def visit_SLASH node
-          "/" + node.children.map { |x| accept x }.join
+        def visit_CAT node
+          node.children.map { |n| visit n }.join
         end
 
         def visit_SYMBOL node
@@ -99,15 +99,15 @@ module Journey
         end
 
         def visit_GROUP node
-          "(?:#{node.children.map { |x| accept x }.join})?"
+          "(?:#{node.children.map { |x| visit x }.join})?"
         end
 
         def visit_LITERAL node
-          node.children
+          Regexp.escape node.children
         end
 
-        def visit_DOT node
-          '\.' + node.children.map { |x| accept x }.join
+        def visit_SLASH node
+          node.children
         end
 
         def visit_STAR node
@@ -116,56 +116,8 @@ module Journey
       end
 
       class UnanchoredRegexp < AnchoredRegexp # :nodoc:
-        def visit_PATH node
-          %r{\A#{node.children.map { |x| accept x }.join}}
-        end
-      end
-
-      class Matcher < Journey::Definition::Node::Visitor # :nodoc:
-        class SyntaxError < ::SyntaxError
-          def initialize expected, actual, pos, after
-            super("unexpected '#{actual}', expected '#{expected}' at #{pos} after #{after}")
-          end
-        end
-
-        def initialize scanner
-          @scanner = scanner
-          @contents = {}
-          super()
-        end
-
-        def visit node
-          return @contents if @scanner.eos?
-          super
-          @contents
-        end
-
-        def visit_SLASH node
-          token, text = @scanner.next_token
-          unless token == :SLASH
-            raise SyntaxError.new('/', text, @scanner.pos, @scanner.pre_match)
-          end
-          super
-        end
-
-        def visit_SYMBOL node
-          _, text = @scanner.next_token
-          @contents[node.to_sym] = text
-          super
-        end
-
-        def visit_LITERAL node
-          _, text = @scanner.next_token
-          raise unless text == node.children
-          super
-        end
-
-        def visit_DOT node
-          token, text = @scanner.next_token
-          unless token == node.type
-            raise SyntaxError.new('.', text, @scanner.pos, @scanner.pre_match)
-          end
-          super
+        def accept node
+          %r{\A#{visit node}}
         end
       end
 
