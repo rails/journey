@@ -134,6 +134,11 @@ digraph parse_tree {
         super
       end
 
+      def unary node
+        @edges << "#{node.object_id} -> #{node.value.object_id};"
+        super
+      end
+
       def visit_GROUP node
         @nodes << "#{node.object_id} [label=\"()\"];"
         super
