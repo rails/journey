@@ -8,7 +8,7 @@ module Journey
       path   = Path::Pattern.new exp
       requirements = { :hello => /world/ }
 
-      routes.add_route nil, {:path_info => path}.merge(requirements), {:id => nil}, {}
+      routes.add_route nil, path, requirements, {:id => nil}, {}
       assert_equal 1, routes.length
 
       routes.clear
