@@ -164,7 +164,7 @@ def _reduce_8(val, _values, result)
 end
 
 def _reduce_9(val, _values, result)
- result = Star.new(Symbol.new(val.last.children)) 
+ result = Star.new(Symbol.new(val.last.value)) 
     result
 end
 

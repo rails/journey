@@ -25,7 +25,7 @@ module Journey
       end
 
       def to_sym
-        children.tr(':', '').to_sym
+        value.tr(':', '').to_sym
       end
 
       def terminal?
@@ -38,8 +38,6 @@ module Journey
     end
 
     class Terminal < Node
-      def children; value end
-
       def nullable?
         !value
       end
