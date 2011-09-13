@@ -31,10 +31,26 @@ module Journey
       def terminal?
         false
       end
+
+      def type
+        raise NotImplementedError
+      end
     end
 
     class Terminal < Node
       def children; value end
+
+      def nullable?
+        !value
+      end
+
+      def firstpos
+        nullable? ? [] : [self]
+      end
+
+      def lastpos
+        nullable? ? [] : [self]
+      end
 
       def terminal?
         true
@@ -51,10 +67,15 @@ module Journey
 
     class Unary < Node
       def children; [value] end
+      def nullable?; value.nullable? end
+      def firstpos; value.firstpos end
+      def lastpos; value.lastpos end
     end
 
     class Group < Unary
       def type; :GROUP; end
+
+      def nullable?; true end
     end
 
     class Star < Unary
@@ -75,10 +96,41 @@ module Journey
 
     class Cat < Binary
       def type; :CAT; end
+      def nullable?
+        left.nullable? && right.nullable?
+      end
+
+      def firstpos
+        if left.nullable?
+          left.firstpos | right.firstpos
+        else
+          left.firstpos
+        end
+      end
+
+      def lastpos
+        if right.nullable?
+          left.firstpos | right.firstpos
+        else
+          right.firstpos
+        end
+      end
     end
 
     class Or < Binary
       def type; :OR; end
+
+      def nullable?
+        left.nullable? || right.nullable?
+      end
+
+      def firstpos
+        left.firstpos | right.firstpos
+      end
+
+      def lastpos
+        left.lastpos | right.lastpos
+      end
     end
   end
 end
