@@ -80,7 +80,7 @@ module Journey
         end
 
         def visit_CAT node
-          node.children.map { |n| visit n }.join
+          [visit(node.left), visit(node.right)].join
         end
 
         def visit_SYMBOL node
@@ -94,16 +94,16 @@ module Journey
         end
 
         def visit_GROUP node
-          "(?:#{node.children.map { |x| visit x }.join})?"
+          "(?:#{visit node.value})?"
         end
 
         def visit_LITERAL node
-          Regexp.escape node.children
+          Regexp.escape node.value
         end
         alias :visit_DOT :visit_LITERAL
 
         def visit_SLASH node
-          node.children
+          node.value
         end
 
         def visit_STAR node

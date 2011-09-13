@@ -4,7 +4,7 @@ token SLASH LITERAL SYMBOL LPAREN RPAREN DOT STAR OR
 
 rule
   expressions
-    : expressions expression  { result = Cat.new(val) }
+    : expressions expression  { result = Cat.new(val.first, val.last) }
     | expression              { result = val.first }
     | or
     ;
@@ -14,13 +14,13 @@ rule
     | star
     ;
   group
-    : LPAREN expressions RPAREN { result = Group.new([val[1]]) }
+    : LPAREN expressions RPAREN { result = Group.new(val[1]) }
     ;
   or
-    : expressions OR expression { result = Or.new([val.first, val.last]) }
+    : expressions OR expression { result = Or.new(val.first, val.last) }
     ;
   star
-    : STAR literal       { result = Star.new([Symbol.new(val.last.children)]) }
+    : STAR literal       { result = Star.new(Symbol.new(val.last.children)) }
     ;
   terminal
     : symbol

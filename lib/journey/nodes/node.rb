@@ -5,11 +5,10 @@ module Journey
     class Node # :nodoc:
       include Enumerable
 
-      attr_reader :children
-      attr_accessor :position
+      attr_accessor :position, :value
 
-      def initialize children = []
-        @children = children
+      def initialize value
+        @value    = value
         @position = nil
       end
 
@@ -35,6 +34,8 @@ module Journey
     end
 
     class Terminal < Node
+      def children; value end
+
       def terminal?
         true
       end
@@ -48,12 +49,36 @@ module Journey
       }
     end
 
-    %w{ Cat Group Star Or }.each do |t|
-      class_eval %{
-        class #{t} < Node
-          def type; :#{t.upcase}; end
-        end
-      }
+    class Unary < Node
+      def children; [value] end
+    end
+
+    class Group < Unary
+      def type; :GROUP; end
+    end
+
+    class Star < Unary
+      def type; :STAR; end
+    end
+
+    class Binary < Node
+      alias :left :value
+      attr_accessor :right
+
+      def initialize left, right
+        super(left)
+        @right = right
+      end
+
+      def children; [left, right] end
+    end
+
+    class Cat < Binary
+      def type; :CAT; end
+    end
+
+    class Or < Binary
+      def type; :OR; end
     end
   end
 end

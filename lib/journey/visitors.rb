@@ -11,12 +11,18 @@ module Journey
         send "visit_#{node.type}", node
       end
 
-      def nary node
-        node.children.each { |x| visit x }
+      def binary node
+        visit node.left
+        visit node.right
       end
-      %w{ GROUP CAT STAR OR }.each do |t|
-        class_eval %{ def visit_#{t}(n); nary(n); end }
+      def visit_CAT(n); binary(n); end
+      def visit_OR(n); binary(n); end
+
+      def unary node
+        visit node.value
       end
+      def visit_GROUP(n); unary(n); end
+      def visit_STAR(n); unary(n); end
 
       def terminal node; end
       %w{ LITERAL SYMBOL SLASH DOT }.each do |t|
@@ -42,24 +48,24 @@ module Journey
     class String < Visitor
       private
 
-      def nary node
-        node.children.map { |x| visit x }.join
+      def binary node
+        [visit(node.left), visit(node.right)].join
+      end
+
+      def terminal node
+        node.value
       end
 
       def visit_STAR node
         "*" + super
       end
 
-      def terminal node
-        node.children
-      end
-
       def visit_GROUP node
-        "(#{node.children.map { |x| visit x }.join})"
+        "(#{visit node.value})"
       end
 
       def visit_OR node
-        node.children.map { |x| visit x }.join '|'
+        [visit(node.left), visit(node.right)].join '|'
       end
     end
 
@@ -78,20 +84,20 @@ module Journey
         if consumed == options
           nil
         else
-          node.children.map { |x| visit x }
+          visit node.value
         end
       end
 
       def terminal node
-        node.children
+        node.value
       end
 
-      def nary node
-        node.children.map { |c| visit c }.join
+      def binary node
+        [visit(node.left), visit(node.right)].join
       end
 
       def visit_SYMBOL node
-        key = node.children.tr(':', '').to_sym
+        key = node.value.tr(':', '').to_sym
 
         if options.key? key
           consumed[key] = options[key]
@@ -121,7 +127,7 @@ digraph parse_tree {
       end
 
       private
-      def nary node
+      def binary node
         node.children.each do |c|
           @edges << "#{node.object_id} -> #{c.object_id};"
         end
