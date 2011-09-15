@@ -10,14 +10,14 @@ Gem::Specification.new do |s|
   s.description = "Journey is a router.  It routes requests."
   s.email = ["aaron@tenderlovemaking.com"]
   s.extra_rdoc_files = ["Manifest.txt", "CHANGELOG.rdoc", "README.rdoc"]
-  s.files = [".autotest", "CHANGELOG.rdoc", "Gemfile", "Manifest.txt", "README.rdoc", "Rakefile", "journey.gemspec", "lib/journey/backwards.rb", "lib/journey/core-ext/hash.rb", "lib/journey/definition/node.rb", "lib/journey/definition/parser.rb", "lib/journey/definition/parser.y", "lib/journey/definition/parser_extras.rb", "lib/journey/definition/scanner.rb", "lib/journey/path/pattern.rb", "lib/journey/route.rb", "lib/journey/router.rb", "lib/journey/router/strexp.rb", "lib/journey/router/utils.rb", "test/helper.rb", "test/path/test_pattern.rb", "test/route/definition/test_parser.rb", "test/route/definition/test_scanner.rb", "test/router/test_strexp.rb", "test/router/test_utils.rb", "test/test_route.rb", "test/test_router.rb", ".gemtest"]
+  s.files = `git ls-files`.split("\n")
   s.homepage = "http://github.com/tenderlove/journey"
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = "journey"
   s.rubygems_version = "1.8.10"
   s.summary = "Journey is a router"
-  s.test_files = ["test/path/test_pattern.rb", "test/route/definition/test_parser.rb", "test/route/definition/test_scanner.rb", "test/router/test_strexp.rb", "test/router/test_utils.rb", "test/test_route.rb", "test/test_router.rb"]
+  s.test_files = `git ls-files -- test/*`.split("\n")
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
