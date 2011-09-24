@@ -160,8 +160,7 @@ digraph parse_tree {
       end
 
       def terminal node
-        label = node.position && "(#{node.position})"
-        value = [label, node.children].compact.join '\\n'
+        value = node.left
 
         @nodes << "#{node.object_id} [label=\"#{value}\"];"
       end
