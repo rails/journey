@@ -2,18 +2,12 @@
 module Journey
   module NFA
     class TransitionTable
+      attr_accessor :accepting
+
       def initialize
         @table     = Hash.new { |h,f| h[f] = {} }
-        @accepting = Hash.new(false)
+        @accepting = 0
         @inverted  = nil
-      end
-
-      def add_accepting s
-        @accepting[s] = true
-      end
-
-      def remove_accepting s
-        @accepting.delete s
       end
 
       def []= i, f, s
@@ -64,7 +58,7 @@ digraph nfa {
   rankdir=LR;
   size="8,5"
   node [shape = doublecircle];
-  #{@accepting.keys.join ' ' };
+  #{accepting};
   node [shape = circle];
   #{nodes.join "\n"}
   #{edges.join "\n"}
@@ -97,8 +91,6 @@ digraph nfa {
         left  = visit node.left
         right = visit node.right
 
-        @tt.remove_accepting left.last
-
         @tt.merge left.last, right.first
 
         [left.first, right.last]
@@ -109,8 +101,7 @@ digraph nfa {
         left  = visit node.left
         to    = @i += 1
 
-        @tt.remove_accepting left.last
-        @tt.add_accepting to
+        @tt.accepting = to
 
         @tt[from, left.first] = nil
         @tt[left.last, to] = nil
@@ -125,15 +116,12 @@ digraph nfa {
         right = visit node.right
         to    = @i += 1
 
-        @tt.remove_accepting left.last
-        @tt.remove_accepting right.last
-
         @tt[from, left.first]  = nil
         @tt[from, right.first] = nil
         @tt[left.last, to]     = nil
         @tt[right.last, to]    = nil
 
-        @tt.add_accepting to
+        @tt.accepting = to
 
         [from, to]
       end
@@ -143,7 +131,7 @@ digraph nfa {
         to_i   = @i += 1 # new state
 
         @tt[from_i, to_i] = node
-        @tt.add_accepting to_i
+        @tt.accepting = to_i
 
         [from_i, to_i]
       end
