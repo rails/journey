@@ -12,7 +12,7 @@ module Journey
         edges = table.edges(0)
 
         assert_equal 1, edges.length
-        assert_equal '/', edges.first.first
+        assert_equal '/', edges.first.first.to_s
       end
 
       def test_eclosure
@@ -48,6 +48,14 @@ module Journey
 
         assert_equal 2, table.move(states, 'a').length
         assert_equal 0, table.move(states, 'b').length
+      end
+
+      def test_move_regexp
+        table  = tt 'a|:a'
+        states = table.eclosure 0
+
+        assert_equal 2, table.move(states, 'a').length
+        assert_equal 1, table.move(states, 'b').length
       end
 
       private

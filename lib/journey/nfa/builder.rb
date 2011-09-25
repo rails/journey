@@ -139,7 +139,7 @@ digraph nfa {
         from_i = @i += 1 # new state
         to_i   = @i += 1 # new state
 
-        @tt[from_i, to_i] = node.left
+        @tt[from_i, to_i] = node
         @tt.add_accepting to_i
 
         [from_i, to_i]

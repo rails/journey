@@ -38,16 +38,8 @@ module Journey
     end
 
     class Terminal < Node
-      def nullable?
-        !value
-      end
-
-      def firstpos
-        nullable? ? [] : [self]
-      end
-
-      def lastpos
-        nullable? ? [] : [self]
+      def === str
+        left === str
       end
 
       def terminal?
@@ -61,6 +53,18 @@ module Journey
           def type; :#{t.upcase}; end
         end
       }
+    end
+    class Symbol < Terminal
+      attr_accessor :regexp
+
+      def initialize left
+        super
+        @regexp = nil
+      end
+
+      def === str
+        (@regexp || /[^\.\/\?]*/) === str
+      end
     end
 
     class Unary < Node
