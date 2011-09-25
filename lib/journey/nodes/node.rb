@@ -55,16 +55,19 @@ module Journey
       }
     end
     class Symbol < Terminal
-      attr_accessor :regexp
+      attr_writer :regexp
 
       def initialize left
         super
         @regexp = nil
       end
 
+      def regexp
+        @regexp || /[^\.\/\?]*/
+      end
+
       def === str
-        re = (@regexp || /[^\.\/\?]*/)
-        re == str || re === str
+        regexp === str || regexp == str
       end
     end
 
