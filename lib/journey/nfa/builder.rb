@@ -37,10 +37,13 @@ module Journey
         inverted[idx]
       end
 
-      def eclosure idx
-        Array(idx).map { |i|
-          edges(i).reject { |sym,_| sym }.map { |_,s|
-            [s] + eclosure(s)
+      ###
+      # Returns a set of NFA states reachable from some NFA state +s+ in set
+      # +t+ on nil-transitions alone.
+      def eclosure t
+        Array(t).map { |s|
+          edges(s).reject { |sym,_| sym }.map { |_,to|
+            [to] + eclosure(to)
           }
         }.flatten
       end
