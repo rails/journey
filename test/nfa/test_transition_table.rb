@@ -17,14 +17,14 @@ module Journey
 
       def test_eclosure
         table = tt '/'
-        assert_equal [], table.eclosure(0)
+        assert_equal [0], table.eclosure(0)
 
         table = tt ':a|:b'
-        assert_equal 2, table.eclosure(0).length
+        assert_equal 3, table.eclosure(0).length
 
         table = tt '(:a|:b)'
-        assert_equal 4, table.eclosure(0).length
-        assert_equal 4, table.eclosure([0]).length
+        assert_equal 5, table.eclosure(0).length
+        assert_equal 5, table.eclosure([0]).length
       end
 
       def test_move_one
@@ -55,8 +55,16 @@ module Journey
         states = table.eclosure 0
 
         assert_equal 2, table.move(states, 'a').length
-        assert_equal 2, table.move(states, /[^\.\/\?]*/).length
+        assert_equal 1, table.move(states, /[^\.\/\?]+/).length
         assert_equal 1, table.move(states, 'b').length
+      end
+
+      def test_alphabet
+        table  = tt 'a|:a'
+        assert_equal ['a', /[^\.\/\?]+/], table.alphabet
+
+        table  = tt 'a|a'
+        assert_equal ['a'], table.alphabet
       end
 
       private

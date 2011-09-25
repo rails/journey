@@ -39,7 +39,7 @@ module Journey
 
     class Terminal < Node
       def === str
-        str === left
+        left == str
       end
 
       def terminal?
@@ -55,19 +55,15 @@ module Journey
       }
     end
     class Symbol < Terminal
-      attr_writer :regexp
+      attr_accessor :regexp
 
       def initialize left
         super
-        @regexp = nil
-      end
-
-      def regexp
-        @regexp || /[^\.\/\?]*/
+        @regexp = /[^\.\/\?]+/
       end
 
       def === str
-        regexp === str || regexp == str
+        regexp == str || regexp === str
       end
     end
 

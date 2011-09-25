@@ -23,23 +23,35 @@ module Journey
       # +a+ from some state +s+ in +t+.
       def move t, a
         Array(t).map { |s|
-          inverted[s].find_all { |sym,_| sym === a }.map(&:last)
-        }.flatten
+          z = edges(s).find_all { |sym,_|
+            sym && sym === a
+          }.map(&:last)
+        }.flatten.uniq
+      end
+
+      def alphabet
+        inverted.values.flatten(1).find_all { |sym,state|
+          sym
+        }.map(&:first).map { |s|
+          Nodes::Symbol === s ? s.regexp : s.left
+        }.uniq
       end
 
       def edges idx
-        inverted[idx]
+        inverted[idx] || []
       end
 
       ###
       # Returns a set of NFA states reachable from some NFA state +s+ in set
       # +t+ on nil-transitions alone.
       def eclosure t
-        Array(t).map { |s|
+        children = Array(t).map { |s|
           edges(s).reject { |sym,_| sym }.map { |_,to|
             [to] + eclosure(to)
           }
         }.flatten
+
+        (children + Array(t)).uniq
       end
 
       def to_dot
@@ -50,7 +62,7 @@ module Journey
         }.flatten
 
         nodes = (@table.keys + @table.values.map(&:keys).flatten).uniq.map { |i|
-          "#{i} [label=\"#{i.to_s(16)}\"];"
+          "#{i} [label=\"#{i}\"];"
         }
 
         <<-eodot
@@ -66,14 +78,13 @@ digraph nfa {
         eodot
       end
 
-      private
       def inverted
         return @inverted if @inverted
 
-        @inverted = Hash.new { |h,from| h[from] = [] }
+        @inverted = {}
         @table.each { |to, hash|
           hash.each { |from, sym|
-            @inverted[from] << [sym, to]
+            (@inverted[from] ||= []) << [sym, to]
           }
         }
 
