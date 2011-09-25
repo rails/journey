@@ -24,13 +24,22 @@ module Journey
         @table[right] = @table.delete(left)
       end
 
+      ###
+      # Returns set of NFA states to which there is a transition on input symbol
+      # +a+ from some state +s+ in +t+.
+      def move t, a
+        Array(t).map { |s|
+          inverted[s].find_all { |sym,_| sym === a }.map(&:last)
+        }.flatten
+      end
+
       def edges idx
         inverted[idx]
       end
 
       def eclosure idx
         Array(idx).map { |i|
-          inverted[i].reject { |sym,_| sym }.map { |_,s|
+          edges(i).reject { |sym,_| sym }.map { |_,s|
             [s] + eclosure(s)
           }
         }.flatten

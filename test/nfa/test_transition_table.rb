@@ -27,6 +27,29 @@ module Journey
         assert_equal 4, table.eclosure([0]).length
       end
 
+      def test_move_one
+        table = tt '/'
+
+        assert_equal [1], table.move(0, '/')
+        assert_equal [1], table.move([0], '/')
+      end
+
+      def test_move_group
+        table  = tt 'a|b'
+        states = table.eclosure 0
+
+        assert_equal 1, table.move(states, 'a').length
+        assert_equal 1, table.move(states, 'b').length
+      end
+
+      def test_move_multi
+        table  = tt 'a|a'
+        states = table.eclosure 0
+
+        assert_equal 2, table.move(states, 'a').length
+        assert_equal 0, table.move(states, 'b').length
+      end
+
       private
       def tt string
         ast     = @parser.parse string
