@@ -39,7 +39,7 @@ module Journey
 
     class Terminal < Node
       def === str
-        left === str
+        str === left
       end
 
       def terminal?
@@ -63,7 +63,8 @@ module Journey
       end
 
       def === str
-        (@regexp || /[^\.\/\?]*/) === str
+        re = (@regexp || /[^\.\/\?]*/)
+        re == str || re === str
       end
     end
 

@@ -55,6 +55,7 @@ module Journey
         states = table.eclosure 0
 
         assert_equal 2, table.move(states, 'a').length
+        assert_equal 2, table.move(states, /[^\.\/\?]*/).length
         assert_equal 1, table.move(states, 'b').length
       end
 
