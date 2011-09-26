@@ -1,54 +1,62 @@
+require 'journey/nfa/dot'
+
 module Journey
   module NFA
     class GeneralizedTable
+      include Journey::NFA::Dot
+
       attr_accessor :accepting
 
       def initialize
-        @dfa_states = Hash.new { |h,k| h[k] = {} }
-        @nfa_states = Hash.new { |h,k| h[k] = {} }
+        @regexp_states = Hash.new { |h,k| h[k] = {} }
+        @string_states = Hash.new { |h,k| h[k] = {} }
         @accepting  = nil
-      end
-
-      def states
-        states = @dfa_states.map { |state, kv|
-          [state] + kv.values
-        }.flatten + @nfa_states.map { |state, kv|
-          [state] + kv.values
-        }.flatten
-
-        states.uniq
       end
 
       def eclosure t
         t = Array(t)
-        t.map { |s| @dfa_states[s][nil] }.compact.uniq + t
+        t.map { |s| @regexp_states[s][nil] }.compact.uniq + t
       end
 
       def move t, a
         t = Array(t)
-        move_dfa(t, a) + move_nfa(t, a)
+        move_string(t, a) + move_regexp(t, a)
       end
 
       def []= i, f, s
         case s
         when String, NilClass
-          @dfa_states[i][s] = f
+          @regexp_states[i][s] = f
         when Regexp
-          @nfa_states[i][s] = f
+          @string_states[i][s] = f
         else
           raise ArgumentError, 'unknown symbol: %s' % s.class
         end
       end
 
+      def states
+        ss = @string_states.keys + @string_states.values.map(&:values).flatten
+        rs = @regexp_states.keys + @regexp_states.values.map(&:values).flatten
+        (ss + rs).uniq
+      end
+
+      def transitions
+        @string_states.map { |from, hash|
+          hash.map { |s, to| [from, s, to] }
+        }.flatten(1) + @regexp_states.map { |from, hash|
+          hash.map { |s, to| [from, s, to] }
+        }.flatten(1)
+      end
+
       private
-      def move_nfa t, a
+      def move_regexp t, a
         t.map { |s|
-          @nfa_states[s].find_all { |re,_| re === a }.map(&:last)
+          @string_states[s].find_all { |re,_| re === a }.map(&:last)
         }.flatten.uniq
       end
 
-      def move_dfa t, a
-        t.map { |s| @dfa_states[s][a] }
+      def move_string t, a
+        t.map { |s| @regexp_states[s][a] }.compact
       end
     end
   end

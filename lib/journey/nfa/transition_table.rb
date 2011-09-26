@@ -1,8 +1,10 @@
-# encoding: utf-8
+require 'journey/nfa/dot'
 
 module Journey
   module NFA
     class TransitionTable
+      include Journey::NFA::Dot
+
       attr_accessor :accepting
 
       def initialize
@@ -69,7 +71,7 @@ module Journey
       # +a+ from some state +s+ in +t+.
       def following_states t, a
         Array(t).map { |s|
-          edges(s).find_all { |sym,_| sym && sym.symbol == a }.map(&:last)
+          edges_on(s).find_all { |sym,_| sym && sym.symbol == a }.map(&:last)
         }.flatten.uniq
       end
 
@@ -78,7 +80,7 @@ module Journey
       # +a+ from some state +s+ in +t+.
       def move t, a
         Array(t).map { |s|
-          edges(s).find_all { |sym,_| sym && sym.symbol === a }.map(&:last)
+          edges_on(s).find_all { |sym,_| sym && sym.symbol === a }.map(&:last)
         }.flatten.uniq
       end
 
@@ -90,16 +92,12 @@ module Journey
         }.uniq
       end
 
-      def edges idx
-        inverted[idx] || []
-      end
-
       ###
       # Returns a set of NFA states reachable from some NFA state +s+ in set
       # +t+ on nil-transitions alone.
       def eclosure t
         children = Array(t).map { |s|
-          edges(s).reject { |sym,_| sym }.map { |_,to|
+          edges_on(s).reject { |sym,_| sym }.map { |_,to|
             [to] + eclosure(to)
           }
         }.flatten
@@ -107,28 +105,15 @@ module Journey
         (children + Array(t)).uniq
       end
 
-      def to_dot
-        edges = @table.map { |to, hash|
-          hash.map { |from, sym|
-            "#{from} -> #{to} [label=\"#{sym || 'ε'}\"];"
-          }
-        }.flatten
+      def transitions
+        @table.map { |to, hash|
+          hash.map { |from, sym| [from, sym, to] }
+        }.flatten(1)
+      end
 
-        nodes = (@table.keys + @table.values.map(&:keys).flatten).uniq.map { |i|
-          "#{i} [label=\"#{i}\"];"
-        }
-
-        <<-eodot
-digraph nfa {
-  rankdir=LR;
-  size="8,5"
-  node [shape = doublecircle];
-  #{accepting};
-  node [shape = circle];
-  #{nodes.join "\n"}
-  #{edges.join "\n"}
-}
-        eodot
+      private
+      def edges_on idx
+        inverted[idx] || []
       end
 
       def inverted

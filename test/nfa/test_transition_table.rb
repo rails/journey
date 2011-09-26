@@ -7,14 +7,6 @@ module Journey
         @parser = Journey::Parser.new
       end
 
-      def test_one_edge
-        table = tt '/'
-        edges = table.edges(0)
-
-        assert_equal 1, edges.length
-        assert_equal '/', edges.first.first.to_s
-      end
-
       def test_eclosure
         table = tt '/'
         assert_equal [0], table.eclosure(0)
