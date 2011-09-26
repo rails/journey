@@ -20,7 +20,7 @@ rule
     : expressions OR expression { result = Or.new(val.first, val.last) }
     ;
   star
-    : STAR literal       { result = Star.new(Symbol.new(val.last.value)) }
+    : STAR literal       { result = Star.new(Symbol.new(val.last.left)) }
     ;
   terminal
     : symbol

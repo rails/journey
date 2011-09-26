@@ -19,14 +19,14 @@ module Journey
       def visit_OR(n); binary(n); end
 
       def unary node
-        visit node.value
+        visit node.left
       end
       def visit_GROUP(n); unary(n); end
       def visit_STAR(n); unary(n); end
 
       def terminal node; end
       %w{ LITERAL SYMBOL SLASH DOT }.each do |t|
-        class_eval %{ def visit_#{t}(n); terminal(n); end }
+        class_eval %{ def visit_#{t}(n); terminal(n); end }, __FILE__, __LINE__
       end
     end
 
@@ -53,7 +53,7 @@ module Journey
       end
 
       def terminal node
-        node.value
+        node.left
       end
 
       def visit_STAR node
@@ -61,7 +61,7 @@ module Journey
       end
 
       def visit_GROUP node
-        "(#{visit node.value})"
+        "(#{visit node.left})"
       end
 
       def visit_OR node
@@ -84,12 +84,12 @@ module Journey
         if consumed == options
           nil
         else
-          visit node.value
+          visit node.left
         end
       end
 
       def terminal node
-        node.value
+        node.left
       end
 
       def binary node
@@ -97,7 +97,7 @@ module Journey
       end
 
       def visit_SYMBOL node
-        key = node.value.tr(':', '').to_sym
+        key = node.to_sym
 
         if options.key? key
           consumed[key] = options[key]

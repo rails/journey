@@ -6,7 +6,6 @@ module Journey
       include Enumerable
 
       attr_accessor :left
-      alias :value :left
 
       def initialize left
         @left = left
@@ -25,11 +24,11 @@ module Journey
       end
 
       def to_sym
-        value.tr(':', '').to_sym
+        name.to_sym
       end
 
-      def terminal?
-        false
+      def name
+        left.tr ':', ''
       end
 
       def type
@@ -38,13 +37,7 @@ module Journey
     end
 
     class Terminal < Node
-      def === str
-        left == str
-      end
-
-      def terminal?
-        true
-      end
+      alias :symbol :left
     end
 
     %w{ Symbol Slash Literal Dot }.each do |t|
@@ -54,16 +47,14 @@ module Journey
         end
       }
     end
+
     class Symbol < Terminal
       attr_accessor :regexp
+      alias :symbol :regexp
 
       def initialize left
         super
         @regexp = /[^\.\/\?]+/
-      end
-
-      def === str
-        regexp == str || regexp === str
       end
     end
 
@@ -85,7 +76,6 @@ module Journey
     end
 
     class Binary < Node
-      alias :left :value
       attr_accessor :right
 
       def initialize left, right

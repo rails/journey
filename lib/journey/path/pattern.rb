@@ -29,7 +29,7 @@ module Journey
       end
 
       def names
-        @names ||= spec.grep(Nodes::Symbol).map { |n| n.value.tr(':', '') }
+        @names ||= spec.grep(Nodes::Symbol).map { |n| n.name }
       end
 
       def required_names
@@ -39,7 +39,7 @@ module Journey
       def optional_names
         @optional_names ||= spec.grep(Nodes::Group).map { |group|
           group.grep(Nodes::Symbol)
-        }.flatten.map { |n| n.value.tr ':', '' }.uniq
+        }.flatten.map { |n| n.name }.uniq
       end
 
       class RegexpOffsets < Journey::Visitors::Visitor # :nodoc:
@@ -94,16 +94,16 @@ module Journey
         end
 
         def visit_GROUP node
-          "(?:#{visit node.value})?"
+          "(?:#{visit node.left})?"
         end
 
         def visit_LITERAL node
-          Regexp.escape node.value
+          Regexp.escape node.left
         end
         alias :visit_DOT :visit_LITERAL
 
         def visit_SLASH node
-          node.value
+          node.left
         end
 
         def visit_STAR node

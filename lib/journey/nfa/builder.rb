@@ -19,13 +19,11 @@ module Journey
       end
 
       ###
-      # Returns set of NFA states to which there is a transition on input symbol
+      # Returns set of NFA states to which there is a transition on ast symbol
       # +a+ from some state +s+ in +t+.
-      def move t, a
+      def following_states t, a
         Array(t).map { |s|
-          z = edges(s).find_all { |sym,_|
-            sym && sym === a
-          }.map(&:last)
+          edges(s).find_all { |sym,_| sym && sym.symbol == a }.map(&:last)
         }.flatten.uniq
       end
 
