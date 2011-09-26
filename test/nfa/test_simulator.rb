@@ -36,6 +36,13 @@ module Journey
         refute_match sim, '/baz'
       end
 
+      def test_simulate_optional
+        sim = simulator_for ['/foo(/bar)']
+        assert_match sim, '/foo'
+        assert_match sim, '/foo/bar'
+        refute_match sim, '/foo/'
+      end
+
       def simulator_for paths
         parser  = Journey::Parser.new
         asts    = paths.map { |x| parser.parse x }

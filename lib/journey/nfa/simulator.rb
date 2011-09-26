@@ -17,7 +17,7 @@ module Journey
           state = tt.eclosure tt.move(state, sym)
         end
 
-        tt.accepting == state.first
+        tt.accepting == state.sort.last
       end
 
       alias :=~    :simulate
