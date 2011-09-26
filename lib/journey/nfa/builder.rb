@@ -27,6 +27,15 @@ module Journey
         }.flatten.uniq
       end
 
+      ###
+      # Returns set of NFA states to which there is a transition on ast symbol
+      # +a+ from some state +s+ in +t+.
+      def move t, a
+        Array(t).map { |s|
+          edges(s).find_all { |sym,_| sym && sym.symbol === a }.map(&:last)
+        }.flatten.uniq
+      end
+
       def alphabet
         inverted.values.flatten(1).find_all { |sym,state|
           sym
