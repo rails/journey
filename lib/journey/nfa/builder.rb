@@ -1,4 +1,5 @@
 require 'journey/nfa/transition_table'
+require 'journey/nfa/generalized_table'
 
 module Journey
   module NFA

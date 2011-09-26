@@ -7,7 +7,7 @@ module Journey
 
       def initialize
         @table     = Hash.new { |h,f| h[f] = {} }
-        @accepting = 0
+        @accepting = nil
         @inverted  = nil
       end
 
@@ -17,6 +17,51 @@ module Journey
 
       def merge left, right
         @table[right] = @table.delete(left)
+      end
+
+      def states
+        @table.map { |s,v| [s] + v.keys }.flatten.uniq
+      end
+
+      ###
+      # Returns a generalized transition graph with reduced states.  The states
+      # are reduced like a DFA, but the table must be simulated like an NFA.
+      #
+      # Edges of the GTG are regular expressions
+      def generalized_table
+        gt       = GeneralizedTable.new
+        marked   = {}
+        state_id = Hash.new { |h,k| h[k] = h.length }
+        alphabet = self.alphabet
+
+        stack = [eclosure(0)]
+
+        until stack.empty?
+          state = stack.pop
+          next if marked[state] || state.empty?
+
+          marked[state] = true
+
+          alphabet.each do |alpha|
+            next_state = eclosure(following_states(state, alpha))
+            next if next_state.empty?
+
+            gt[state_id[state], state_id[next_state]] = alpha
+            stack << next_state
+          end
+        end
+
+        accepting = state_id.length + 1
+
+        state_id.each do |states, id|
+          if states.include? self.accepting
+            gt[id, accepting] = nil
+          end
+        end
+
+        gt.accepting = accepting
+
+        gt
       end
 
       ###
