@@ -53,9 +53,14 @@ module Journey
       attr_accessor :regexp
       alias :symbol :regexp
 
+      DEFAULT_EXP = /[^\.\/\?]+/
       def initialize left
         super
-        @regexp = /[^\.\/\?]+/
+        @regexp = DEFAULT_EXP
+      end
+
+      def default_regexp?
+        regexp == DEFAULT_EXP
       end
     end
 
