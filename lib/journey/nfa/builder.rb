@@ -54,6 +54,7 @@ module Journey
 
         @tt[from_i, to_i] = node
         @tt.accepting = to_i
+        @tt.add_memo to_i, node.memo
 
         [from_i, to_i]
       end

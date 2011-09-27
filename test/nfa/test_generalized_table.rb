@@ -33,11 +33,53 @@ module Journey
         refute_match sim, '/foo/'
       end
 
+      def test_match_data
+        path_asts = asts %w{ /get /:method/foo }
+        paths     = path_asts.dup
+
+        builder = Builder.new path_asts.inject(path_asts.shift) { |l,r|
+          Nodes::Or.new l, r
+        }
+        sim = Simulator.new builder.transition_table.generalized_table
+
+        match = sim.match '/get'
+        assert_equal [paths.first], match.memos
+
+        match = sim.match '/get/foo'
+        assert_equal [paths.last], match.memos
+      end
+
+      def test_match_data_ambiguous
+        path_asts = asts %w{
+          /articles(.:format)
+          /articles/new(.:format)
+          /articles/:id/edit(.:format)
+          /articles/:id(.:format)
+        }
+
+        paths = path_asts.dup
+        ast   = path_asts.inject(path_asts.shift) { |l,r| Nodes::Or.new l, r }
+
+        builder = Builder.new ast
+        sim     = Simulator.new builder.transition_table.generalized_table
+
+        match = sim.match '/articles/new'
+        assert_equal [paths[1], paths[3]], match.memos
+      end
+
       private
-      def tt paths
+      def asts paths
         parser  = Journey::Parser.new
-        asts    = paths.map { |x| parser.parse x }
-        builder = Builder.new asts.inject(asts.shift) { |l,r|
+        paths.map { |x|
+          ast = parser.parse x
+          ast.each { |n| n.memo = ast}
+          ast
+        }
+      end
+
+      def tt paths
+        x = asts paths
+        builder = Builder.new x.inject(x.shift) { |l,r|
           Nodes::Or.new l, r
         }
         builder.transition_table

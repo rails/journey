@@ -5,10 +5,11 @@ module Journey
     class Node # :nodoc:
       include Enumerable
 
-      attr_accessor :left
+      attr_accessor :left, :memo
 
       def initialize left
         @left = left
+        @memo = nil
       end
 
       def each(&block)

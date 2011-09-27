@@ -11,6 +11,15 @@ module Journey
         @regexp_states = Hash.new { |h,k| h[k] = {} }
         @string_states = Hash.new { |h,k| h[k] = {} }
         @accepting  = nil
+        @memos      = {}
+      end
+
+      def add_memo idx, memo
+        @memos[idx] = memo
+      end
+
+      def memo idx
+        @memos[idx]
       end
 
       def eclosure t

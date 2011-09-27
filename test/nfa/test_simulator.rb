@@ -43,6 +43,52 @@ module Journey
         refute_match sim, '/foo/'
       end
 
+      def test_matchdata_has_memos
+        paths   = %w{ /foo /bar }
+        parser  = Journey::Parser.new
+        asts    = paths.map { |x|
+          ast = parser.parse x
+          ast.each { |n| n.memo = ast}
+          ast
+        }
+
+        expected = asts.first
+
+        builder = Builder.new asts.inject(asts.shift) { |l,r|
+          Nodes::Or.new l, r
+        }
+
+        sim = Simulator.new builder.transition_table
+
+        md = sim.match '/foo'
+        assert_equal [expected], md.memos
+      end
+
+      def test_matchdata_memos_on_merge
+        parser = Journey::Parser.new
+        routes = [
+          '/articles(.:format)',
+          '/articles/new(.:format)',
+          '/articles/:id/edit(.:format)',
+          '/articles/:id(.:format)',
+        ].map { |path|
+          ast = parser.parse path
+          ast.each { |n| n.memo = ast }
+          ast
+        }
+
+        asts = routes.dup
+
+        ast = routes.inject(routes.shift) { |left, right|
+          Journey::Nodes::Or.new left, right
+        }
+
+        nfa   = Journey::NFA::Builder.new ast
+        sim = Simulator.new nfa.transition_table
+        md = sim.match '/articles'
+        assert_equal [asts.first], md.memos
+      end
+
       def simulator_for paths
         parser  = Journey::Parser.new
         asts    = paths.map { |x| parser.parse x }

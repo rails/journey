@@ -2,6 +2,14 @@ require 'strscan'
 
 module Journey
   module NFA
+    class MatchData
+      attr_reader :memos
+
+      def initialize memos
+        @memos = memos
+      end
+    end
+
     class Simulator
       attr_reader :tt
 
@@ -19,7 +27,15 @@ module Journey
           state = tt.eclosure tt.move(state, sym)
         end
 
-        tt.accepting == state.sort.last
+        return unless tt.accepting == state.sort.last
+
+        acceptance_states = state.find_all { |s|
+          tt.eclosure(s).sort.last == tt.accepting
+        }
+
+        memos = acceptance_states.map { |x| tt.memo x }.flatten.compact
+
+        MatchData.new memos
       end
 
       alias :=~    :simulate

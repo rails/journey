@@ -6,11 +6,21 @@ module Journey
       include Journey::NFA::Dot
 
       attr_accessor :accepting
+      attr_reader :memos
 
       def initialize
         @table     = Hash.new { |h,f| h[f] = {} }
+        @memos     = {}
         @accepting = nil
         @inverted  = nil
+      end
+
+      def add_memo idx, memo
+        @memos[idx] = memo
+      end
+
+      def memo idx
+        @memos[idx]
       end
 
       def []= i, f, s
@@ -18,11 +28,12 @@ module Journey
       end
 
       def merge left, right
+        @memos[right] = @memos.delete left
         @table[right] = @table.delete(left)
       end
 
       def states
-        @table.map { |s,v| [s] + v.keys }.flatten.uniq
+        (@table.keys + @table.values.map(&:keys).flatten).uniq
       end
 
       ###
@@ -53,15 +64,24 @@ module Journey
           end
         end
 
-        accepting = state_id.length + 1
+        final_state = state_id.length + 1
 
-        state_id.each do |states, id|
-          if states.include? self.accepting
-            gt[id, accepting] = nil
-          end
+        final_groups = state_id.keys.find_all { |s|
+          s.sort.last == accepting
+        }
+
+        final_groups.each do |states|
+          id = state_id[states]
+
+          gt[id, final_state] = nil
+          save = states.find { |s|
+            @memos.key?(s) && eclosure(s).sort.last == accepting
+          }
+
+          gt.add_memo id, memo(save)
         end
 
-        gt.accepting = accepting
+        gt.accepting = final_state
 
         gt
       end
