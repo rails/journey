@@ -22,6 +22,14 @@ module Journey
       @required_defaults = nil
       @required_parts    = nil
       @parts             = nil
+      @decorated_ast     = nil
+    end
+
+    def ast
+      return @decorated_ast if @decorated_ast
+      @decorated_ast = path.spec
+      @decorated_ast.grep(Nodes::Terminal).each { |n| n.memo = self }
+      @decorated_ast
     end
 
     def requirements # :nodoc:

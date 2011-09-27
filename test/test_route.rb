@@ -13,6 +13,17 @@ module Journey
       assert_equal defaults, route.defaults
     end
 
+    def test_route_adds_itself_as_memo
+      app      = Object.new
+      path     = Path::Pattern.new '/:controller(/:action(/:id(.:format)))'
+      defaults = Object.new
+      route    = Route.new("name", app, path, {}, defaults)
+
+      route.ast.grep(Nodes::Terminal).each do |node|
+        assert_equal route, node.memo
+      end
+    end
+
     def test_ip_address
       path  = Path::Pattern.new '/messages/:id(.:format)'
       route = Route.new("name", nil, path, {:ip => '192.168.1.1'},
