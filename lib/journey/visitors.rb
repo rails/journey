@@ -135,7 +135,7 @@ digraph parse_tree {
       end
 
       def unary node
-        @edges << "#{node.object_id} -> #{node.value.object_id};"
+        @edges << "#{node.object_id} -> #{node.left.object_id};"
         super
       end
 
