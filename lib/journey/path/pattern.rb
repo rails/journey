@@ -28,6 +28,15 @@ module Journey
         @re = nil
       end
 
+      def ast
+        @spec.grep(Nodes::Symbol).each do |node|
+          re = @requirements[node.to_sym]
+          node.regexp = re if re
+        end
+
+        @spec
+      end
+
       def names
         @names ||= spec.grep(Nodes::Symbol).map { |n| n.name }
       end

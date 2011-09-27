@@ -113,6 +113,24 @@ module Journey
         refute_match('/page/loving', path)
       end
 
+      def test_ast_sets_regular_expressions
+        requirements = { :name => /(tender|love)/, :value => /./ }
+        strexp = Router::Strexp.new(
+          '/page/:name/:value',
+          requirements,
+          ["/", ".", "?"]
+        )
+
+        assert_equal requirements, strexp.requirements
+
+        path = Pattern.new strexp
+        nodes = path.ast.grep(Nodes::Symbol)
+        assert_equal 2, nodes.length
+        nodes.each do |node|
+          assert_equal requirements[node.to_sym], node.regexp
+        end
+      end
+
       def test_match_data_with_group
         strexp = Router::Strexp.new(
           '/page/:name',
