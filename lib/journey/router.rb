@@ -45,7 +45,7 @@ module Journey
     def call env
       env['PATH_INFO'] = Utils.normalize_path env['PATH_INFO']
 
-      find_routes(env) do |match, parameters, route|
+      find_routes(env).each do |match, parameters, route|
         script_name, path_info, set_params = env.values_at('SCRIPT_NAME',
                                                            'PATH_INFO',
                                                            @params_key)
@@ -73,7 +73,7 @@ module Journey
     end
 
     def recognize req
-      find_routes(req.env) do |match, parameters, route|
+      find_routes(req.env).each do |match, parameters, route|
         unless route.path.anchored
           req.env['SCRIPT_NAME'] = match.to_s
           req.env['PATH_INFO']   = match.post_match.sub(/^([^\/])/, '/\1')
@@ -89,22 +89,20 @@ module Journey
       addr       = env['REMOTE_ADDR']
       req        = request_class.new env
 
-      routes.each do |r|
-        next unless r.constraints.all? { |k,v|
-          v === req.send(k)
-        }
+      routes.find_all { |r|
 
-        next unless r.verb === env['REQUEST_METHOD']
-        next if addr && !(r.ip === addr)
+        r.path.match(env['PATH_INFO']) &&
+          r.constraints.all? { |k,v| v === req.send(k) } &&
+          r.verb === env['REQUEST_METHOD']
 
-        match_data = r.path.match env['PATH_INFO']
+      }.reject { |r| addr && !(r.ip === addr) }.map { |r|
 
-        next unless match_data
-
+        match_data  = r.path.match(env['PATH_INFO'])
         match_names = match_data.names.map { |n| n.to_sym }
-        info = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
-        yield(match_data, r.defaults.merge(info), r)
-      end
+        info        = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
+
+        [match_data, r.defaults.merge(info), r]
+      }
     end
   end
 end
