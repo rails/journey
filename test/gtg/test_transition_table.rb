@@ -1,7 +1,7 @@
 require 'helper'
 
 module Journey
-  module NFA
+  module GTG
     class TestGeneralizedTable < MiniTest::Unit::TestCase
       def test_reduction_states
         table = tt ['/foo', '/bar']
@@ -37,10 +37,10 @@ module Journey
         path_asts = asts %w{ /get /:method/foo }
         paths     = path_asts.dup
 
-        builder = Builder.new path_asts.inject(path_asts.shift) { |l,r|
+        builder = NFA::Builder.new path_asts.inject(path_asts.shift) { |l,r|
           Nodes::Or.new l, r
         }
-        sim = Simulator.new builder.transition_table.generalized_table
+        sim = NFA::Simulator.new builder.transition_table.generalized_table
 
         match = sim.match '/get'
         assert_equal [paths.first], match.memos
@@ -60,8 +60,8 @@ module Journey
         paths = path_asts.dup
         ast   = path_asts.inject(path_asts.shift) { |l,r| Nodes::Or.new l, r }
 
-        builder = Builder.new ast
-        sim     = Simulator.new builder.transition_table.generalized_table
+        builder = NFA::Builder.new ast
+        sim     = NFA::Simulator.new builder.transition_table.generalized_table
 
         match = sim.match '/articles/new'
         assert_equal [paths[1], paths[3]], match.memos
@@ -79,14 +79,14 @@ module Journey
 
       def tt paths
         x = asts paths
-        builder = Builder.new x.inject(x.shift) { |l,r|
+        builder = NFA::Builder.new x.inject(x.shift) { |l,r|
           Nodes::Or.new l, r
         }
         builder.transition_table
       end
 
       def simulator_for paths
-        Simulator.new tt(paths).generalized_table
+        NFA::Simulator.new tt(paths).generalized_table
       end
     end
   end

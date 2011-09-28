@@ -42,7 +42,7 @@ module Journey
       #
       # Edges of the GTG are regular expressions
       def generalized_table
-        gt       = GeneralizedTable.new
+        gt       = GTG::TransitionTable.new
         marked   = {}
         state_id = Hash.new { |h,k| h[k] = h.length }
         alphabet = self.alphabet

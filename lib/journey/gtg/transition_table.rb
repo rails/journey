@@ -1,8 +1,8 @@
 require 'journey/nfa/dot'
 
 module Journey
-  module NFA
-    class GeneralizedTable
+  module GTG
+    class TransitionTable
       include Journey::NFA::Dot
 
       attr_accessor :accepting
@@ -24,7 +24,7 @@ module Journey
 
       def eclosure t
         t = Array(t)
-        t.map { |s| @regexp_states[s][nil] }.compact.uniq + t
+        t.map { |s| @string_states[s][nil] }.compact.uniq + t
       end
 
       def move t, a
@@ -32,14 +32,14 @@ module Journey
         move_string(t, a) + move_regexp(t, a)
       end
 
-      def []= i, f, s
-        case s
+      def []= from, to, sym
+        case sym
         when String, NilClass
-          @regexp_states[i][s] = f
+          @string_states[from][sym] = to
         when Regexp
-          @string_states[i][s] = f
+          @regexp_states[from][sym] = to
         else
-          raise ArgumentError, 'unknown symbol: %s' % s.class
+          raise ArgumentError, 'unknown symbol: %s' % sym.class
         end
       end
 
@@ -60,12 +60,12 @@ module Journey
       private
       def move_regexp t, a
         t.map { |s|
-          @string_states[s].find_all { |re,_| re === a }.map(&:last)
+          @regexp_states[s].find_all { |re,_| re === a }.map(&:last)
         }.flatten.uniq
       end
 
       def move_string t, a
-        t.map { |s| @regexp_states[s][a] }.compact
+        t.map { |s| @string_states[s][a] }.compact
       end
     end
   end
