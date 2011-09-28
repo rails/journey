@@ -90,9 +90,7 @@ module Journey
       # Returns set of NFA states to which there is a transition on ast symbol
       # +a+ from some state +s+ in +t+.
       def following_states t, a
-        Array(t).map { |s|
-          edges_on(s).find_all { |sym,_| sym && sym.symbol == a }.map(&:last)
-        }.flatten.uniq
+        Array(t).map { |s| inverted[s][a] }.flatten.uniq
       end
 
       ###
@@ -100,29 +98,35 @@ module Journey
       # +a+ from some state +s+ in +t+.
       def move t, a
         Array(t).map { |s|
-          edges_on(s).find_all { |sym,_| sym && sym.symbol === a }.map(&:last)
+          inverted[s].keys.compact.find_all { |sym|
+            sym === a
+          }.map { |sym| inverted[s][sym] }
         }.flatten.uniq
       end
 
       def alphabet
-        inverted.values.flatten(1).find_all { |sym,state|
-          sym
-        }.map(&:first).map { |s|
-          Nodes::Symbol === s ? s.regexp : s.left
-        }.uniq
+        inverted.values.map(&:keys).flatten.compact.uniq
       end
 
       ###
       # Returns a set of NFA states reachable from some NFA state +s+ in set
       # +t+ on nil-transitions alone.
       def eclosure t
-        children = Array(t).map { |s|
-          edges_on(s).reject { |sym,_| sym }.map { |_,to|
-            [to] + eclosure(to)
-          }
-        }.flatten
+        stack = Array(t)
+        seen  = {}
+        children = []
 
-        (children + Array(t)).uniq
+        until stack.empty?
+          s = stack.pop
+          next if seen[s]
+
+          seen[s] = true
+          children << s
+
+          stack.concat inverted[s][nil]
+        end
+
+        children.uniq
       end
 
       def transitions
@@ -132,17 +136,20 @@ module Journey
       end
 
       private
-      def edges_on idx
-        inverted[idx] || []
-      end
-
       def inverted
         return @inverted if @inverted
 
-        @inverted = {}
+        @inverted = Hash.new { |h,from|
+          h[from] = Hash.new { |j,s| j[s] = [] }
+        }
+
         @table.each { |to, hash|
           hash.each { |from, sym|
-            (@inverted[from] ||= []) << [sym, to]
+            if sym
+              sym = Nodes::Symbol === sym ? sym.regexp : sym.left
+            end
+
+            @inverted[from][sym] << to
           }
         }
 
