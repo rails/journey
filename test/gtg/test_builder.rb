@@ -43,6 +43,20 @@ module Journey
         assert_equal 2, match.memos.length
       end
 
+      ##
+      # Identical Routes may have different restrictions.
+      def test_match_same_paths
+        table = tt %w{
+          /articles/new(.:format)
+          /articles/new(.:format)
+        }
+
+        sim     = NFA::Simulator.new table
+
+        match = sim.match '/articles/new'
+        assert_equal 2, match.memos.length
+      end
+
       private
       def ast strings
         parser = Journey::Parser.new
