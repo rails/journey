@@ -5,17 +5,29 @@ module Journey
     class TransitionTable
       include Journey::NFA::Dot
 
-      attr_accessor :accepting
+      attr_reader :memos
 
       def initialize
         @regexp_states = Hash.new { |h,k| h[k] = {} }
         @string_states = Hash.new { |h,k| h[k] = {} }
-        @accepting  = nil
-        @memos      = {}
+        @accepting  = {}
+        @memos      = Hash.new { |h,k| h[k] = [] }
+      end
+
+      def add_accepting state
+        @accepting[state] = true
+      end
+
+      def accepting_states
+        @accepting.keys
+      end
+
+      def accepting? state
+        @accepting[state]
       end
 
       def add_memo idx, memo
-        @memos[idx] = memo
+        @memos[idx] << memo
       end
 
       def memo idx

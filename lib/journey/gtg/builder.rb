@@ -29,15 +29,27 @@ module Journey
             u = ps.map { |l| followpos(l) }.flatten
             next if u.empty?
 
-            if u == [DUMMY]
-              #dtrans[state_id[s], state_id[Object.new]] = sym
-              dtrans[state_id[s], state_id[u]] = sym
+            if u.uniq == [DUMMY]
+              from = state_id[s]
+              to   = state_id[Object.new]
+              dtrans[from, to] = sym
+
+              dtrans.add_accepting to
+              s.each { |state| dtrans.add_memo to, state.memo }
             else
               dtrans[state_id[s], state_id[u]] = sym
 
-              #if u.include? DUMMY
-              #  p sym => state_id[u]
-              #end
+              if u.include? DUMMY
+                to = state_id[u]
+
+                accepting = ps.find_all { |l| followpos(l).include? DUMMY }
+
+                accepting.each { |accepting_state|
+                  dtrans.add_memo to, accepting_state.memo
+                }
+
+                dtrans.add_accepting state_id[u]
+              end
             end
 
             dstates << u

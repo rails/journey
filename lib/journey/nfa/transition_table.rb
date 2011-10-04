@@ -15,6 +15,10 @@ module Journey
         @inverted  = nil
       end
 
+      def accepting? state
+        accepting == state
+      end
+
       def add_memo idx, memo
         @memos[idx] = memo
       end
@@ -81,7 +85,7 @@ module Journey
           gt.add_memo id, memo(save)
         end
 
-        gt.accepting = final_state
+        gt.add_accepting final_state
 
         gt
       end

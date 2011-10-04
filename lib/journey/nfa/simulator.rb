@@ -27,11 +27,11 @@ module Journey
           state = tt.eclosure tt.move(state, sym)
         end
 
-        return unless tt.accepting == state.sort.last
-
         acceptance_states = state.find_all { |s|
-          tt.eclosure(s).sort.last == tt.accepting
+          tt.accepting? tt.eclosure(s).sort.last
         }
+
+        return if acceptance_states.empty?
 
         memos = acceptance_states.map { |x| tt.memo x }.flatten.compact
 

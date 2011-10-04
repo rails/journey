@@ -29,13 +29,34 @@ module Journey
         }
       end
 
+      def test_match_data_ambiguous
+        table = tt %w{
+          /articles(.:format)
+          /articles/new(.:format)
+          /articles/:id/edit(.:format)
+          /articles/:id(.:format)
+        }
+
+        sim     = NFA::Simulator.new table
+
+        match = sim.match '/articles/new'
+        assert_equal 2, match.memos.length
+      end
+
       private
-      def tt strings
+      def ast strings
         parser = Journey::Parser.new
-        asts   = strings.map { |string| parser.parse string }
-        ast    = asts.inject(asts.shift) { |l,r| Nodes::Or.new(l,r) }
-        builder = Builder.new ast
-        builder.transition_table
+        asts   = strings.map { |string|
+          memo = Object.new
+          ast  = parser.parse string
+          ast.each { |n| n.memo = memo }
+          ast
+        }
+        asts.inject(asts.shift) { |l,r| Nodes::Or.new(l,r) }
+      end
+
+      def tt strings
+        Builder.new(ast(strings)).transition_table
       end
     end
   end
