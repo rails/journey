@@ -28,7 +28,7 @@ module Journey
     def ast
       return @decorated_ast if @decorated_ast
 
-      @decorated_ast = path.spec
+      @decorated_ast = path.ast
       @decorated_ast.grep(Nodes::Terminal).each { |n| n.memo = self }
       @decorated_ast
     end

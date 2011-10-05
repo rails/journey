@@ -40,6 +40,7 @@ module Journey
       @params_key    = options[:parameters_key]
       @request_class = options[:request_class] || NullReq
       @routes        = routes
+      @ast = @partitioned_routes = @simulator = nil
     end
 
     def call env
@@ -85,18 +86,48 @@ module Journey
 
     private
 
+    def partitioned_routes
+      @partitioned_routes ||= routes.partition { |r|
+        r.path.anchored && r.ast.grep(Nodes::Symbol).all? { |n| n.default_regexp?  }
+      }
+    end
+
+    def ast
+      return @ast if @ast
+
+      asts = partitioned_routes.first.map { |r| r.ast }
+      @ast = asts.inject(asts.shift) { |l,r| Nodes::Or.new l, r }
+    end
+
+    def simulator
+      return @simulator if @simulator
+
+      gtg = GTG::Builder.new(ast).transition_table
+      @simulator = NFA::Simulator.new gtg
+    end
+
+    def custom_routes
+      partitioned_routes.last
+    end
+
+    def filter_routes path
+      return [] unless ast
+      data = simulator.match(path)
+      data ? data.memos : []
+    end
+
     def find_routes env
       addr       = env['REMOTE_ADDR']
       req        = request_class.new env
 
+      routes = filter_routes(env['PATH_INFO']) + custom_routes.find_all { |r|
+        r.path.match(env['PATH_INFO'])
+      }
+
       routes.find_all { |r|
-
-        r.path.match(env['PATH_INFO']) &&
-          r.constraints.all? { |k,v| v === req.send(k) } &&
+        r.constraints.all? { |k,v| v === req.send(k) } &&
           r.verb === env['REQUEST_METHOD']
-
       }.reject { |r| addr && !(r.ip === addr) }.map { |r|
-
         match_data  = r.path.match(env['PATH_INFO'])
         match_names = match_data.names.map { |n| n.to_sym }
         info        = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
