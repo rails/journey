@@ -54,9 +54,7 @@ module Journey
 
         expected = asts.first
 
-        builder = Builder.new asts.inject(asts.shift) { |l,r|
-          Nodes::Or.new l, r
-        }
+        builder = Builder.new Nodes::Or.new asts
 
         sim = Simulator.new builder.transition_table
 
@@ -79,9 +77,7 @@ module Journey
 
         asts = routes.dup
 
-        ast = routes.inject(routes.shift) { |left, right|
-          Journey::Nodes::Or.new left, right
-        }
+        ast = Nodes::Or.new routes
 
         nfa   = Journey::NFA::Builder.new ast
         sim = Simulator.new nfa.transition_table
@@ -92,9 +88,7 @@ module Journey
       def simulator_for paths
         parser  = Journey::Parser.new
         asts    = paths.map { |x| parser.parse x }
-        builder = Builder.new asts.inject(asts.shift) { |l,r|
-          Nodes::Or.new l, r
-        }
+        builder = Builder.new Nodes::Or.new asts
         Simulator.new builder.transition_table
       end
     end

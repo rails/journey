@@ -34,14 +34,13 @@ module Journey
 
       def visit_OR node
         from  = @i += 1
-        left  = visit node.left
-        right = visit node.right
+        children = node.children.map { |c| visit c }
         to    = @i += 1
 
-        @tt[from, left.first]  = nil
-        @tt[from, right.first] = nil
-        @tt[left.last, to]     = nil
-        @tt[right.last, to]    = nil
+        children.each do |child|
+          @tt[from, child.first]  = nil
+          @tt[child.last, to]     = nil
+        end
 
         @tt.accepting = to
 

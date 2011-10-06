@@ -66,7 +66,7 @@ module Journey
           ast.each { |n| n.memo = memo }
           ast
         }
-        asts.inject(asts.shift) { |l,r| Nodes::Or.new(l,r) }
+        Nodes::Or.new asts
       end
 
       def tt strings

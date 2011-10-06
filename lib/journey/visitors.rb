@@ -16,7 +16,11 @@ module Journey
         visit node.right
       end
       def visit_CAT(n); binary(n); end
-      def visit_OR(n); binary(n); end
+
+      def nary node
+        node.children.each { |c| visit c }
+      end
+      def visit_OR(n); nary(n); end
 
       def unary node
         visit node.left
@@ -52,6 +56,10 @@ module Journey
         [visit(node.left), visit(node.right)].join
       end
 
+      def nary node
+        node.children.map { |c| visit c }.join '|'
+      end
+
       def terminal node
         node.left
       end
@@ -62,10 +70,6 @@ module Journey
 
       def visit_GROUP node
         "(#{visit node.left})"
-      end
-
-      def visit_OR node
-        [visit(node.left), visit(node.right)].join '|'
       end
     end
 
@@ -94,6 +98,10 @@ module Journey
 
       def binary node
         [visit(node.left), visit(node.right)].join
+      end
+
+      def nary node
+        node.children.map { |c| visit c }.join
       end
 
       def visit_SYMBOL node
@@ -133,6 +141,7 @@ digraph parse_tree {
         end
         super
       end
+      alias :nary :binary
 
       def unary node
         @edges << "#{node.object_id} -> #{node.left.object_id};"

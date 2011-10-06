@@ -94,9 +94,10 @@ module Journey
 
     def ast
       return @ast if @ast
+      return if partitioned_routes.first.empty?
 
       asts = partitioned_routes.first.map { |r| r.ast }
-      @ast = asts.inject(asts.shift) { |l,r| Nodes::Or.new l, r }
+      @ast = Nodes::Or.new(asts)
     end
 
     def simulator

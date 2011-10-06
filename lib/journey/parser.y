@@ -17,7 +17,7 @@ rule
     : LPAREN expressions RPAREN { result = Group.new(val[1]) }
     ;
   or
-    : expressions OR expression { result = Or.new(val.first, val.last) }
+    : expressions OR expression { result = Or.new([val.first, val.last]) }
     ;
   star
     : STAR literal       { result = Star.new(Symbol.new(val.last.left)) }

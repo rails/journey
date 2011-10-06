@@ -35,7 +35,7 @@ module Journey
               dtrans[from, to] = sym
 
               dtrans.add_accepting to
-              s.each { |state| dtrans.add_memo to, state.memo }
+              ps.each { |state| dtrans.add_memo to, state.memo }
             else
               dtrans[state_id[s], state_id[u]] = sym
 
@@ -66,7 +66,7 @@ module Journey
         when Nodes::Star
           true
         when Nodes::Or
-          nullable?(node.left) || nullable?(node.right)
+          node.children.any? { |c| nullable?(c) }
         when Nodes::Cat
           nullable?(node.left) && nullable?(node.right)
         when Nodes::Terminal
@@ -89,7 +89,7 @@ module Journey
             firstpos(node.left)
           end
         when Nodes::Or
-          firstpos(node.left) | firstpos(node.right)
+          node.children.map { |c| firstpos(c) }.flatten.uniq
         when Nodes::Unary
           firstpos(node.left)
         when Nodes::Terminal
@@ -104,7 +104,7 @@ module Journey
         when Nodes::Star
           firstpos(node.left)
         when Nodes::Or
-          lastpos(node.right) | lastpos(node.left)
+          node.children.map { |c| lastpos(c) }.flatten.uniq
         when Nodes::Cat
           if nullable? node.right
             lastpos(node.left) | lastpos(node.right)

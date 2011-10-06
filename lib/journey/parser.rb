@@ -159,7 +159,7 @@ def _reduce_7(val, _values, result)
 end
 
 def _reduce_8(val, _values, result)
- result = Or.new(val.first, val.last) 
+ result = Or.new([val.first, val.last]) 
     result
 end
 
