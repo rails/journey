@@ -104,7 +104,7 @@ module Journey
       return @simulator if @simulator
 
       gtg = GTG::Builder.new(ast).transition_table
-      @simulator = NFA::Simulator.new gtg
+      @simulator = GTG::Simulator.new gtg
     end
 
     def custom_routes

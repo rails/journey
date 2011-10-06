@@ -35,8 +35,7 @@ module Journey
       end
 
       def eclosure t
-        t = Array(t)
-        t.map { |s| @string_states[s][nil] }.compact.uniq + t
+        Array(t)
       end
 
       def move t, a
