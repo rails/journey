@@ -33,17 +33,13 @@ module Journey
         builder = GTG::Builder.new Nodes::Or.new path_asts
         tt = builder.transition_table
 
-        File.open('out.dot', 'wb') { |f|
-          f.write tt.to_dot
-        }
-
         sim = GTG::Simulator.new tt
 
         match = sim.match '/get'
         assert_equal [paths.first], match.memos
 
-        #match = sim.match '/get/foo'
-        #assert_equal [paths.last], match.memos
+        match = sim.match '/get/foo'
+        assert_equal [paths.last], match.memos
       end
 
       def test_match_data_ambiguous
