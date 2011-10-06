@@ -84,6 +84,13 @@ module Journey
       end
     end
 
+    def visualizer
+      tt     = GTG::Builder.new(ast).transition_table
+      groups = partitioned_routes.first.map(&:ast).group_by { |a| a.to_s }
+      asts   = groups.values.map { |v| v.first }
+      tt.visualizer asts
+    end
+
     private
 
     def partitioned_routes
