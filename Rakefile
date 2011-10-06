@@ -14,6 +14,10 @@ Hoe.spec 'journey' do
   self.readme_file      = 'README.rdoc'
   self.history_file     = 'CHANGELOG.rdoc'
   self.extra_rdoc_files = FileList['*.rdoc']
+  self.extra_dev_deps += [
+    ["racc",            ">= 1.4.6"],
+    ["json"],
+  ]
 end
 
 rule '.rb' => '.y' do |t|

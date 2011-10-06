@@ -1,8 +1,37 @@
 require 'helper'
+require 'json'
 
 module Journey
   module GTG
     class TestGeneralizedTable < MiniTest::Unit::TestCase
+      def test_to_json
+        table = tt %w{
+          /articles(.:format)
+          /articles/new(.:format)
+          /articles/:id/edit(.:format)
+          /articles/:id(.:format)
+        }
+
+        json = JSON.load table.to_json
+        assert json['regexp_states']
+        assert json['string_states']
+        assert json['accepting']
+      end
+
+      if system("dot -V 2>/dev/null")
+        def test_to_svg
+          table = tt %w{
+            /articles(.:format)
+            /articles/new(.:format)
+            /articles/:id/edit(.:format)
+            /articles/:id(.:format)
+          }
+          svg = table.to_svg
+          assert svg
+          refute_match(/DOCTYPE/, svg)
+        end
+      end
+
       def test_simulate_gt
         sim = simulator_for ['/foo', '/bar']
         assert_match sim, '/foo'
