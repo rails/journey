@@ -80,7 +80,7 @@ module Journey
         erb       = File.read File.join(viz_dir, 'index.html.erb')
         states    = "function tt() { return #{to_json}; }"
 
-        fun_routes = paths.first(3).map do |ast|
+        fun_routes = paths.shuffle.first(3).map do |ast|
           ast.map { |n|
             case n
             when Nodes::Symbol
