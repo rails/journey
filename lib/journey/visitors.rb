@@ -141,7 +141,13 @@ digraph parse_tree {
         end
         super
       end
-      alias :nary :binary
+
+      def nary node
+        node.children.each do |c|
+          @edges << "#{node.object_id} -> #{c.object_id};"
+        end
+        super
+      end
 
       def unary node
         @edges << "#{node.object_id} -> #{node.left.object_id};"

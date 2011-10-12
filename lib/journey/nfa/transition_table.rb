@@ -19,6 +19,10 @@ module Journey
         accepting == state
       end
 
+      def accepting_states
+        [accepting]
+      end
+
       def add_memo idx, memo
         @memos[idx] = memo
       end
@@ -77,15 +81,13 @@ module Journey
         final_groups.each do |states|
           id = state_id[states]
 
-          gt[id, final_state] = nil
+          gt.add_accepting id
           save = states.find { |s|
             @memos.key?(s) && eclosure(s).sort.last == accepting
           }
 
           gt.add_memo id, memo(save)
         end
-
-        gt.add_accepting final_state
 
         gt
       end

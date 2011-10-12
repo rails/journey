@@ -8,16 +8,16 @@ module Journey
           "  #{from} -> #{to} [label=\"#{sym || 'ε'}\"];"
         }
 
-        memo_nodes = memos.values.flatten.map { |n|
-          label = n
-          if Journey::Route === n
-            label = "#{n.verb.source} #{n.path.spec}"
-          end
-          "  #{n.object_id} [label=\"#{label}\", shape=box];"
-        }
-        memo_edges = memos.map { |k, memos|
-          memos.map { |v| "  #{k} -> #{v.object_id};" }
-        }.flatten
+        #memo_nodes = memos.values.flatten.map { |n|
+        #  label = n
+        #  if Journey::Route === n
+        #    label = "#{n.verb.source} #{n.path.spec}"
+        #  end
+        #  "  #{n.object_id} [label=\"#{label}\", shape=box];"
+        #}
+        #memo_edges = memos.map { |k, memos|
+        #  (memos || []).map { |v| "  #{k} -> #{v.object_id};" }
+        #}.flatten.uniq
 
         <<-eodot
 digraph nfa {
@@ -26,9 +26,6 @@ digraph nfa {
   #{accepting_states.join ' '};
   node [shape = circle];
 #{edges.join "\n"}
-
-#{memo_nodes.join "\n"}
-#{memo_edges.join "\n"}
 }
         eodot
       end

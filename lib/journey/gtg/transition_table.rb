@@ -114,7 +114,7 @@ module Journey
 
       def []= from, to, sym
         case sym
-        when String, NilClass
+        when String
           @string_states[from][sym] = to
         when Regexp
           @regexp_states[from][sym] = to
