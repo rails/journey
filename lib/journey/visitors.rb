@@ -102,7 +102,7 @@ module Journey
         if options.key? key
           value = options[key]
           consumed[key] = value
-          Router::Utils.escape_uri(value)
+          Router::Utils.escape_path(value)
         else
           "\0"
         end
