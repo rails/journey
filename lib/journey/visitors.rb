@@ -100,7 +100,9 @@ module Journey
         key = node.value.tr(':', '').to_sym
 
         if options.key? key
-          consumed[key] = options[key]
+          value = options[key]
+          consumed[key] = value
+          Router::Utils.escape_uri(value)
         else
           "\0"
         end

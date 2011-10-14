@@ -32,6 +32,10 @@ module Journey
       def self.escape_uri(uri)
         Parser.escape(uri.to_s, UNSAFE_PCHAR)
       end
+
+      def self.unescape_uri(uri)
+        Parser.unescape(uri)
+      end
     end
   end
 end
