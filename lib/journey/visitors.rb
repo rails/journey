@@ -108,7 +108,9 @@ module Journey
         key = node.to_sym
 
         if options.key? key
-          consumed[key] = options[key]
+          value = options[key]
+          consumed[key] = value
+          Router::Utils.escape_path(value)
         else
           "\0"
         end

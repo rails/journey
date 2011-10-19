@@ -254,16 +254,15 @@ module Journey
       assert_equal({:id => 1}, params)
     end
 
-    # FIXME I *guess* this isn't required??
     def test_generate_escapes
       path  = Path::Pattern.new '/:controller(/:action)'
       @router.routes.add_route nil, path, {}, {}, {}
 
       path, _ = @formatter.generate(:path_info,
         nil, { :controller        => "tasks",
-               :action            => "show me",
+               :action            => "a/b c+d",
       }, {})
-      assert_equal '/tasks/show me', path
+      assert_equal '/tasks/a/b%20c+d', path
     end
 
     def test_generate_extra_params
@@ -305,12 +304,34 @@ module Journey
     end
 
     {
-      '/content'            => { :controller => 'content' },
-      '/content/list'       => { :controller => 'content', :action => 'list' },
-      '/content/show/10'    => { :controller => 'content', :action => 'show', :id => "10" },
+      '/content'          => { :controller => 'content' },
+      '/content/list'     => { :controller => 'content', :action => 'list' },
+      '/content/show/10'  => { :controller => 'content', :action => 'show', :id => "10" },
     }.each do |request_path, expected|
       define_method("test_recognize_#{expected.keys.map(&:to_s).join('_')}") do
         path  = Path::Pattern.new "/:controller(/:action(/:id))"
+        app   = Object.new
+        route = @router.routes.add_route(app, path, {}, {}, {})
+
+        env = rails_env 'PATH_INFO' => request_path
+        called   = false
+
+        @router.recognize(env) do |r, _, params|
+          assert_equal route, r
+          assert_equal(expected, params)
+          called = true
+        end
+
+        assert called
+      end
+    end
+
+    {
+      :segment => ['/a%2Fb%20c+d/splat', { :segment => 'a/b c+d', :splat => 'splat'   }],
+      :splat   => ['/segment/a/b%20c+d', { :segment => 'segment', :splat => 'a/b c+d' }]
+    }.each do |name, (request_path, expected)|
+      define_method("test_recognize_#{name}") do
+        path  = Path::Pattern.new '/:segment/*splat'
         app   = Object.new
         route = @router.routes.add_route(app, path, {}, {}, {})
 

@@ -34,6 +34,11 @@ module Journey
           node.regexp = re if re
         end
 
+        @spec.grep(Nodes::Star).each do |node|
+          node = node.left
+          node.regexp = @requirements[node.to_sym] || /(.+)/
+        end
+
         @spec
       end
 

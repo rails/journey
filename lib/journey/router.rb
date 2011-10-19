@@ -138,7 +138,8 @@ module Journey
       }.reject { |r| addr && !(r.ip === addr) }.map { |r|
         match_data  = r.path.match(env['PATH_INFO'])
         match_names = match_data.names.map { |n| n.to_sym }
-        info        = Hash[match_names.zip(match_data.captures).find_all { |_,y| y }]
+        match_values = match_data.captures.map { |v| v && Utils.unescape_uri(v) }
+        info = Hash[match_names.zip(match_values).find_all { |_,y| y }]
 
         [match_data, r.defaults.merge(info), r]
       }
