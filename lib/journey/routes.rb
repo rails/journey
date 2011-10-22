@@ -8,8 +8,11 @@ module Journey
     attr_reader :routes, :named_routes
 
     def initialize
-      @routes       = []
-      @named_routes = {}
+      @routes             = []
+      @named_routes       = {}
+      @ast                = nil
+      @partitioned_routes = nil
+      @simulator          = nil
     end
 
     def length
@@ -29,6 +32,27 @@ module Journey
       routes.clear
     end
 
+    def partitioned_routes
+      @partitioned_routes ||= routes.partition { |r|
+        r.path.anchored && r.ast.grep(Nodes::Symbol).all? { |n| n.default_regexp?  }
+      }
+    end
+
+    def ast
+      return @ast if @ast
+      return if partitioned_routes.first.empty?
+
+      asts = partitioned_routes.first.map { |r| r.ast }
+      @ast = Nodes::Or.new(asts)
+    end
+
+    def simulator
+      return @simulator if @simulator
+
+      gtg = GTG::Builder.new(ast).transition_table
+      @simulator = GTG::Simulator.new gtg
+    end
+
     ###
     # Add a route to the routing table.
     def add_route app, path, conditions, defaults, name = nil
@@ -36,7 +60,15 @@ module Journey
 
       routes << route
       named_routes[name] = route if name
+      clear_cache!
       route
+    end
+
+    private
+    def clear_cache!
+      @ast                = nil
+      @partitioned_routes = nil
+      @simulator          = nil
     end
   end
 end

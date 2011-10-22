@@ -40,7 +40,6 @@ module Journey
       @params_key    = options[:parameters_key]
       @request_class = options[:request_class] || NullReq
       @routes        = routes
-      @ast = @partitioned_routes = @simulator = nil
     end
 
     def call env
@@ -94,24 +93,15 @@ module Journey
     private
 
     def partitioned_routes
-      @partitioned_routes ||= routes.partition { |r|
-        r.path.anchored && r.ast.grep(Nodes::Symbol).all? { |n| n.default_regexp?  }
-      }
+      routes.partitioned_routes
     end
 
     def ast
-      return @ast if @ast
-      return if partitioned_routes.first.empty?
-
-      asts = partitioned_routes.first.map { |r| r.ast }
-      @ast = Nodes::Or.new(asts)
+      routes.ast
     end
 
     def simulator
-      return @simulator if @simulator
-
-      gtg = GTG::Builder.new(ast).transition_table
-      @simulator = GTG::Simulator.new gtg
+      routes.simulator
     end
 
     def custom_routes
