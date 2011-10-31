@@ -72,8 +72,6 @@ module Journey
           end
         end
 
-        final_state = state_id.length + 1
-
         final_groups = state_id.keys.find_all { |s|
           s.sort.last == accepting
         }

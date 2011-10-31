@@ -28,6 +28,23 @@ module Journey
       end
     end
 
+    def test_dashes
+      klass  = FakeRequestFeeler.new nil
+      router = Router.new(routes, {})
+
+      exp = Router::Strexp.new '/foo-bar-baz', {}, ['/.?']
+      path  = Path::Pattern.new exp
+
+      routes.add_route nil, path, {}, {:id => nil}, {}
+
+      env = rails_env 'PATH_INFO' => '/foo-bar-baz'
+      called = false
+      router.recognize(env) do |r, _, params|
+        called = true
+      end
+      assert called
+    end
+
     def test_request_class_and_requirements_success
       klass  = FakeRequestFeeler.new nil
       router = Router.new(routes, {:request_class => klass })

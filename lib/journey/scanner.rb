@@ -47,7 +47,7 @@ module Journey
         [:DOT, text]
       when text = @ss.scan(/:\w+/)
         [:SYMBOL, text]
-      when text = @ss.scan(/\w+/)
+      when text = @ss.scan(/[\w-]+/)
         [:LITERAL, text]
         # any char
       when text = @ss.scan(/./)
