@@ -59,7 +59,7 @@ module Journey
       route = Route.new(name, app, path, conditions, defaults)
 
       routes << route
-      named_routes[name] = route if name
+      named_routes[name] = route if name && !named_routes[name]
       clear_cache!
       route
     end
