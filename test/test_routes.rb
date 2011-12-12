@@ -34,5 +34,18 @@ module Journey
       routes.add_route nil, path, {}, {}, {}
       refute_equal sim, routes.simulator
     end
+
+    def test_first_name_wins
+      #def add_route app, path, conditions, defaults, name = nil
+      routes = Routes.new
+
+      one   = Path::Pattern.new '/hello'
+      two   = Path::Pattern.new '/aaron'
+
+      routes.add_route nil, one, {}, {}, 'aaron'
+      routes.add_route nil, two, {}, {}, 'aaron'
+
+      assert_equal '/hello', routes.named_routes['aaron'].path.spec.to_s
+    end
   end
 end
