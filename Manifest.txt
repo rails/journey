@@ -1,4 +1,5 @@
 .autotest
+.gemtest
 CHANGELOG.rdoc
 Gemfile
 Manifest.txt
