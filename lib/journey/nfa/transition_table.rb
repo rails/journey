@@ -109,7 +109,7 @@ module Journey
       end
 
       def alphabet
-        inverted.values.map(&:keys).flatten.compact.uniq
+        inverted.values.map(&:keys).flatten.compact.uniq.sort_by { |x| x.to_s }
       end
 
       ###
