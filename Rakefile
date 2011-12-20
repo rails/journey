@@ -16,6 +16,7 @@ Hoe.spec 'journey' do
   self.extra_rdoc_files = FileList['*.rdoc']
   self.extra_dev_deps += [
     ["racc",            ">= 1.4.6"],
+    ["rdoc",            "~> 3.11"],
     ["json"],
   ]
 end
