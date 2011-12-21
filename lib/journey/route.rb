@@ -5,6 +5,8 @@ module Journey
     attr_reader :constraints
     alias :conditions :constraints
 
+    attr_accessor :precidence
+
     ##
     # +path+ is a path constraint.
     # +constraints+ is a hash of constraints to be applied to this route.
@@ -23,6 +25,7 @@ module Journey
       @required_parts    = nil
       @parts             = nil
       @decorated_ast     = nil
+      @precidence        = 0
     end
 
     def ast

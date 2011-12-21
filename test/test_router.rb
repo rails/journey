@@ -85,6 +85,25 @@ module Journey
       assert_equal env.env, klass.env
     end
 
+    def test_regexp_first_precedence
+      add_routes @router, [
+        Router::Strexp.new("/whois/:domain", {:domain => /\w+\.[\w\.]+/}, ['/', '.', '?']),
+        Router::Strexp.new("/whois/:id(.:format)", {}, ['/', '.', '?'])
+      ]
+
+      env = rails_env 'PATH_INFO' => '/whois/example.com'
+
+      list = []
+      @router.recognize(env) do |r, _, params|
+        list << r
+      end
+      assert_equal 2, list.length
+
+      r = list.first
+
+      assert_equal '/whois/:domain', r.path.spec.to_s
+    end
+
     def test_required_parts_verified_are_anchored
       add_routes @router, [
         Router::Strexp.new("/foo/:id", { :id => /\d/ }, ['/', '.', '?'], false)

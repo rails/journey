@@ -58,6 +58,7 @@ module Journey
     def add_route app, path, conditions, defaults, name = nil
       route = Route.new(name, app, path, conditions, defaults)
 
+      route.precidence = routes.length
       routes << route
       named_routes[name] = route if name && !named_routes[name]
       clear_cache!
