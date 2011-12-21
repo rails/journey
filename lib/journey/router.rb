@@ -122,7 +122,7 @@ module Journey
         r.path.match(env['PATH_INFO'])
       }
 
-      routes.sort_by(&:precidence).find_all { |r|
+      routes.sort_by(&:precedence).find_all { |r|
         r.constraints.all? { |k,v| v === req.send(k) } &&
           r.verb === env['REQUEST_METHOD']
       }.reject { |r| addr && !(r.ip === addr) }.map { |r|
