@@ -103,8 +103,7 @@ module Journey
           return @separator_re unless @matchers.key? node
 
           re = @matchers[node]
-          # FIXME: is the question mark needed?
-          "(#{re}?)"
+          "(#{re})"
         end
 
         def visit_GROUP node

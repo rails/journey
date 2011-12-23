@@ -5,16 +5,16 @@ module Journey
     class TestPattern < MiniTest::Unit::TestCase
       x = /.+/
       {
-        '/:controller(/:action)'       => %r{\A/(#{x}?)(?:/([^/.?]+))?\Z},
-        '/:controller/foo'             => %r{\A/(#{x}?)/foo\Z},
-        '/:controller/:action'         => %r{\A/(#{x}?)/([^/.?]+)\Z},
-        '/:controller'                 => %r{\A/(#{x}?)\Z},
-        '/:controller(/:action(/:id))' => %r{\A/(#{x}?)(?:/([^/.?]+)(?:/([^/.?]+))?)?\Z},
-        '/:controller/:action.xml'     => %r{\A/(#{x}?)/([^/.?]+)\.xml\Z},
-        '/:controller.:format'         => %r{\A/(#{x}?)\.([^/.?]+)\Z},
-        '/:controller(.:format)'       => %r{\A/(#{x}?)(?:\.([^/.?]+))?\Z},
-        '/:controller/*foo'            => %r{\A/(#{x}?)/(.+)\Z},
-        '/:controller/*foo/bar'        => %r{\A/(#{x}?)/(.+)/bar\Z},
+        '/:controller(/:action)'       => %r{\A/(#{x})(?:/([^/.?]+))?\Z},
+        '/:controller/foo'             => %r{\A/(#{x})/foo\Z},
+        '/:controller/:action'         => %r{\A/(#{x})/([^/.?]+)\Z},
+        '/:controller'                 => %r{\A/(#{x})\Z},
+        '/:controller(/:action(/:id))' => %r{\A/(#{x})(?:/([^/.?]+)(?:/([^/.?]+))?)?\Z},
+        '/:controller/:action.xml'     => %r{\A/(#{x})/([^/.?]+)\.xml\Z},
+        '/:controller.:format'         => %r{\A/(#{x})\.([^/.?]+)\Z},
+        '/:controller(.:format)'       => %r{\A/(#{x})(?:\.([^/.?]+))?\Z},
+        '/:controller/*foo'            => %r{\A/(#{x})/(.+)\Z},
+        '/:controller/*foo/bar'        => %r{\A/(#{x})/(.+)/bar\Z},
       }.each do |path, expected|
         define_method(:"test_to_regexp_#{path}") do
           strexp = Router::Strexp.new(
@@ -28,16 +28,16 @@ module Journey
       end
 
       {
-        '/:controller(/:action)'       => %r{\A/(#{x}?)(?:/([^/.?]+))?},
-        '/:controller/foo'             => %r{\A/(#{x}?)/foo},
-        '/:controller/:action'         => %r{\A/(#{x}?)/([^/.?]+)},
-        '/:controller'                 => %r{\A/(#{x}?)},
-        '/:controller(/:action(/:id))' => %r{\A/(#{x}?)(?:/([^/.?]+)(?:/([^/.?]+))?)?},
-        '/:controller/:action.xml'     => %r{\A/(#{x}?)/([^/.?]+)\.xml},
-        '/:controller.:format'         => %r{\A/(#{x}?)\.([^/.?]+)},
-        '/:controller(.:format)'       => %r{\A/(#{x}?)(?:\.([^/.?]+))?},
-        '/:controller/*foo'            => %r{\A/(#{x}?)/(.+)},
-        '/:controller/*foo/bar'        => %r{\A/(#{x}?)/(.+)/bar},
+        '/:controller(/:action)'       => %r{\A/(#{x})(?:/([^/.?]+))?},
+        '/:controller/foo'             => %r{\A/(#{x})/foo},
+        '/:controller/:action'         => %r{\A/(#{x})/([^/.?]+)},
+        '/:controller'                 => %r{\A/(#{x})},
+        '/:controller(/:action(/:id))' => %r{\A/(#{x})(?:/([^/.?]+)(?:/([^/.?]+))?)?},
+        '/:controller/:action.xml'     => %r{\A/(#{x})/([^/.?]+)\.xml},
+        '/:controller.:format'         => %r{\A/(#{x})\.([^/.?]+)},
+        '/:controller(.:format)'       => %r{\A/(#{x})(?:\.([^/.?]+))?},
+        '/:controller/*foo'            => %r{\A/(#{x})/(.+)},
+        '/:controller/*foo/bar'        => %r{\A/(#{x})/(.+)/bar},
       }.each do |path, expected|
         define_method(:"test_to_non_anchored_regexp_#{path}") do
           strexp = Router::Strexp.new(
@@ -99,6 +99,17 @@ module Journey
           path = Pattern.new pattern
           assert_equal list.sort, path.optional_names.sort
         end
+      end
+
+      def test_to_regexp_match_non_optional
+        strexp = Router::Strexp.new(
+          '/:name',
+          { :name => /\d+/ },
+          ["/", ".", "?"]
+        )
+        path = Pattern.new strexp
+        assert_match('/123', path)
+        refute_match('/', path)
       end
 
       def test_to_regexp_with_group

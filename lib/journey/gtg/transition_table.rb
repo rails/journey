@@ -10,8 +10,8 @@ module Journey
       def initialize
         @regexp_states = Hash.new { |h,k| h[k] = {} }
         @string_states = Hash.new { |h,k| h[k] = {} }
-        @accepting  = {}
-        @memos      = Hash.new { |h,k| h[k] = [] }
+        @accepting     = {}
+        @memos         = Hash.new { |h,k| h[k] = [] }
       end
 
       def add_accepting state
