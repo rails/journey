@@ -120,7 +120,8 @@ module Journey
         end
 
         def visit_STAR node
-          "(.+)"
+          re = @matchers[node.left.to_sym] || '.+'
+          "(#{re})"
         end
       end
 
@@ -171,11 +172,11 @@ module Journey
         to_regexp.source
       end
 
-      private
       def to_regexp
         @re ||= regexp_visitor.new(@separators, @requirements).accept spec
       end
 
+      private
       def regexp_visitor
         @anchored ? AnchoredRegexp : UnanchoredRegexp
       end

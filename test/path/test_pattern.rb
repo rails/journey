@@ -23,7 +23,7 @@ module Journey
             ["/", ".", "?"]
           )
           path = Pattern.new strexp
-          assert_equal(expected, path.send(:to_regexp))
+          assert_equal(expected, path.to_regexp)
         end
       end
 
@@ -47,7 +47,7 @@ module Journey
             false
           )
           path = Pattern.new strexp
-          assert_equal(expected, path.send(:to_regexp))
+          assert_equal(expected, path.to_regexp)
         end
       end
 
@@ -168,6 +168,17 @@ module Journey
         assert_equal %w{ tender 10 }, match.captures
       end
 
+      def test_star_with_custom_re
+        z = /\d+/
+        strexp = Router::Strexp.new(
+          '/page/*foo',
+          { :foo => z },
+          ["/", ".", "?"]
+        )
+        path = Pattern.new strexp
+        assert_equal(%r{\A/page/(#{z})\Z}, path.to_regexp)
+      end
+
       def test_insensitive_regexp_with_group
         strexp = Router::Strexp.new(
           '/page/:name/aaron',
@@ -191,7 +202,7 @@ module Journey
       def test_to_regexp_defaults
         path = Pattern.new '/:controller(/:action(/:id))'
         expected = %r{\A/([^/.?]+)(?:/([^/.?]+)(?:/([^/.?]+))?)?\Z}
-        assert_equal expected, path.send(:to_regexp)
+        assert_equal expected, path.to_regexp
       end
 
       def test_failed_match
