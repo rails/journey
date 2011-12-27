@@ -88,7 +88,8 @@ module Journey
         if consumed == options
           nil
         else
-          visit node.left
+          route = visit node.left
+          route.include?("\0") ? nil : route
         end
       end
 
@@ -107,8 +108,7 @@ module Journey
       def visit_SYMBOL node
         key = node.to_sym
 
-        if options.key? key
-          value = options[key]
+        if value = options[key]
           consumed[key] = value
           Router::Utils.escape_path(value)
         else
