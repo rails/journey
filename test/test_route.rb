@@ -74,6 +74,20 @@ module Journey
       assert_equal '/page/10', route.format({ :id => 10 })
     end
 
+    def test_extras_are_not_included_if_optional_with_parameter
+      path  = Path::Pattern.new '(/sections/:section)/pages/:id'
+      route = Route.new("name", nil, path, { }, { :action => 'show' })
+
+      assert_equal '/pages/10', route.format({:id => 10})
+    end
+
+    def test_extras_are_not_included_if_optional_parameter_is_nil
+      path  = Path::Pattern.new '(/sections/:section)/pages/:id'
+      route = Route.new("name", nil, path, { }, { :action => 'show' })
+
+      assert_equal '/pages/10', route.format({:id => 10, :section => nil})
+    end
+
     def test_score
       path = Path::Pattern.new "/page/:id(/:action)(.:format)"
       specific = Route.new "name", nil, path, {}, {:controller=>"pages", :action=>"show"}
