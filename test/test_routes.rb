@@ -35,8 +35,8 @@ module Journey
       refute_equal sim, routes.simulator
     end
 
-    def test_first_name_wins
-      #def add_route app, path, conditions, defaults, name = nil
+    # FIXME: first name *should* win, revert this after Rails 3.2 release
+    def test_last_name_wins
       routes = Routes.new
 
       one   = Path::Pattern.new '/hello'
@@ -45,7 +45,7 @@ module Journey
       routes.add_route nil, one, {}, {}, 'aaron'
       routes.add_route nil, two, {}, {}, 'aaron'
 
-      assert_equal '/hello', routes.named_routes['aaron'].path.spec.to_s
+      assert_equal '/aaron', routes.named_routes['aaron'].path.spec.to_s
     end
   end
 end

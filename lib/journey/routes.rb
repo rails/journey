@@ -60,7 +60,7 @@ module Journey
 
       route.precedence = routes.length
       routes << route
-      named_routes[name] = route if name && !named_routes[name]
+      named_routes[name] = route if name
       clear_cache!
       route
     end
