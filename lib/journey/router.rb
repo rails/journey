@@ -29,6 +29,14 @@ module Journey
         env['REQUEST_METHOD']
       end
 
+      def path_info
+        env['PATH_INFO']
+      end
+
+      def ip
+        env['REMOTE_ADDR']
+      end
+
       def [](k); env[k]; end
     end
 
@@ -115,18 +123,17 @@ module Journey
     end
 
     def find_routes env
-      addr       = env['REMOTE_ADDR']
-      req        = request_class.new env
+      req = request_class.new env
 
-      routes = filter_routes(env['PATH_INFO']) + custom_routes.find_all { |r|
-        r.path.match(env['PATH_INFO'])
+      routes = filter_routes(req.path_info) + custom_routes.find_all { |r|
+        r.path.match(req.path_info)
       }
 
       routes.sort_by(&:precedence).find_all { |r|
         r.constraints.all? { |k,v| v === req.send(k) } &&
-          r.verb === env['REQUEST_METHOD']
-      }.reject { |r| addr && !(r.ip === addr) }.map { |r|
-        match_data  = r.path.match(env['PATH_INFO'])
+          r.verb === req.request_method
+      }.reject { |r| req.ip && !(r.ip === req.ip) }.map { |r|
+        match_data  = r.path.match(req.path_info)
         match_names = match_data.names.map { |n| n.to_sym }
         match_values = match_data.captures.map { |v| v && Utils.unescape_uri(v) }
         info = Hash[match_names.zip(match_values).find_all { |_,y| y }]
