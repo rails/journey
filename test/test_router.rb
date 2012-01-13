@@ -26,6 +26,10 @@ module Journey
         self.called = true
         'world'
       end
+
+      def path_info; env['PATH_INFO']; end
+      def request_method; env['REQUEST_METHOD']; end
+      def ip; env['REMOTE_ADDR']; end
     end
 
     def test_dashes
@@ -83,6 +87,30 @@ module Journey
 
       assert klass.called, 'hello should have been called'
       assert_equal env.env, klass.env
+    end
+
+    class CustomPathRequest < Router::NullReq
+      def path_info
+        env['custom.path_info']
+      end
+    end
+
+    def test_request_class_overrides_path_info
+      router = Router.new(routes, {:request_class => CustomPathRequest })
+
+      exp = Router::Strexp.new '/bar', {}, ['/.?']
+      path = Path::Pattern.new exp
+
+      routes.add_route nil, path, {}, {}, {}
+
+      env = rails_env 'PATH_INFO' => '/foo', 'custom.path_info' => '/bar'
+
+      recognized = false
+      router.recognize(env) do |r, _, params|
+        recognized = true
+      end
+
+      assert recognized, "route should have been recognized"
     end
 
     def test_regexp_first_precedence
