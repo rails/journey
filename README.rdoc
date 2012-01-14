@@ -1,6 +1,6 @@
 = Journey
 
-* http://github.com/tenderlove/journey
+* http://github.com/rails/journey
 
 == DESCRIPTION:
 
