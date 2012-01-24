@@ -35,13 +35,29 @@ module Journey
       def type
         raise NotImplementedError
       end
+
+      def symbol?; false; end
+      def literal?; false; end
     end
 
     class Terminal < Node
       alias :symbol :left
     end
 
-    %w{ Symbol Slash Literal Dot }.each do |t|
+    class Literal < Terminal
+      def literal?; true; end
+      def type; :LITERAL; end
+    end
+
+    class Dummy < Literal
+      def initialize x = Object.new
+        super
+      end
+
+      def literal?; false; end
+    end
+
+    %w{ Symbol Slash Dot }.each do |t|
       class_eval %{
         class #{t} < Terminal
           def type; :#{t.upcase}; end
@@ -62,6 +78,8 @@ module Journey
       def default_regexp?
         regexp == DEFAULT_EXP
       end
+
+      def symbol?; true; end
     end
 
     class Unary < Node
