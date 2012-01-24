@@ -3,7 +3,7 @@ require 'journey/gtg/transition_table'
 module Journey
   module GTG
     class Builder
-      DUMMY = Nodes::Literal.new Object.new # :nodoc:
+      DUMMY = Nodes::Dummy.new # :nodoc:
 
       attr_reader :root, :ast, :endpoints
 

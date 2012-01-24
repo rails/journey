@@ -1,6 +1,5 @@
-=== 1.0.0 / (not released)
+Mon Jan 23 17:07:53 2012  Aaron Patterson <aaron@tenderlovemaking.com>
 
-* 1 major enhancement
-
-  * Birthday!
-
+	* Added symbol? and literal? predicate methods to the ast nodes for
+        easier AST traversal.
+        * Made the dummy node a real class.
