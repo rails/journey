@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'helper'
 
 module Journey
@@ -42,6 +43,24 @@ module Journey
       routes.add_route nil, path, {}, {:id => nil}, {}
 
       env = rails_env 'PATH_INFO' => '/foo-bar-baz'
+      called = false
+      router.recognize(env) do |r, _, params|
+        called = true
+      end
+      assert called
+    end
+
+    def test_unicode
+      klass  = FakeRequestFeeler.new nil
+      router = Router.new(routes, {})
+      
+      #match the escaped version of /ほげ
+      exp = Router::Strexp.new '/%E3%81%BB%E3%81%92', {}, ['/.?'] 
+      path  = Path::Pattern.new exp
+
+      routes.add_route nil, path, {}, {:id => nil}, {}
+
+      env = rails_env 'PATH_INFO' => '/%E3%81%BB%E3%81%92'
       called = false
       router.recognize(env) do |r, _, params|
         called = true
