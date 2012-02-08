@@ -74,8 +74,6 @@ module Journey
       def visualizer paths, title = 'FSM'
         viz_dir   = File.join File.dirname(__FILE__), '..', 'visualizer'
         fsm_js    = File.read File.join(viz_dir, 'fsm.js')
-        d3_js     = File.read File.join(viz_dir, 'd3.min.js')
-        reset_css = File.read File.join(viz_dir, 'reset.css')
         fsm_css   = File.read File.join(viz_dir, 'fsm.css')
         erb       = File.read File.join(viz_dir, 'index.html.erb')
         states    = "function tt() { return #{to_json}; }"
@@ -97,9 +95,9 @@ module Journey
           }.compact.join
         end
 
-        stylesheets = [reset_css, fsm_css]
+        stylesheets = [fsm_css]
         svg         = to_svg
-        javascripts = [d3_js, states, fsm_js]
+        javascripts = [states, fsm_js]
 
         # Annoying hack for 1.9 warnings
         fun_routes  = fun_routes
