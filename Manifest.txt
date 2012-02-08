@@ -30,11 +30,9 @@ lib/journey/router/utils.rb
 lib/journey/routes.rb
 lib/journey/scanner.rb
 lib/journey/visitors.rb
-lib/journey/visualizer/d3.min.js
 lib/journey/visualizer/fsm.css
 lib/journey/visualizer/fsm.js
 lib/journey/visualizer/index.html.erb
-lib/journey/visualizer/reset.css
 test/gtg/test_builder.rb
 test/gtg/test_transition_table.rb
 test/helper.rb

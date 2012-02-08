@@ -2,16 +2,16 @@
 
 Gem::Specification.new do |s|
   s.name = "journey"
-  s.version = "1.0.1.20120126101943"
+  s.version = "1.0.1.20120208102424"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aaron Patterson"]
-  s.date = "2012-01-26"
+  s.date = "2012-02-08"
   s.description = "Journey is a router.  It routes requests."
   s.email = ["aaron@tenderlovemaking.com"]
   s.extra_rdoc_files = ["Manifest.txt", "CHANGELOG.rdoc", "README.rdoc"]
-  s.files = [".autotest", ".gemtest", ".travis.yml", "CHANGELOG.rdoc", "Gemfile", "Manifest.txt", "README.rdoc", "Rakefile", "journey.gemspec", "lib/journey.rb", "lib/journey/backwards.rb", "lib/journey/core-ext/hash.rb", "lib/journey/formatter.rb", "lib/journey/gtg/builder.rb", "lib/journey/gtg/simulator.rb", "lib/journey/gtg/transition_table.rb", "lib/journey/nfa/builder.rb", "lib/journey/nfa/dot.rb", "lib/journey/nfa/simulator.rb", "lib/journey/nfa/transition_table.rb", "lib/journey/nodes/node.rb", "lib/journey/parser.rb", "lib/journey/parser.y", "lib/journey/parser_extras.rb", "lib/journey/path/pattern.rb", "lib/journey/route.rb", "lib/journey/router.rb", "lib/journey/router/strexp.rb", "lib/journey/router/utils.rb", "lib/journey/routes.rb", "lib/journey/scanner.rb", "lib/journey/visitors.rb", "lib/journey/visualizer/d3.min.js", "lib/journey/visualizer/fsm.css", "lib/journey/visualizer/fsm.js", "lib/journey/visualizer/index.html.erb", "lib/journey/visualizer/reset.css", "test/gtg/test_builder.rb", "test/gtg/test_transition_table.rb", "test/helper.rb", "test/nfa/test_simulator.rb", "test/nfa/test_transition_table.rb", "test/nodes/test_symbol.rb", "test/path/test_pattern.rb", "test/route/definition/test_parser.rb", "test/route/definition/test_scanner.rb", "test/router/test_strexp.rb", "test/router/test_utils.rb", "test/test_route.rb", "test/test_router.rb", "test/test_routes.rb"]
-  s.homepage = "http://github.com/tenderlove/journey"
+  s.files = [".autotest", ".gemtest", ".travis.yml", "CHANGELOG.rdoc", "Gemfile", "Manifest.txt", "README.rdoc", "Rakefile", "journey.gemspec", "lib/journey.rb", "lib/journey/backwards.rb", "lib/journey/core-ext/hash.rb", "lib/journey/formatter.rb", "lib/journey/gtg/builder.rb", "lib/journey/gtg/simulator.rb", "lib/journey/gtg/transition_table.rb", "lib/journey/nfa/builder.rb", "lib/journey/nfa/dot.rb", "lib/journey/nfa/simulator.rb", "lib/journey/nfa/transition_table.rb", "lib/journey/nodes/node.rb", "lib/journey/parser.rb", "lib/journey/parser.y", "lib/journey/parser_extras.rb", "lib/journey/path/pattern.rb", "lib/journey/route.rb", "lib/journey/router.rb", "lib/journey/router/strexp.rb", "lib/journey/router/utils.rb", "lib/journey/routes.rb", "lib/journey/scanner.rb", "lib/journey/visitors.rb", "lib/journey/visualizer/fsm.css", "lib/journey/visualizer/fsm.js", "lib/journey/visualizer/index.html.erb", "test/gtg/test_builder.rb", "test/gtg/test_transition_table.rb", "test/helper.rb", "test/nfa/test_simulator.rb", "test/nfa/test_transition_table.rb", "test/nodes/test_symbol.rb", "test/path/test_pattern.rb", "test/route/definition/test_parser.rb", "test/route/definition/test_scanner.rb", "test/router/test_strexp.rb", "test/router/test_utils.rb", "test/test_route.rb", "test/test_router.rb", "test/test_routes.rb"]
+  s.homepage = "http://github.com/rails/journey"
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = "journey"
