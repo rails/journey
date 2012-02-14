@@ -21,7 +21,7 @@ module Journey
         input = StringScanner.new string
         state = [0]
         until input.eos?
-          sym   = input.scan(/[\/\.\?]|[^\/\.\?]+/)
+          sym   = input.scan(%r([/.?]|[^/.?]+))
           state = tt.move(state, sym)
         end
 
