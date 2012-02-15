@@ -104,7 +104,7 @@ module Journey
         if tests.key? key
           /\A#{tests[key]}\Z/ === parts[key]
         else
-          true
+          parts.fetch(key) { false }
         end
       }
     end
