@@ -25,7 +25,8 @@ module Journey
         @names          = nil
         @optional_names = nil
         @required_names = nil
-        @re = nil
+        @re             = nil
+        @offsets        = nil
       end
 
       def ast
@@ -182,8 +183,10 @@ module Journey
       end
 
       def offsets
+        return @offsets if @offsets
+
         viz = RegexpOffsets.new @requirements
-        viz.accept spec
+        @offsets = viz.accept spec
       end
     end
   end

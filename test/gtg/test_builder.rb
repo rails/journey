@@ -5,13 +5,13 @@ module Journey
     class TestBuilder < MiniTest::Unit::TestCase
       def test_following_states_multi
         table  = tt ['a|a']
-        assert_equal 1, table.move(0, 'a').length
+        assert_equal 1, table.move([0], 'a').length
       end
 
       def test_following_states_multi_regexp
         table  = tt [':a|b']
-        assert_equal 1, table.move(0, 'fooo').length
-        assert_equal 2, table.move(0, 'b').length
+        assert_equal 1, table.move([0], 'fooo').length
+        assert_equal 2, table.move([0], 'b').length
       end
 
       def test_multi_path
@@ -22,7 +22,7 @@ module Journey
           [2, 'b'],
           [2, '/'],
           [1, 'c'],
-        ].inject(0) { |state, (exp, sym)|
+        ].inject([0]) { |state, (exp, sym)|
           new = table.move(state, sym)
           assert_equal exp, new.length
           new
