@@ -39,8 +39,7 @@ module Journey
       end
 
       def move t, a
-        t = Array(t)
-        move_string(t, a) + move_regexp(t, a)
+        move_string(t, a).concat move_regexp(t, a)
       end
 
       def to_json
@@ -137,12 +136,16 @@ module Journey
 
       private
       def move_regexp t, a
+        return [] if t.empty?
+
         t.map { |s|
-          @regexp_states[s].find_all { |re,_| re === a }.map(&:last)
-        }.flatten.uniq
+          @regexp_states[s].map { |re,v| re === a ? v : nil }
+        }.flatten.compact.uniq
       end
 
       def move_string t, a
+        return [] if t.empty?
+
         t.map { |s| @string_states[s][a] }.compact
       end
     end

@@ -2,13 +2,17 @@
 module Journey
   module Visitors
     class Visitor # :nodoc:
+      DISPATCH_CACHE = Hash.new { |h,k|
+        h[k] = "visit_#{k}"
+      }
+
       def accept node
         visit node
       end
 
       private
       def visit node
-        send "visit_#{node.type}", node
+        send DISPATCH_CACHE[node.type], node
       end
 
       def binary node
