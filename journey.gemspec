@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = "journey"
-  s.version = "1.0.2.20120220091328"
+  s.version = "1.0.3.20120222115248"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aaron Patterson"]
-  s.date = "2012-02-20"
+  s.date = "2012-02-22"
   s.description = "Journey is a router.  It routes requests."
   s.email = ["aaron@tenderlovemaking.com"]
   s.extra_rdoc_files = ["Manifest.txt", "CHANGELOG.rdoc", "README.rdoc"]
