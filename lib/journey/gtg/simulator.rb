@@ -20,8 +20,7 @@ module Journey
       def simulate string
         input = StringScanner.new string
         state = [0]
-        until input.eos?
-          sym   = input.scan(%r([/.?]|[^/.?]+))
+        while sym = input.scan(%r([/.?]|[^/.?]+))
           state = tt.move(state, sym)
         end
 
