@@ -13,6 +13,8 @@ module Journey
           ['/',      [[:SLASH, '/']]],
           ['*omg',   [[:STAR, '*'], [:LITERAL, 'omg']]],
           ['/page',  [[:SLASH, '/'], [:LITERAL, 'page']]],
+          ['/~page', [[:SLASH, '/'], [:LITERAL, '~page']]],
+          ['/pa-ge', [[:SLASH, '/'], [:LITERAL, 'pa-ge']]],
           ['/:page', [[:SLASH, '/'], [:SYMBOL, ':page']]],
           ['/(:page)', [
                         [:SLASH, '/'],
