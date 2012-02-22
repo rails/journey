@@ -83,7 +83,7 @@ module Journey
     end
 
     class Unary < Node
-      def children; [value] end
+      def children; [left] end
     end
 
     class Group < Unary
