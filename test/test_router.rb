@@ -53,9 +53,9 @@ module Journey
     def test_unicode
       klass  = FakeRequestFeeler.new nil
       router = Router.new(routes, {})
-      
+
       #match the escaped version of /ほげ
-      exp = Router::Strexp.new '/%E3%81%BB%E3%81%92', {}, ['/.?'] 
+      exp = Router::Strexp.new '/%E3%81%BB%E3%81%92', {}, ['/.?']
       path  = Path::Pattern.new exp
 
       routes.add_route nil, path, {}, {:id => nil}, {}
@@ -197,6 +197,18 @@ module Journey
       assert_equal 404, resp.first
     end
 
+    def test_clear_trailing_slash_from_script_name_on_root_unanchored_routes
+      strexp = Router::Strexp.new("/", {}, ['/', '.', '?'], false)
+      path   = Path::Pattern.new strexp
+      app    = lambda { |env| [200, {}, ['success!']] }
+      route  = @router.routes.add_route(app, path, {}, {}, {})
+
+      env  = rack_env('SCRIPT_NAME' => '', 'PATH_INFO' => '/weblog')
+      resp = @router.call(env)
+      assert_equal ['success!'], resp.last
+      assert_equal '', env['SCRIPT_NAME']
+    end
+
     def test_defaults_merge_correctly
       path  = Path::Pattern.new '/foo(/:id)'
       @router.routes.add_route nil, path, {}, {:id => nil}, {}
@@ -278,13 +290,6 @@ module Journey
 
       path, _ = @formatter.generate(:path_info, nil, { :id => 10 }, { :action => 'index' })
       assert_equal "/messages/index/10", path
-    end
-
-    def add_routes router, paths
-      paths.each do |path|
-        path  = Path::Pattern.new path
-        router.routes.add_route nil, path, {}, {}, {}
-      end
     end
 
     def test_nil_path_parts_are_ignored
@@ -500,6 +505,13 @@ module Journey
     end
 
     private
+
+    def add_routes router, paths
+      paths.each do |path|
+        path  = Path::Pattern.new path
+        router.routes.add_route nil, path, {}, {}, {}
+      end
+    end
 
     RailsEnv = Struct.new(:env)
 
