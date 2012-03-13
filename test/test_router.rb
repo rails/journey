@@ -207,6 +207,7 @@ module Journey
       resp = @router.call(env)
       assert_equal ['success!'], resp.last
       assert_equal '', env['SCRIPT_NAME']
+      assert_equal '/weblog', env['PATH_INFO']
     end
 
     def test_defaults_merge_correctly

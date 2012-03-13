@@ -60,7 +60,7 @@ module Journey
 
         unless route.path.anchored
           env['SCRIPT_NAME'] = (script_name.to_s + match.to_s).chomp('/')
-          env['PATH_INFO']   = match.post_match
+          env['PATH_INFO']   = Utils.normalize_path(match.post_match)
         end
 
         env[@params_key] = (set_params || {}).merge parameters
