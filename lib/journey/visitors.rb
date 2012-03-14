@@ -38,6 +38,25 @@ module Journey
       end
     end
 
+    class Ragel < Visitor
+      private
+      def visit_GROUP(n)
+        "(#{super})?"
+      end
+
+      def visit_CAT(n)
+        visit(n.left) + " . " + visit(n.right)
+      end
+
+      def visit_SYMBOL n
+        "/[^/]/+"
+      end
+
+      def terminal n
+        n.symbol.inspect
+      end
+    end
+
     ##
     # Loop through the requirements AST
     class Each < Visitor # :nodoc:
