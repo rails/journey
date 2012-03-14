@@ -8,7 +8,7 @@ module Journey
 
       @action_template = ERB.new <<-EOF
   action <%= action_name %> {
-    rb_funcall(self, rb_intern("match"), 1, INT2NUM(<%= offset %>));
+    rb_ary_push(matches, INT2NUM(<%= offset %>));
   }
 
   <%= rule_name %> = <%= rule %> %<%= action_name %>;
@@ -16,7 +16,7 @@ module Journey
 
       @machine_template = ERB.new <<-EOF
 %%{
-  machine <%= name %>;
+  machine <%= machine_name %>;
   write data;
 
 <%= rules.join "\n" %>
@@ -24,6 +24,41 @@ module Journey
   main := <%= main %>;
 }%%
       EOF
+
+      @source_template = ERB.new <<-EOF
+#include <ruby.h>
+
+<%= machine %>
+
+static VALUE parse(VALUE self, VALUE string)
+{
+  int cs;
+  char * p = RSTRING_PTR(string);
+  char * pe = p + RSTRING_LEN(string);
+  char * eof = pe;
+
+  VALUE matches = rb_ary_new();
+
+  %%{
+  write init;
+  write exec;
+  }%%
+
+  if (RARRAY_LEN(matches) == 0)
+    return Qfalse;
+  else
+    return matches;
+}
+
+void Init_router()
+{
+  VALUE above = rb_path2class("<%= name %>");
+  VALUE cParser = rb_define_class_under(above, "Parser", rb_cObject);
+
+  rb_define_method(cParser, "parse", parse, 1);
+}
+      EOF
+
     end
 
     def rules
@@ -41,11 +76,19 @@ module Journey
       @machine_template.result binding
     end
 
+    def source
+      @source_template.result binding
+    end
+
     private
     def main
       asts.length.times.map { |i|
         "r_#{i}"
       }.join ' | '
+    end
+
+    def machine_name
+      name.to_s.gsub /:/, ''
     end
   end
 end
