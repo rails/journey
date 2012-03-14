@@ -50,7 +50,7 @@ static VALUE parse(VALUE self, VALUE string)
     return matches;
 }
 
-void Init_router()
+void Init_roflscale()
 {
   VALUE above = rb_path2class("<%= name %>");
   VALUE cParser = rb_define_class_under(above, "Parser", rb_cObject);

@@ -15,6 +15,10 @@ module Journey
       @simulator          = nil
     end
 
+    def [] i
+      @routes[i]
+    end
+
     def length
       @routes.length
     end
