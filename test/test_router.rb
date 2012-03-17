@@ -201,7 +201,7 @@ module Journey
       strexp = Router::Strexp.new("/", {}, ['/', '.', '?'], false)
       path   = Path::Pattern.new strexp
       app    = lambda { |env| [200, {}, ['success!']] }
-      route  = @router.routes.add_route(app, path, {}, {}, {})
+      @router.routes.add_route(app, path, {}, {}, {})
 
       env  = rack_env('SCRIPT_NAME' => '', 'PATH_INFO' => '/weblog')
       resp = @router.call(env)
