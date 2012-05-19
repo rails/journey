@@ -257,11 +257,11 @@ module Journey
         "/messages/:id/edit(.:format)",
         "/messages/:id(.:format)"
       ]
-      env = rails_env 'PATH_INFO' => '/messages/1.1.1'
+      env = rails_env 'PATH_INFO' => '/messages/unknown/path'
       yielded = false
 
       @router.recognize(env) do |*whatever|
-        yielded = false
+        yielded = true
       end
       refute yielded
     end
