@@ -67,8 +67,8 @@ module Journey
     alias :segment_keys :parts
 
     def format path_options
-      (defaults.keys - required_parts).each do |key|
-        path_options.delete key if defaults[key].to_s == path_options[key].to_s
+      path_options.delete_if do |key, value|
+        value.to_s == defaults[key].to_s && !required_parts.include?(key)
       end
 
       formatter      = Visitors::Formatter.new(path_options)
