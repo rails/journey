@@ -11,7 +11,7 @@ module Journey
       def test_tokens
         [
           ['/',      [[:SLASH, '/']]],
-          ['*omg',   [[:STAR, '*'], [:LITERAL, 'omg']]],
+          ['*omg',   [[:STAR, '*omg']]],
           ['/page',  [[:SLASH, '/'], [:LITERAL, 'page']]],
           ['/~page', [[:SLASH, '/'], [:LITERAL, '~page']]],
           ['/pa-ge', [[:SLASH, '/'], [:LITERAL, 'pa-ge']]],

@@ -68,10 +68,6 @@ module Journey
         node.left
       end
 
-      def visit_STAR node
-        "*" + super
-      end
-
       def visit_GROUP node
         "(#{visit node.left})"
       end
