@@ -29,7 +29,7 @@ module Journey
       end
 
       def name
-        left.tr ':', ''
+        left.tr '*:', ''
       end
 
       def type

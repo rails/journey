@@ -35,7 +35,7 @@ module Journey
         # /
       when text = @ss.scan(/\//)
         [:SLASH, text]
-      when text = @ss.scan(/\*/)
+      when text = @ss.scan(/\*\w+/)
         [:STAR, text]
       when text = @ss.scan(/\(/)
         [:LPAREN, text]
