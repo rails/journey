@@ -71,10 +71,7 @@ module Journey
         path_options.delete key if defaults[key].to_s == path_options[key].to_s
       end
 
-      formatter      = Visitors::Formatter.new(path_options)
-
-      formatted_path = formatter.accept(path.spec)
-      formatted_path.gsub(/\/\x00/, '')
+      Visitors::Formatter.new(path_options).accept(path.spec)
     end
 
     def optional_parts
