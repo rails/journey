@@ -38,14 +38,6 @@ module Journey
       assert_equal(//, route.ip)
     end
 
-    def test_format_empty
-      path  = Path::Pattern.new '/messages/:id(.:format)'
-      route = Route.new("name", nil, path, {},
-                        { :controller => 'foo', :action => 'bar' })
-
-      assert_equal '/messages', route.format({})
-    end
-
     def test_format_with_star
       path  = Path::Pattern.new '/:controller/*extra'
       route = Route.new("name", nil, path, {},
