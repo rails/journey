@@ -10,21 +10,18 @@ module Journey
       @cache  = nil
     end
 
-    def generate key, name, options, recall = {}, parameterize = nil
+    def generate type, name, options, recall = {}, parameterize = nil
       constraints = recall.merge options
 
       match_route(name, constraints) do |route|
-        data = constraints.dup
 
         keys_to_keep = route.parts.reverse.drop_while { |part|
           !options.key?(part) || (options[part] || recall[part]).nil?
-        } | route.required_parts
+        }
 
-        (data.keys - keys_to_keep).each do |bad_key|
-          data.delete bad_key
+        parameterized_parts = constraints.dup.keep_if do |key, _|
+          keys_to_keep.include?(key) || route.required_parts.include?(key)
         end
-
-        parameterized_parts = data.dup
 
         if parameterize
           parameterized_parts.each do |k,v|
@@ -36,9 +33,11 @@ module Journey
 
         next unless verify_required_parts!(route, parameterized_parts)
 
-        z = Hash[options.to_a - data.to_a - route.defaults.to_a]
+        params = options.dup.delete_if do |key, _|
+          parameterized_parts.key?(key) || route.defaults.key?(key)
+        end
 
-        return [route.format(parameterized_parts), z]
+        return [route.format(parameterized_parts), params]
       end
 
       raise Router::RoutingError
