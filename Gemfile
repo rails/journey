@@ -11,4 +11,8 @@ gem "rdoc", "~>3.11", :group => [:development, :test]
 gem "json", ">=0", :group => [:development, :test]
 gem "hoe", "~>2.12", :group => [:development, :test]
 
+# Add your own local bundler stuff
+local_gemfile = File.dirname(__FILE__) + "/.Gemfile"
+instance_eval File.read local_gemfile if File.exists? local_gemfile
+
 # vim: syntax=ruby
