@@ -30,14 +30,12 @@ module Journey
         end
 
         parameterized_parts.keep_if { |_,v| v  }
-
-        next unless verify_required_parts!(route, parameterized_parts)
-
         params = options.dup.delete_if do |key, _|
           parameterized_parts.key?(key) || route.defaults.key?(key)
         end
 
-        return [route.format(parameterized_parts), params]
+        string = route.format(parameterized_parts)
+        return [string, params] if string
       end
 
       raise Router::RoutingError
@@ -95,17 +93,6 @@ module Journey
       }.map { |pair|
         possibles(cache[pair], options, depth + 1)
       }.flatten(1)
-    end
-
-    def verify_required_parts! route, parts
-      tests = route.path.requirements
-      route.required_parts.all? { |key|
-        if tests.key? key
-          /\A#{tests[key]}\Z/ === parts[key]
-        else
-          parts.fetch(key) { false }
-        end
-      }
     end
 
     def build_cache

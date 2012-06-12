@@ -78,8 +78,9 @@ module Journey
     class Formatter < Visitor
       attr_reader :options, :consumed
 
-      def initialize options
+      def initialize options, requirements
         @options  = options
+        @requirements = requirements
         @consumed = {}
       end
 
@@ -98,7 +99,7 @@ module Journey
       end
 
       def binary node
-        [visit(node.left), visit(node.right)].join
+        "#{visit(node.left)}#{visit(node.right)}"
       end
 
       def nary node
@@ -108,11 +109,13 @@ module Journey
       def visit_SYMBOL node
         key = node.to_sym
 
-        if value = options[key]
+        value = options[key]
+        return "\0" unless value
+        if requirement = @requirements[key] and !(/\A#{requirement}\Z/ === value)
+          "\0"
+        else
           consumed[key] = value
           Router::Utils.escape_path(value)
-        else
-          "\0"
         end
       end
     end

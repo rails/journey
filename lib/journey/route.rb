@@ -71,7 +71,8 @@ module Journey
         value.to_s == defaults[key].to_s && !required_parts.include?(key)
       end
 
-      Visitors::Formatter.new(path_options).accept(path.spec)
+      result = Visitors::Formatter.new(path_options, path.requirements).accept(path.spec)
+      result.include?("\0") ? nil : result
     end
 
     def optional_parts
