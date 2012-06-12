@@ -172,19 +172,19 @@ module Journey
       end
     end
 
-    def test_only_required_parts_are_verified
+    def test_optional_parts_are_verified
       add_routes @router, [
         Router::Strexp.new("/foo(/:id)", {:id => /\d/}, ['/', '.', '?'], false)
       ]
 
       path, _ = @formatter.generate(:path_info, nil, { :id => '10' }, { })
-      assert_equal '/foo/10', path
+      assert_equal '/foo', path
 
       path, _ = @formatter.generate(:path_info, nil, { }, { })
       assert_equal '/foo', path
 
       path, _ = @formatter.generate(:path_info, nil, { :id => 'aa' }, { })
-      assert_equal '/foo/aa', path
+      assert_equal '/foo', path
     end
 
     def test_X_Cascade
