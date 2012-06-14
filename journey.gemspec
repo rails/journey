@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = "journey"
-  s.version = "1.0.3.20120222115248"
+  s.version = "1.0.4.20120614141756"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aaron Patterson"]
-  s.date = "2012-02-22"
+  s.date = "2012-06-14"
   s.description = "Journey is a router.  It routes requests."
   s.email = ["aaron@tenderlovemaking.com"]
   s.extra_rdoc_files = ["Manifest.txt", "CHANGELOG.rdoc", "README.rdoc"]
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = "journey"
-  s.rubygems_version = "1.8.11"
+  s.rubygems_version = "1.8.22"
   s.summary = "Journey is a router"
   s.test_files = ["test/gtg/test_builder.rb", "test/gtg/test_transition_table.rb", "test/nfa/test_simulator.rb", "test/nfa/test_transition_table.rb", "test/nodes/test_symbol.rb", "test/path/test_pattern.rb", "test/route/definition/test_parser.rb", "test/route/definition/test_scanner.rb", "test/router/test_strexp.rb", "test/router/test_utils.rb", "test/test_route.rb", "test/test_router.rb", "test/test_routes.rb"]
 

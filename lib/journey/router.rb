@@ -17,7 +17,7 @@ module Journey
     class RoutingError < ::StandardError
     end
 
-    VERSION = '1.0.3'
+    VERSION = '1.0.4'
 
     class NullReq # :nodoc:
       attr_reader :env
