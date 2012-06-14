@@ -305,11 +305,12 @@ module Journey
     end
 
     def test_generate_slash
-      path  = Path::Pattern.new '/'
-      @router.routes.add_route nil, path, {}, {}, {}
-
       params = [ [:controller, "tasks"],
                  [:action, "show"] ]
+      str = Router::Strexp.new("/", Hash[params], ['/', '.', '?'], true)
+      path  = Path::Pattern.new str
+
+      @router.routes.add_route nil, path, {}, {}, {}
 
       path, _ = @formatter.generate(:path_info, nil, Hash[params], {})
       assert_equal '/', path

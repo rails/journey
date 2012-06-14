@@ -34,6 +34,8 @@ module Journey
 
         parameterized_parts.keep_if { |_,v| v  }
 
+        next if !name && route.requirements.empty? && route.parts.empty?
+
         next unless verify_required_parts!(route, parameterized_parts)
 
         z = Hash[options.to_a - data.to_a - route.defaults.to_a]
