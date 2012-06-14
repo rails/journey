@@ -1,3 +1,13 @@
+Thu Jun 14 14:03:22 2012  Aaron Patterson <aaron@tenderlovemaking.com>
+
+	* lib/journey/formatter.rb: when generating routes, skip route
+          literals (routes that do not have replacement values like
+          "/:controller") when matching unnamed routes.
+            
+            https://github.com/rails/rails/issues/6459
+
+        * test/test_router.rb: corresponding test
+
 Wed Feb 15 11:49:41 2012  Aaron Patterson <aaron@tenderlovemaking.com>
 
 	* lib/journey/formatter.rb: reject non-truthy parameters parts.

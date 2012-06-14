@@ -14,7 +14,6 @@ module Journey
       constraints = recall.merge options
 
       match_route(name, constraints) do |route|
-
         keys_to_keep = route.parts.reverse.drop_while { |part|
           !options.key?(part) || (options[part] || recall[part]).nil?
         }
@@ -30,6 +29,8 @@ module Journey
         end
 
         parameterized_parts.keep_if { |_,v| v  }
+
+        next if !name && route.requirements.empty? && route.parts.empty?
 
         next unless verify_required_parts!(route, parameterized_parts)
 
