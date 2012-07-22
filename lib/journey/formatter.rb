@@ -14,21 +14,7 @@ module Journey
       constraints = recall.merge options
 
       match_route(name, constraints) do |route|
-        keys_to_keep = route.parts.reverse.drop_while { |part|
-          !options.key?(part) || (options[part] || recall[part]).nil?
-        }
-
-        parameterized_parts = constraints.dup.keep_if do |key, _|
-          keys_to_keep.include?(key) || route.required_parts.include?(key)
-        end
-
-        if parameterize
-          parameterized_parts.each do |k,v|
-            parameterized_parts[k] = parameterize.call(k, v)
-          end
-        end
-
-        parameterized_parts.keep_if { |_,v| v  }
+        parameterized_parts = extract_parameterized_parts route, options, recall, parameterize
 
         next if !name && route.requirements.empty? && route.parts.empty?
 
@@ -49,6 +35,30 @@ module Journey
     end
 
     private
+    def extract_parameterized_parts route, options, recall, parameterize = nil
+      constraints = recall.merge options
+      data = constraints.dup
+
+      keys_to_keep = route.parts.reverse.drop_while { |part|
+        !options.key?(part) || (options[part] || recall[part]).nil?
+      } | route.required_parts
+
+      (data.keys - keys_to_keep).each do |bad_key|
+        data.delete bad_key
+      end
+
+      parameterized_parts = data.dup
+
+      if parameterize
+        parameterized_parts.each do |k,v|
+          parameterized_parts[k] = parameterize.call(k, v)
+        end
+      end
+
+      parameterized_parts.keep_if { |_,v| v  }
+      parameterized_parts
+    end
+
     def named_routes
       routes.named_routes
     end
