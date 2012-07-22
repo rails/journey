@@ -207,6 +207,17 @@ module Journey
       assert_equal '', env['SCRIPT_NAME']
     end
 
+    def test_add_route_info_to_env
+      app  = lambda { |env| [200, {}, ['success!']] }
+      ["/messages(.:format)", "/messages/new(.:format)"].each do |path|
+        @router.routes.add_route(app, Path::Pattern.new(path), {}, {}, {})
+      end
+
+      env = rack_env('PATH_INFO' => '/messages/new')
+      @router.call(env)
+      assert_equal @router.routes.last, env['journey.route']
+    end
+
     def test_defaults_merge_correctly
       path  = Path::Pattern.new '/foo(/:id)'
       @router.routes.add_route nil, path, {}, {:id => nil}, {}
