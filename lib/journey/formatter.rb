@@ -100,6 +100,20 @@ module Journey
       routes
     end
 
+    # returns an array populated with missing keys if any are present
+    def missing_keys route, parts
+      missing_keys = []
+      tests = route.path.requirements
+      route.required_parts.each { |key|
+        if tests.key? key
+          missing_keys << key unless /\A#{tests[key]}\Z/ === parts[key]
+        else
+          missing_keys << key unless parts[key]
+        end
+      }
+      missing_keys
+    end
+
     def possibles cache, options, depth = 0
       cache.fetch(:___routes) { [] } + options.find_all { |pair|
         cache.key? pair
@@ -108,15 +122,9 @@ module Journey
       }.flatten(1)
     end
 
+    # returns boolean, true if no missing keys are present
     def verify_required_parts! route, parts
-      tests = route.path.requirements
-      route.required_parts.all? { |key|
-        if tests.key? key
-          /\A#{tests[key]}\Z/ === parts[key]
-        else
-          parts.fetch(key) { false }
-        end
-      }
+      missing_keys(route, parts).empty?
     end
 
     def build_cache
