@@ -12,14 +12,14 @@ module Journey
 
     def generate type, name, options, recall = {}, parameterize = nil
       constraints = recall.merge options
+      missing_keys = []
 
       match_route(name, constraints) do |route|
         parameterized_parts = extract_parameterized_parts route, options, recall, parameterize
-
         next if !name && route.requirements.empty? && route.parts.empty?
 
-        next unless verify_required_parts!(route, parameterized_parts)
-
+        missing_keys = missing_keys(route, parameterized_parts)
+        next unless missing_keys.empty?
         params = options.dup.delete_if do |key, _|
           parameterized_parts.key?(key) || route.defaults.key?(key)
         end
@@ -27,7 +27,7 @@ module Journey
         return [route.format(parameterized_parts), params]
       end
 
-      raise Router::RoutingError
+      raise Router::RoutingError.new "missing required keys: #{missing_keys}"
     end
 
     def clear
