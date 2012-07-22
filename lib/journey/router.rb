@@ -18,6 +18,7 @@ module Journey
     end
 
     VERSION = '1.0.1'
+    ROUTE_KEY = 'journey.route'
 
     class NullReq # :nodoc:
       attr_reader :env
@@ -46,6 +47,7 @@ module Journey
     def initialize routes, options
       @options       = options
       @params_key    = options[:parameters_key]
+      @route_key     = options[:route_key] || ROUTE_KEY
       @request_class = options[:request_class] || NullReq
       @routes        = routes
     end
@@ -64,7 +66,7 @@ module Journey
         end
 
         env[@params_key] = (set_params || {}).merge parameters
-
+        env[@route_key]  = route
         status, headers, body = route.app.call(env)
 
         if 'pass' == headers['X-Cascade']
