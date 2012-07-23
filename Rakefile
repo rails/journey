@@ -19,6 +19,9 @@ Hoe.spec 'journey' do
     ["rdoc",            "~> 3.11"],
     ["json"],
   ]
+  self.spec_extras = {
+    :required_ruby_version => '>= 1.9.3'
+  }
 end
 
 rule '.rb' => '.y' do |t|
