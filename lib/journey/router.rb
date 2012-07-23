@@ -125,15 +125,18 @@ module Journey
     def find_routes env
       req = request_class.new env
 
-      routes = filter_routes(req.path_info) + custom_routes.find_all { |r|
+      routes = filter_routes(req.path_info).concat custom_routes.find_all { |r|
         r.path.match(req.path_info)
       }
       routes.concat head_routes(routes)
 
-      routes.sort_by(&:precedence).find_all { |r|
+      routes.sort_by!(&:precedence).select! { |r|
         r.constraints.all? { |k,v| v === req.send(k) } &&
           r.verb === req.request_method
-      }.reject { |r| req.ip && !(r.ip === req.ip) }.map { |r|
+      }
+      routes.reject! { |r| req.ip && !(r.ip === req.ip) }
+
+      routes.map! { |r|
         match_data  = r.path.match(req.path_info)
         match_names = match_data.names.map { |n| n.to_sym }
         match_values = match_data.captures.map { |v| v && Utils.unescape_uri(v) }
