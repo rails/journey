@@ -1,7 +1,7 @@
 language: ruby
 rvm:
   - 1.9.3
-  matrix:
-    allow_failures:
-      - rvm: rbx-19mode
-      - rvm: jruby-19mode
+matrix:
+  allow_failures:
+    - rvm: rbx-19mode
+    - rvm: jruby-19mode
