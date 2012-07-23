@@ -478,6 +478,25 @@ module Journey
       assert called
     end
 
+    def test_recognize_head_request_as_get_route
+      path   = Path::Pattern.new "/books(/:action(.:format))"
+      app    = Object.new
+      conditions = {
+        :request_method => 'GET'
+      }
+      @router.routes.add_route(app, path, conditions, {})
+
+      env = rails_env 'PATH_INFO' => '/books/list.rss',
+                      "REQUEST_METHOD"    => "HEAD"
+
+      called = false
+      @router.recognize(env) do |r, _, params|
+        called = true
+      end
+
+      assert called
+    end
+
     def test_recognize_cares_about_verbs
       path   = Path::Pattern.new "/books(/:action(.:format))"
       app    = Object.new

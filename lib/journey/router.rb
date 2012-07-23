@@ -128,6 +128,7 @@ module Journey
       routes = filter_routes(req.path_info) + custom_routes.find_all { |r|
         r.path.match(req.path_info)
       }
+      routes.concat head_routes(routes)
 
       routes.sort_by(&:precedence).find_all { |r|
         r.constraints.all? { |k,v| v === req.send(k) } &&
@@ -140,6 +141,23 @@ module Journey
 
         [match_data, r.defaults.merge(info), r]
       }
+    end
+
+    def head_routes(routes)
+      precedence = (routes.map(&:precedence).max || 0) + 1
+      routes = routes.select { |r|
+        r.verb === "GET" && !(r.verb === "HEAD")
+      }.map! { |r|
+        Route.new(r.name,
+                  r.app,
+                  r.path,
+                  r.conditions.merge(:request_method => "HEAD"),
+                  r.defaults).tap do |route|
+                    route.precedence = r.precedence + precedence
+                  end
+      }
+      routes.flatten!
+      routes
     end
   end
 end
