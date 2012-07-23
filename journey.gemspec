@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = "journey"
-  s.version = "1.0.1.20120208102204"
+  s.version = "2.0.0.20120723141804"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aaron Patterson"]
-  s.date = "2012-02-08"
+  s.date = "2012-07-23"
   s.description = "Journey is a router.  It routes requests."
   s.email = ["aaron@tenderlovemaking.com"]
   s.extra_rdoc_files = ["Manifest.txt", "CHANGELOG.rdoc", "README.rdoc"]
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = "journey"
-  s.rubygems_version = "1.8.11"
+  s.rubygems_version = "1.8.23"
   s.summary = "Journey is a router"
   s.test_files = ["test/gtg/test_builder.rb", "test/gtg/test_transition_table.rb", "test/nfa/test_simulator.rb", "test/nfa/test_transition_table.rb", "test/nodes/test_symbol.rb", "test/path/test_pattern.rb", "test/route/definition/test_parser.rb", "test/route/definition/test_scanner.rb", "test/router/test_strexp.rb", "test/router/test_utils.rb", "test/test_route.rb", "test/test_router.rb", "test/test_routes.rb"]
 
@@ -23,26 +23,23 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<minitest>, ["~> 2.10"])
-      s.add_development_dependency(%q<racc>, [">= 1.4.6"])
-      s.add_development_dependency(%q<rdoc>, ["~> 3.11"])
-      s.add_development_dependency(%q<json>, [">= 0"])
+      s.add_development_dependency(%q<minitest>, ["~> 3.2"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.10"])
-      s.add_development_dependency(%q<hoe>, ["~> 2.12"])
+      s.add_development_dependency(%q<racc>, [">= 1.4.6"])
+      s.add_development_dependency(%q<json>, [">= 0"])
+      s.add_development_dependency(%q<hoe>, ["~> 3.0"])
     else
-      s.add_dependency(%q<minitest>, ["~> 2.10"])
-      s.add_dependency(%q<racc>, [">= 1.4.6"])
-      s.add_dependency(%q<rdoc>, ["~> 3.11"])
-      s.add_dependency(%q<json>, [">= 0"])
+      s.add_dependency(%q<minitest>, ["~> 3.2"])
       s.add_dependency(%q<rdoc>, ["~> 3.10"])
-      s.add_dependency(%q<hoe>, ["~> 2.12"])
+      s.add_dependency(%q<racc>, [">= 1.4.6"])
+      s.add_dependency(%q<json>, [">= 0"])
+      s.add_dependency(%q<hoe>, ["~> 3.0"])
     end
   else
-    s.add_dependency(%q<minitest>, ["~> 2.10"])
-    s.add_dependency(%q<racc>, [">= 1.4.6"])
-    s.add_dependency(%q<rdoc>, ["~> 3.11"])
-    s.add_dependency(%q<json>, [">= 0"])
+    s.add_dependency(%q<minitest>, ["~> 3.2"])
     s.add_dependency(%q<rdoc>, ["~> 3.10"])
-    s.add_dependency(%q<hoe>, ["~> 2.12"])
+    s.add_dependency(%q<racc>, [">= 1.4.6"])
+    s.add_dependency(%q<json>, [">= 0"])
+    s.add_dependency(%q<hoe>, ["~> 3.0"])
   end
 end
