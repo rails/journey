@@ -1,4 +1,4 @@
-= Journey
+= Journey {<img src="https://secure.travis-ci.org/rails/journey.png"/>}[http://travis-ci.org/rails/journey]
 
 * http://github.com/rails/journey
 
