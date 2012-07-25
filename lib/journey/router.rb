@@ -128,7 +128,7 @@ module Journey
       routes = filter_routes(req.path_info).concat custom_routes.find_all { |r|
         r.path.match(req.path_info)
       }
-      routes.concat head_routes(routes)
+      routes.concat get_routes_as_head(routes)
 
       routes.sort_by!(&:precedence).select! { |r|
         r.constraints.all? { |k,v| v === req.send(k) } &&
@@ -146,7 +146,7 @@ module Journey
       }
     end
 
-    def head_routes(routes)
+    def get_routes_as_head(routes)
       precedence = (routes.map(&:precedence).max || 0) + 1
       routes = routes.select { |r|
         r.verb === "GET" && !(r.verb === "HEAD")
