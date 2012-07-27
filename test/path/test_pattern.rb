@@ -85,9 +85,9 @@ module Journey
           ["/", ".", "?"]
         )
         path = Pattern.new strexp
-        assert_match('/page/tender', path)
-        assert_match('/page/love', path)
-        refute_match('/page/loving', path)
+        assert_match(path, '/page/tender')
+        assert_match(path, '/page/love')
+        refute_match(path, '/page/loving')
       end
 
       def test_optional_names
@@ -108,8 +108,8 @@ module Journey
           ["/", ".", "?"]
         )
         path = Pattern.new strexp
-        assert_match('/123', path)
-        refute_match('/', path)
+        assert_match(path, '/123')
+        refute_match(path, '/')
       end
 
       def test_to_regexp_with_group
@@ -119,9 +119,9 @@ module Journey
           ["/", ".", "?"]
         )
         path = Pattern.new strexp
-        assert_match('/page/tender', path)
-        assert_match('/page/love', path)
-        refute_match('/page/loving', path)
+        assert_match(path, '/page/tender')
+        assert_match(path, '/page/love')
+        refute_match(path, '/page/loving')
       end
 
       def test_ast_sets_regular_expressions
@@ -186,9 +186,9 @@ module Journey
           ["/", ".", "?"]
         )
         path = Pattern.new strexp
-        assert_match('/page/TENDER/aaron', path)
-        assert_match('/page/loVE/aaron', path)
-        refute_match('/page/loVE/AAron', path)
+        assert_match(path, '/page/TENDER/aaron')
+        assert_match(path, '/page/loVE/aaron')
+        refute_match(path, '/page/loVE/AAron')
       end
 
       def test_to_regexp_with_strexp
