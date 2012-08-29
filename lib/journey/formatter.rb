@@ -128,16 +128,14 @@ module Journey
     end
 
     def build_cache
-      kash = {}
+      root = { :___routes => [] }
       routes.each_with_index do |route, i|
-        money = kash
-        route.required_defaults.each do |tuple|
-          hash = (money[tuple] ||= {})
-          money = hash
+        leaf = route.required_defaults.inject(root) do |h, tuple|
+          h[tuple] ||= {}
         end
-        (money[:___routes] ||= []) << [i, route]
+        (leaf[:___routes] ||= []) << [i, route]
       end
-      kash
+      root
     end
 
     def cache
