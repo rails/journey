@@ -12,28 +12,14 @@ module Journey
 
     def generate type, name, options, recall = {}, parameterize = nil
       constraints = recall.merge options
+      missing_keys = []
 
       match_route(name, constraints) do |route|
-        keys_to_keep = route.parts.reverse.drop_while { |part|
-          !options.key?(part) || (options[part] || recall[part]).nil?
-        }
-
-        parameterized_parts = constraints.dup.keep_if do |key, _|
-          keys_to_keep.include?(key) || route.required_parts.include?(key)
-        end
-
-        if parameterize
-          parameterized_parts.each do |k,v|
-            parameterized_parts[k] = parameterize.call(k, v)
-          end
-        end
-
-        parameterized_parts.keep_if { |_,v| v  }
-
+        parameterized_parts = extract_parameterized_parts route, options, recall, parameterize
         next if !name && route.requirements.empty? && route.parts.empty?
 
-        next unless verify_required_parts!(route, parameterized_parts)
-
+        missing_keys = missing_keys(route, parameterized_parts)
+        next unless missing_keys.empty?
         params = options.dup.delete_if do |key, _|
           parameterized_parts.key?(key) || route.defaults.key?(key)
         end
@@ -41,7 +27,7 @@ module Journey
         return [route.format(parameterized_parts), params]
       end
 
-      raise Router::RoutingError
+      raise Router::RoutingError.new "missing required keys: #{missing_keys}"
     end
 
     def clear
@@ -49,6 +35,30 @@ module Journey
     end
 
     private
+    def extract_parameterized_parts route, options, recall, parameterize = nil
+      constraints = recall.merge options
+      data = constraints.dup
+
+      keys_to_keep = route.parts.reverse.drop_while { |part|
+        !options.key?(part) || (options[part] || recall[part]).nil?
+      } | route.required_parts
+
+      (data.keys - keys_to_keep).each do |bad_key|
+        data.delete bad_key
+      end
+
+      parameterized_parts = data.dup
+
+      if parameterize
+        parameterized_parts.each do |k,v|
+          parameterized_parts[k] = parameterize.call(k, v)
+        end
+      end
+
+      parameterized_parts.keep_if { |_,v| v  }
+      parameterized_parts
+    end
+
     def named_routes
       routes.named_routes
     end
@@ -90,6 +100,20 @@ module Journey
       routes
     end
 
+    # returns an array populated with missing keys if any are present
+    def missing_keys route, parts
+      missing_keys = []
+      tests = route.path.requirements
+      route.required_parts.each { |key|
+        if tests.key? key
+          missing_keys << key unless /\A#{tests[key]}\Z/ === parts[key]
+        else
+          missing_keys << key unless parts[key]
+        end
+      }
+      missing_keys
+    end
+
     def possibles cache, options, depth = 0
       cache.fetch(:___routes) { [] } + options.find_all { |pair|
         cache.key? pair
@@ -98,15 +122,9 @@ module Journey
       }.flatten(1)
     end
 
+    # returns boolean, true if no missing keys are present
     def verify_required_parts! route, parts
-      tests = route.path.requirements
-      route.required_parts.all? { |key|
-        if tests.key? key
-          /\A#{tests[key]}\Z/ === parts[key]
-        else
-          parts.fetch(key) { false }
-        end
-      }
+      missing_keys(route, parts).empty?
     end
 
     def build_cache

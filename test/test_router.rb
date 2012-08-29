@@ -187,6 +187,19 @@ module Journey
       assert_equal '/foo/aa', path
     end
 
+    def test_knows_what_parts_are_missing_from_named_route
+      route_name = "gorby_thunderhorse"
+      pattern = Router::Strexp.new("/foo/:id", { :id => /\d+/ }, ['/', '.', '?'], false)
+      path = Path::Pattern.new pattern
+      @router.routes.add_route nil, path, {}, {}, route_name
+
+      error = assert_raises(Router::RoutingError) do
+        @formatter.generate(:path_info, route_name, { }, { })
+      end
+
+      assert_match /required keys: \[:id\]/, error.message
+    end
+
     def test_X_Cascade
       add_routes @router, [ "/messages(.:format)" ]
       resp = @router.call({ 'REQUEST_METHOD' => 'GET', 'PATH_INFO' => '/lol' })
