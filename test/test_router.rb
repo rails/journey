@@ -34,7 +34,6 @@ module Journey
     end
 
     def test_dashes
-      klass  = FakeRequestFeeler.new nil
       router = Router.new(routes, {})
 
       exp = Router::Strexp.new '/foo-bar-baz', {}, ['/.?']
@@ -51,7 +50,6 @@ module Journey
     end
 
     def test_unicode
-      klass  = FakeRequestFeeler.new nil
       router = Router.new(routes, {})
 
       #match the escaped version of /ほげ
