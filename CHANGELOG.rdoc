@@ -1,7 +1,3 @@
-Tue Aug 28 17:21:49 2012  Aaron Patterson <aaron@tenderlovemaking.com>
-
-	* lib/journey/route.rb: add points based on constraints and defaults.
-
 Thu Jun 14 14:03:22 2012  Aaron Patterson <aaron@tenderlovemaking.com>
 
 	* lib/journey/formatter.rb: when generating routes, skip route

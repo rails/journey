@@ -58,7 +58,7 @@ module Journey
       return -1 unless (required_keys - supplied_keys).empty?
 
       score = (supplied_keys & path.names).length
-      score + constraints.find_all { |k,v| @defaults[k] == v }.length
+      score + (required_defaults.length * 2)
     end
 
     def parts
