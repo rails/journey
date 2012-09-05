@@ -197,7 +197,7 @@ module Journey
         @formatter.generate(:path_info, route_name, { }, { })
       end
 
-      assert_match /required keys: \[:id\]/, error.message
+      assert_match(/required keys: \[:id\]/, error.message)
     end
 
     def test_X_Cascade
