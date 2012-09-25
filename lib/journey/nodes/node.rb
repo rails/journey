@@ -58,11 +58,11 @@ module Journey
     end
 
     %w{ Symbol Slash Dot }.each do |t|
-      class_eval %{
-        class #{t} < Terminal
+      class_eval <<-eoruby, __FILE__, __LINE__ + 1
+        class #{t} < Terminal;
           def type; :#{t.upcase}; end
         end
-      }
+      eoruby
     end
 
     class Symbol < Terminal
