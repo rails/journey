@@ -1,4 +1,5 @@
 require 'journey/visitors'
+require 'forwardable'
 
 module Journey
   module Nodes
@@ -36,12 +37,34 @@ module Journey
         raise NotImplementedError
       end
 
+      def nullable?
+        raise ArgumentError, 'unknown nullable: %s' % self.class.name
+      end
+
+      def firstpos
+        raise ArgumentError, 'unknown firstpos: %s' % self.class.name
+      end
+
+      def lastpos
+        raise ArgumentError, 'unknown lastpos: %s' % self.class.name
+      end
+
       def symbol?; false; end
       def literal?; false; end
     end
 
     class Terminal < Node
       alias :symbol :left
+
+      def nullable?
+        !left
+      end
+
+      def firstpos
+        @wrapped_self ||= [self]
+        left && @wrapped_self
+      end
+      alias :lastpos :firstpos
     end
 
     class Literal < Terminal
@@ -83,15 +106,27 @@ module Journey
     end
 
     class Unary < Node
-      def children; [value] end
+      extend Forwardable
+      def children; [left] end
+      def_delegators :left, :nullable?, :firstpos, :lastpos
     end
 
     class Group < Unary
       def type; :GROUP; end
+
+      def nullable?
+        true
+      end
     end
 
     class Star < Unary
+      extend Forwardable
+      def_delegators :left, :firstpos, :lastpos
       def type; :STAR; end
+
+      def nullable?
+        true
+      end
     end
 
     class Binary < Node
@@ -107,6 +142,30 @@ module Journey
 
     class Cat < Binary
       def type; :CAT; end
+
+      def nullable?
+        left.nullable? and right.nullable?
+      end
+
+      def firstpos
+        @firstpos ||= begin
+          if left.nullable?
+            left.firstpos | right.firstpos
+          else
+            left.firstpos
+          end
+        end
+      end
+
+      def lastpos
+        @lastpos ||= begin
+          if right.nullable?
+            left.lastpos | right.lastpos
+          else
+            right.lastpos
+          end
+        end
+      end
     end
 
     class Or < Node
@@ -117,6 +176,18 @@ module Journey
       end
 
       def type; :OR; end
+
+      def nullable?
+        @nullable = children.any?(&:nullable?) if @nullable.nil?
+      end
+
+      def firstpos
+        @firstpos ||= children.map(&:firstpos).flatten.uniq
+      end
+
+      def lastpos
+        @lastpos ||= children.map(&:lastpos).flatten.uniq
+      end
     end
   end
 end
