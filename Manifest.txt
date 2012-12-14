@@ -9,7 +9,6 @@ Rakefile
 journey.gemspec
 lib/journey.rb
 lib/journey/backwards.rb
-lib/journey/core-ext/hash.rb
 lib/journey/formatter.rb
 lib/journey/gtg/builder.rb
 lib/journey/gtg/simulator.rb
