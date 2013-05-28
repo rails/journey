@@ -6,13 +6,22 @@
 
 Journey is a router.  It routes requests.
 
+The problem of finding a route that matches a request, is a bit similar to walking an Abstract Syntax Tree, and this is where Journey comes in.
+
+Look at this grammar:
+
+  ROUTE = GET | POST | PUT | DELETE  path
+  path = (static_path | dynamic_path).format
+
+What we have here is similar to a mini-programming language, with a mandatory request verb and advanced matching logic.
+
 == FEATURES/PROBLEMS:
 
 * Designed for rails
 
 == SYNOPSIS:
 
-  Too complex right now. :(
+Journey approaches Routes definitions with a Parse tree with the goal to make path lookup faster.
 
 == REQUIREMENTS:
 
