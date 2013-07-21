@@ -30,6 +30,7 @@ module Journey
 
     def clear
       routes.clear
+      named_routes.clear
     end
 
     def partitioned_routes

@@ -8,11 +8,13 @@ module Journey
       path   = Path::Pattern.new exp
       requirements = { :hello => /world/ }
 
-      routes.add_route nil, path, requirements, {:id => nil}, {}
+      routes.add_route nil, path, requirements, {:id => nil}, :hello
       assert_equal 1, routes.length
+      assert_equal 1, routes.named_routes.length
 
       routes.clear
       assert_equal 0, routes.length
+      assert_equal 0, routes.named_routes.length
     end
 
     def test_ast
