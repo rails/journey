@@ -15,7 +15,7 @@ Journey is a router.  It routes requests.
   Too complex right now. :(
   
 For an example of integrating Journey in a small rack-based web framework,
-see ["New York, New York"](https://github.com/alisnic/nyny) source code.
+see {"New York, New York"'s}[https://github.com/alisnic/nyny] source code.
 
 == REQUIREMENTS:
 
