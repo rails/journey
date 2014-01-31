@@ -6,6 +6,8 @@
 
 Journey is a router.  It routes requests.
 
+Note: This gem was merged on Rails 4.0 and will only receive security fixes.
+
 == FEATURES/PROBLEMS:
 
 * Designed for rails
