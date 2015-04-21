@@ -18,6 +18,14 @@ module Journey
       @verb        = constraints[:request_method] || //
       @ip          = constraints.delete(:ip) || //
 
+      # Unwrap any constraints so we can see what's inside for route generation.
+      # This allows the formatter to skip over any mounted applications or redirects
+      # that shouldn't be matched when using a url_for without a route name.
+      while app.is_a?(ActionDispatch::Routing::Mapper::Constraints) do
+        app = app.app
+      end
+      @dispatcher  = app.is_a?(ActionDispatch::Routing::RouteSet::Dispatcher)
+
       @constraints = constraints
       @constraints.keep_if { |_,v| Regexp === v || String === v }
       @defaults    = defaults
@@ -90,6 +98,10 @@ module Journey
         matches = parts
         @defaults.dup.delete_if { |k,_| matches.include? k }
       end
+    end
+
+    def dispatcher?
+      @dispatcher
     end
   end
 end
